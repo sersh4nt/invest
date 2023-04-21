@@ -1,3 +1,2 @@
-from app.models.user import User
-
+from app.models import *
 from .base_class import Base
