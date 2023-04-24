@@ -1,6 +1,6 @@
-from app.core.config import settings
-from app.schemas.user import UserCreate, UserUpdate
-from app.services.users import UserManager
+from src.core.config import settings
+from src.schemas.user import UserCreate, UserUpdate
+from src.services.users import UserManager
 from fastapi_users.exceptions import UserAlreadyExists
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 

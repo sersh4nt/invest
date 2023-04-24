@@ -1,4 +1,4 @@
-from app.core.config import settings
+from src.core.config import settings
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,

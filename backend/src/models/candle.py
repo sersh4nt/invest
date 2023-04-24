@@ -1,4 +1,4 @@
-from app.db.base_class import Base
+from src.db.base_class import Base
 from sqlalchemy import (
     BigInteger,
     Column,

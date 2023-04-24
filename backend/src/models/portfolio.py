@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from app.db.base_class import Base
+from src.db.base_class import Base
 from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import relationship
 

@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from app import models, schemas
-from app.api.deps import get_user_manager
-from app.services.auth import auth_backend
+from src import models, schemas
+from src.api.deps import get_user_manager
+from src.services.auth import auth_backend
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 

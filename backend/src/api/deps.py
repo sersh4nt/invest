@@ -1,8 +1,8 @@
 from typing import AsyncGenerator
 
-from app import models
-from app.db.session import async_session
-from app.services.users import UserManager
+from src import models
+from src.db.session import async_session
+from src.services.users import UserManager
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession

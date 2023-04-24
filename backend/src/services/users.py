@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from app import models
-from app.core.config import settings
+from src import models
+from src.core.config import settings
 from fastapi_users import BaseUserManager, UUIDIDMixin
 
 
