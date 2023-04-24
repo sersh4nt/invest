@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
+
 from src.auth.service import auth_backend
 
 from .dependencies import get_user_manager

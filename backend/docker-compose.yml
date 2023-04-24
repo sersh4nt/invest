@@ -6,21 +6,23 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data/pgdata
     env_file:
-      - ./backend/.env
+      - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
 
   app:
+    container_name: invest-api
     volumes:
-      - ./backend:/app
+      - ./:/src
     depends_on:
       - db
     env_file:
-      - ./backend/.env
+      - .env
     build:
-      context: ./backend
+      context: .
+      dockerfile: Dockerfile
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
     ports:
@@ -28,3 +30,4 @@ services:
 
 volumes:
   db-data:
+    driver: "local"

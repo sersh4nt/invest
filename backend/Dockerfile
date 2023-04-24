@@ -1,12 +1,19 @@
 FROM python:3.11-slim
 
-ARG WORK_DIR=/opt/mnt
-ENV WORK_DIR=$WORK_DIR
-ENV PYTHONPATH=$WORK_DIR
+RUN apt-get update && \
+    apt-get install -y curl gcc libpq-dev && \
+    apt clean && \
+    rm -rf /var/cache/apt/*
+
+ARG WORK_DIR=/src
+
+ENV WORK_DIR=$WORK_DIR \
+    PYTHONPATH=$WORK_DIR \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=utf-8
 
 WORKDIR $WORK_DIR
-
-RUN apt-get update && apt-get install --no-install-recommends -y curl 
 
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 && \
     cd /usr/local/bin && \
@@ -16,10 +23,14 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python
 COPY ./pyproject.toml ./poetry.lock* ./
 
 ARG INSTALL_DEV=false
-RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
+RUN bash -c "if [ $INSTALL_DEV == 'true '] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
 
-COPY ./src ./cmd ./
+COPY . .
+ENV PATH "$PATH:/src/cmd"
 
-ARG SCRIPT_LOCATION=$WORK_DIR/cmd/start.sh
+RUN useradd -m -d /src -s /bin/bash app \
+    && chown -R app:app /src/* && chmod +x /src/cmd/*
 
-CMD ["bash", "$SCRIPT_LOCATION"]
+USER app
+
+CMD ["./cmd/start-dev.sh"]

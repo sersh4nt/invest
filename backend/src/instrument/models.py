@@ -12,6 +12,7 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.orm import relationship
+
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 

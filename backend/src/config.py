@@ -2,6 +2,8 @@ from typing import Any, Dict, Literal, Optional
 
 from pydantic import BaseSettings, PostgresDsn, validator
 
+SHOW_DOCS_ENVS = ("local", "staging")
+
 
 class Settings(BaseSettings):
     POSTGRES_SERVER: str
@@ -26,6 +28,7 @@ class Settings(BaseSettings):
 
     ADMIN_EMAIL: str
     ADMIN_PASSWORD: str
+    ENVIRONMENT: str
 
     LOG_LEVEL: Literal["INFO", "WARN", "ERROR", "DEBUG"]
 
@@ -34,3 +37,8 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+app_config: Dict[str, Any] = {"title": "Invest API"}
+
+if settings.ENVIRONMENT not in SHOW_DOCS_ENVS:
+    app_config.update({"openapi_url": None})

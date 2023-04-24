@@ -2,9 +2,10 @@ from typing import AsyncGenerator
 
 from fastapi_users.exceptions import UserAlreadyExists
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from src.config import settings
-from src.services.users import UserManager
-from src.users.schemas import UserCreate, UserUpdate
+from src.user.schemas import UserCreate, UserUpdate
+from src.user.service import UserManager
 
 engine = create_async_engine(settings.DB_URI, echo=True)
 async_session = async_sessionmaker(engine, expire_on_commit=False)

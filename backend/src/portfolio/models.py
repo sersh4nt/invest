@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import relationship
+
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi_users import BaseUserManager, UUIDIDMixin
+
 from src.config import settings
 
 from .models import User
