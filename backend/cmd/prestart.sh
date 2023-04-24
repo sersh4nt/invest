@@ -2,4 +2,4 @@
 
 alembic upgrade head
 
-python /app/initial_data.py
+python /src/src/initial_data.py

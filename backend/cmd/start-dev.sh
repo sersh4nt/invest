@@ -13,5 +13,9 @@ PORT=${PORT:-8000}
 LOG_LEVEL=${LOG_LEVEL:-info}
 LOG_CONFIG=${LOG_CONFIG:-/src/logging.ini}
 
+# run prestart script
+PRESTART_SCRIPT_PATH=${PRESTART_PATH:-"prestart.sh"}
+. $PRESTART_SCRIPT_PATH
+
 # Start Uvicorn with live reload
-exec uvicorn --reload --proxy-headers --host $HOST --port $PORT --log-config $LOG_CONFIG "$APP_MODULE"
+exec uvicorn --proxy-headers --host $HOST --port $PORT --log-config $LOG_CONFIG "$APP_MODULE"

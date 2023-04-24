@@ -1,7 +1,7 @@
 import asyncio
 
-from src.api.deps import get_async_session, get_user_db, get_user_manager
-from src.db.session import init_db
+from src.db.init_db import init_db
+from src.user.dependencies import get_async_session, get_user_db, get_user_manager
 
 
 async def main():

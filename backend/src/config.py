@@ -32,9 +32,6 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: Literal["INFO", "WARN", "ERROR", "DEBUG"]
 
-    class Config:
-        env_file = ".env"
-
 
 settings = Settings()
 
