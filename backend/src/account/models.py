@@ -1,9 +1,8 @@
-from src.db.base_class import Base
 from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, String, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from .mixins import IntegerIDPKMixin
+from src.db.base_class import Base
+from src.db.mixins import IntegerIDPKMixin
 
 
 class Account(Base, IntegerIDPKMixin):

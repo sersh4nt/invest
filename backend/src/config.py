@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
 from pydantic import BaseSettings, PostgresDsn, validator
 
@@ -23,9 +23,11 @@ class Settings(BaseSettings):
             host=values.get("POSTGRES_SERVER"),
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
-    
+
     ADMIN_EMAIL: str
     ADMIN_PASSWORD: str
+
+    LOG_LEVEL: Literal["INFO", "WARN", "ERROR", "DEBUG"]
 
     class Config:
         env_file = ".env"

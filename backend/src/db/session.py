@@ -1,11 +1,18 @@
-from src.core.config import settings
-from src.schemas.user import UserCreate, UserUpdate
-from src.services.users import UserManager
+from typing import AsyncGenerator
+
 from fastapi_users.exceptions import UserAlreadyExists
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from src.config import settings
+from src.services.users import UserManager
+from src.users.schemas import UserCreate, UserUpdate
 
 engine = create_async_engine(settings.DB_URI, echo=True)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
+        yield session
 
 
 async def init_db(manager: UserManager) -> None:

@@ -1,9 +1,9 @@
-from src.core.config import settings
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
     JWTStrategy,
 )
+from src.config import settings
 
 bearer_transport = BearerTransport(tokenUrl="api/v1/auth/login")
 

@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 
-from sqlalchemy.orm import relationship
-from src.db.base_class import Base
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -13,8 +11,19 @@ from sqlalchemy import (
     String,
     Text,
 )
+from sqlalchemy.orm import relationship
+from src.db.base_class import Base
+from src.db.mixins import IntegerIDPKMixin
 
-from .mixins import IntegerIDPKMixin
+
+class Currency(Base):
+    __tablename__ = "currencies"
+
+    iso: str = Column(String(length=3), primary_key=True, index=True)
+    figi: str = Column(String(length=12))
+    ticker: str = Column(String)
+    lot: int = Column(Integer)
+    name: str = Column(Text)
 
 
 class Instrument(Base, IntegerIDPKMixin):
@@ -109,3 +118,16 @@ class Option(Instrument):
         "polymorphic_identity": "option",
         "inherit_condition": (id == Instrument.id),
     }
+
+
+class Candle(Base, IntegerIDPKMixin):
+    __tablename__ = "candles"
+
+    instrument_id = Column(BigInteger, ForeignKey("instruments.id"))
+    high = Column(Numeric(18, 9))
+    low = Column(Numeric(18, 9))
+    open = Column(Numeric(18, 9))
+    close = Column(Numeric(18, 9))
+    volume = Column(Integer)
+    date = Column(DateTime(timezone=True))
+    resolution = Column(String)
