@@ -18,15 +18,33 @@ services:
       - ./:/src
     depends_on:
       - db
+      - redis
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        INSTALL_DEV: ${INSTALL_DEV-false}
+    build: .
     ports:
       - "8000:8000"
+
+  redis:
+    image: redis:7-alpine
+
+  celery-worker:
+    build: .
+    env_file:
+      - .env
+    command: celery -A src.worker worker -l info -E
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    env_file:
+      - .env
+    command: celery -A src.worker beat -s /src/celerybeat-schedule
+    depends_on:
+      - db
+      - redis
 
 volumes:
   db-data:

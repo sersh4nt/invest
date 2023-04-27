@@ -1,8 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
+from uuid import UUID
 
 from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Numeric, String, func
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import relationship
+
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 
@@ -32,7 +35,7 @@ class PortfolioPosition(Base, IntegerIDPKMixin):
     __tablename__ = "portfolio_positions"
 
     portfolio_id: int = Column(BigInteger, ForeignKey("portfolio.id"))
-    instrument_id: int = Column(BigInteger, ForeignKey("instruments.id"))
+    instrument_uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"))
     quantity: Decimal = Column(Numeric(11, 2))
     blocked: Decimal = Column(Numeric(11, 2))
     average_price: Decimal = Column(Numeric(11, 2))

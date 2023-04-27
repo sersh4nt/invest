@@ -16,6 +16,8 @@ fastapi-users = {extras = ["sqlalchemy"], version = "^10.4.2"}
 asyncpg = "^0.27.0"
 pydantic = {extras = ["dotenv"], version = "^1.10.7"}
 tinkoff-investments = "^0.2.0b54"
+celery = {extras = ["redis"], version = "^5.2.7"}
+psycopg = "^3.1.8"
 
 
 [tool.poetry.group.dev.dependencies]

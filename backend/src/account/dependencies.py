@@ -1,14 +1,15 @@
 from typing import AsyncGenerator
 
-import src.account.service as account_service
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from tinkoff.invest import AsyncClient
+from tinkoff.invest.async_services import AsyncServices
+
+import src.account.service as account_service
 from src.db.session import get_async_session
 from src.exceptions import NotFound
 from src.user.dependencies import get_current_user
 from src.user.models import User
-from tinkoff.invest import AsyncClient
-from tinkoff.invest.async_services import AsyncServices
 
 
 async def get_tinkoff_client_from_token(

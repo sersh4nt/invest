@@ -1,5 +1,6 @@
 from fastapi_users import BaseUserManager
 from fastapi_users.exceptions import UserAlreadyExists
+
 from src.config import settings
 from src.db import base  # noqa: F401
 from src.user.schemas import UserCreate, UserUpdate
