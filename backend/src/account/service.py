@@ -4,10 +4,9 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient
-
 from src.exceptions import ObjectAlreadyExists
 from src.user.models import User
+from tinkoff.invest import AsyncClient
 
 from .models import Account, Subaccount
 from .schemas import AccountCreate
@@ -50,11 +49,16 @@ async def create_account(
 ) -> Account:
     async with AsyncClient(data.token) as client:
         subaccounts = await get_account_subaccounts(client)
+
     account = Account(
         **data.dict(),
         user_id=user.id,
         subaccounts=[
-            Subaccount(broker_id=subaccount.id, type=subaccount.type.name)
+            Subaccount(
+                broker_id=subaccount.id,
+                type=subaccount.type.name,
+                opened_date=subaccount.opened_date,
+            )
             for subaccount in subaccounts
         ]
     )

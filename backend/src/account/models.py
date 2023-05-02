@@ -1,7 +1,8 @@
-from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, String, Text
+from datetime import datetime
+
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 
@@ -27,6 +28,8 @@ class Subaccount(Base, IntegerIDPKMixin):
     name: str = Column(String)
     description: str = Column(Text)
     is_enabled: bool = Column(Boolean, default=False, nullable=False)
+    opened_date: datetime = Column(DateTime(timezone=True))
 
     account = relationship("Account", back_populates="subaccounts")
     portfolio = relationship("Portfolio", back_populates="subaccount")
+    operations = relationship("Operation", back_populates="subaccount")
