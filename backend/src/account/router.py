@@ -4,9 +4,14 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.account.service as account_service
-from src.account.dependencies import get_user_account
-from src.account.models import Account
-from src.account.schemas import AccountCreate, AccountScheme, SubaccountScheme
+from src.account.dependencies import get_user_account, get_user_subaccount
+from src.account.models import Account, Subaccount
+from src.account.schemas import (
+    AccountCreate,
+    AccountScheme,
+    SubaccountScheme,
+    SubaccountUpdate,
+)
 from src.db.session import get_async_session
 from src.user.dependencies import get_current_user
 from src.user.models import User
@@ -41,3 +46,15 @@ async def get_account(account: Account = Depends(get_user_account)):
 @router.get("/accounts/{account_id}/subaccounts", response_model=List[SubaccountScheme])
 async def get_subaccounts(account: Account = Depends(get_user_account)):
     return account.subaccounts
+
+
+@router.put("/subaccounts/{subaccount_id}", response_model=SubaccountScheme)
+async def edit_subaccount(
+    data: SubaccountUpdate,
+    subaccount: Subaccount = Depends(get_user_subaccount),
+    session: AsyncSession = Depends(get_async_session),
+):
+    subaccount = await account_service.update_subaccount(
+        session, subaccount=subaccount, data=data
+    )
+    return subaccount

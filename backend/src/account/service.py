@@ -1,17 +1,17 @@
 from typing import List
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from tinkoff.invest import AsyncClient
 
+from src.account.models import Account, Subaccount
+from src.account.schemas import AccountCreate, SubaccountUpdate
+from src.account.tinkoff import get_account_subaccounts
 from src.exceptions import ObjectAlreadyExists
 from src.user.models import User
-
-from .models import Account, Subaccount
-from .schemas import AccountCreate
-from .tinkoff import get_account_subaccounts
 
 
 async def get_account_by_id(
@@ -70,3 +70,17 @@ async def create_account(
         await session.rollback()
         raise ObjectAlreadyExists() from e
     return account
+
+
+async def update_subaccount(
+    session: AsyncSession, *, subaccount: Subaccount, data: SubaccountUpdate
+) -> Subaccount:
+    data_dict = data.json(exclude_unset=True)
+    for field in jsonable_encoder(subaccount):
+        if field in data_dict:
+            setattr(subaccount, field, data_dict[field])
+
+    session.add(subaccount)
+    await session.commit()
+    await session.refresh(subaccount)
+    return subaccount

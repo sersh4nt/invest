@@ -4,13 +4,20 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class SubaccountScheme(BaseModel):
+class SubaccountBase(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    is_enabled: Optional[bool] = False
+
+
+class SubaccountUpdate(SubaccountBase):
+    pass
+
+
+class SubaccountScheme(SubaccountBase):
     id: int
     broker_id: str
     type: str
-    name: Optional[str]
-    description: Optional[str]
-    is_enabled: bool
 
     class Config:
         orm_mode = True
