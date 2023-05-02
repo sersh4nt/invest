@@ -21,8 +21,8 @@ async def list_operations(
     subaccount: Subaccount = Depends(get_user_subaccount),
     dt_from: Annotated[datetime | None, Query(alias="from")] = None,
     dt_to: Annotated[datetime | None, Query(alias="to")] = None,
-    limit: Annotated[int, Query(gt=0)] = 50,
-    offset: Annotated[int, Query(ge=0)] = 0,
+    page_size: Annotated[int, Query(gt=0)] = 50,
+    page: Annotated[int, Query(ge=0)] = 0,
     session: AsyncSession = Depends(get_async_session),
 ):
     operations = await operations_service.get_operations(
@@ -30,8 +30,8 @@ async def list_operations(
         subaccount=subaccount,
         dt_from=dt_from,
         dt_to=dt_to,
-        limit=limit,
-        offset=offset,
+        page=page,
+        page_size=page_size,
     )
     return operations
 

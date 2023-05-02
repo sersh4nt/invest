@@ -16,26 +16,23 @@ async def get_operations(
     subaccount: Subaccount,
     dt_from: datetime | None = None,
     dt_to: datetime | None = None,
-    limit: int | None = None,
-    offset: int | None = None,
+    page: int = 0,
+    page_size: int = 50
 ) -> List[Operation]:
     stmt = (
         select(Operation)
         .filter(Operation.subaccount_id == subaccount.id)
         .options(selectinload(Operation.trades))
         .order_by(Operation.date.desc())
+        .limit(page_size)
+        .offset(page_size * page)
     )
+
     if dt_from is not None:
         stmt.filter(Operation.date >= dt_from)
 
     if dt_to is not None:
         stmt.filter(Operation.date <= dt_to)
-
-    if offset is not None:
-        stmt.offset(offset)
-
-    if limit is not None:
-        stmt.limit(limit)
 
     result = await session.scalars(stmt)
     return result.all()
