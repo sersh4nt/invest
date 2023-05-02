@@ -1,10 +1,6 @@
 from typing import Any, Callable, Dict, List, Literal
 
 from sqlalchemy.dialects.postgresql import insert
-from src.config import settings
-from src.db.session import get_sync_session
-from src.instrument.models import ETF, Bond, Currency, Future, Instrument, Option, Share
-from src.utils import quotation_to_decimal
 from tinkoff.invest import Bond as TBond
 from tinkoff.invest import Client
 from tinkoff.invest import Currency as TCurrency
@@ -13,6 +9,11 @@ from tinkoff.invest import Future as TFuture
 from tinkoff.invest import InstrumentStatus
 from tinkoff.invest import Option as TOption
 from tinkoff.invest import Share as TShare
+
+from src.config import settings
+from src.db.session import get_sync_session
+from src.instrument.models import ETF, Bond, Currency, Future, Instrument, Option, Share
+from src.utils import quotation_to_decimal
 
 TinkoffInstrument = TETF | TBond | TShare | TFuture | TOption | TCurrency
 

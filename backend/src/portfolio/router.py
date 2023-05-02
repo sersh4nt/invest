@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Annotated, Optional
 
-import src.portfolio.service as portfolio_service
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.portfolio.service as portfolio_service
 from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
 from src.db.session import get_async_session

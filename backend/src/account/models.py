@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import BigInteger, Boolean, Column, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 

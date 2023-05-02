@@ -1,0 +1,59 @@
+from datetime import datetime
+from typing import Annotated, List
+
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.operation.service as operations_service
+from src.account.dependencies import get_user_subaccount
+from src.account.models import Subaccount
+from src.db.session import get_async_session
+from src.operation.schemas import ActiveOrderScheme, OperationScheme
+from src.utils import quotation_to_decimal
+
+router = APIRouter(tags=["operations"])
+
+
+@router.get(
+    "/subaccounts/{subaccount_id}/operations", response_model=List[OperationScheme]
+)
+async def list_operations(
+    subaccount: Subaccount = Depends(get_user_subaccount),
+    dt_from: Annotated[datetime | None, Query(alias="from")] = None,
+    dt_to: Annotated[datetime | None, Query(alias="to")] = None,
+    limit: Annotated[int, Query(gt=0)] = 50,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    session: AsyncSession = Depends(get_async_session),
+):
+    operations = await operations_service.get_operations(
+        session,
+        subaccount=subaccount,
+        dt_from=dt_from,
+        dt_to=dt_to,
+        limit=limit,
+        offset=offset,
+    )
+    return operations
+
+
+@router.get(
+    "/subaccounts/{subaccount_id}/active-orders", response_model=List[ActiveOrderScheme]
+)
+async def list_active_orders(
+    subaccount: Subaccount = Depends(get_user_subaccount),
+    session: AsyncSession = Depends(get_async_session),
+):
+    orders = await operations_service.get_active_orders(session, subaccount=subaccount)
+    return [
+        {
+            "broker_id": order.order_id,
+            "lots_requested": order.lots_requested,
+            "lots_executed": order.lots_executed,
+            "instrument_figi": order.figi,
+            "direction": order.direction.name[16:],
+            "price": quotation_to_decimal(order.initial_order_price),
+            "type": order.order_type.name[11:],
+            "date": order.order_date,
+        }
+        for order in orders
+    ]

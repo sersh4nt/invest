@@ -4,7 +4,8 @@ from typing import List, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
+
 from src.account.models import Subaccount
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
 
