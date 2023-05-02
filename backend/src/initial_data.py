@@ -1,14 +1,17 @@
 import asyncio
 
+from fastapi_users.db import SQLAlchemyUserDatabase
 from src.db.init_db import init_db
-from src.user.dependencies import get_async_session, get_user_db, get_user_manager
+from src.db.session import async_session
+from src.user.dependencies import UserManager
+from src.user.models import User
 
 
 async def main():
-    session = await get_async_session().__anext__()
-    user_db = await get_user_db(session).__anext__()
-    manager = await get_user_manager(user_db).__anext__()
-    await init_db(manager)
+    async with async_session() as session:
+        user_db = SQLAlchemyUserDatabase(session, User)
+        manager = UserManager(user_db)
+        await init_db(manager)
 
 
 if __name__ == "__main__":

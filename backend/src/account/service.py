@@ -25,6 +25,17 @@ async def get_account_by_id(
     return account.first()
 
 
+async def get_subaccount_by_id(
+    session: AsyncSession, *, subaccount_id: int
+) -> Subaccount | None:
+    subaccount = await session.scalars(
+        select(Subaccount)
+        .filter(Subaccount.id == subaccount_id)
+        .options(selectinload(Subaccount.account))
+    )
+    return subaccount.first()
+
+
 async def list_user_accounts(session: AsyncSession, *, user: User) -> List[Account]:
     accounts = await session.scalars(
         select(Account)

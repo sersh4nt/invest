@@ -5,7 +5,6 @@ from uuid import UUID
 from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import relationship
-
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
 
@@ -25,7 +24,7 @@ class PortfolioCost(Base, IntegerIDPKMixin):
     __tablename__ = "portfolio_cost"
 
     portfolio_id: int = Column(BigInteger, ForeignKey("portfolio.id"))
-    currency: str = Column(String(length=3), ForeignKey("currencies.iso"))
+    currency: str = Column(String(length=3))
     value: Decimal = Column(Numeric(11, 2))
 
     portfolio = relationship("Portfolio", back_populates="cost")

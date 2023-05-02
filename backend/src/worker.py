@@ -1,10 +1,16 @@
-from celery import Celery, group
+from celery import Celery, chain, group
 from sqlalchemy import select
-
 from src.account.models import Subaccount
 from src.config import settings
 from src.db.session import get_sync_session
-from src.instrument.flows import UpdateCurrenciesFlow, UpdateInstrumentsFlow
+from src.instrument.flows import (
+    UpdateBondsFlow,
+    UpdateCurrenciesFlow,
+    UpdateETFSFlow,
+    UpdateFuturesFlow,
+    UpdateOptionsFlow,
+    UpdateSharesFlow,
+)
 from src.portfolio.flows import StorePortfolioFlow
 
 celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
@@ -32,7 +38,48 @@ def store_portfolio(*args, **kwargs):
 
 @celery.task
 def update_instruments(*args, **kwargs):
+    flow = chain(
+        update_currencies.s(*args, **kwargs),
+        update_bonds.s(*args, **kwargs),
+        update_etfs.s(*args, **kwargs),
+        update_shares.s(*args, **kwargs),
+        update_futures.s(*args, **kwargs),
+        update_options.s(*args, **kwargs),
+    )
+    flow()
+
+
+@celery.task
+def update_currencies(*args, **kwargs):
     flow = UpdateCurrenciesFlow()
     flow.run(*args, **kwargs)
-    flow = UpdateInstrumentsFlow()
+
+
+@celery.task
+def update_bonds(*args, **kwargs):
+    flow = UpdateBondsFlow()
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_etfs(*args, **kwargs):
+    flow = UpdateETFSFlow()
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_futures(*args, **kwargs):
+    flow = UpdateFuturesFlow()
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_options(*args, **kwargs):
+    flow = UpdateOptionsFlow()
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_shares(*args, **kwargs):
+    flow = UpdateSharesFlow()
     flow.run(*args, **kwargs)

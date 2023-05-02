@@ -5,22 +5,8 @@ from uuid import UUID
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import relationship
-
 from src.db.base_class import Base
 from src.db.mixins import IntegerIDPKMixin
-
-
-class Currency(Base):
-    __tablename__ = "currencies"
-
-    iso: str = Column(String(length=3), primary_key=True, index=True)
-    figi: str = Column(String(length=12))
-    uid: UUID = Column(postgresql.UUID, unique=True, index=True)
-    position_uid: UUID = Column(postgresql.UUID, unique=True, index=True)
-    ticker: str = Column(String)
-    lot: int = Column(Integer)
-    name: str = Column(Text)
-    image_link: str = Column(String)
 
 
 class Instrument(Base):
@@ -31,7 +17,7 @@ class Instrument(Base):
     figi: str = Column(String(length=12))
     ticker: str = Column(String)
     lot: int = Column(Integer)
-    currency: str = Column(String(length=3), ForeignKey("currencies.iso"))
+    currency: str = Column(String(length=3), default="rub")
     name: str = Column(Text)
     min_price_increment: Decimal = Column(Numeric(28, 9))
     image_link: str = Column(String)
@@ -43,6 +29,15 @@ class Instrument(Base):
     }
 
     candles = relationship("Candle")
+
+
+class Currency(Instrument):
+    __tablename__ = "currencies"
+
+    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
+    iso: str = Column(String(length=3))
+
+    __mapper_args__ = {"polymorphic_identity": "currency"}
 
 
 class Share(Instrument):
@@ -100,7 +95,7 @@ class Option(Instrument):
     payment_type: str = Column(String)
     style: str = Column(String)
     settlement_style: str = Column(String)
-    settlement_currency: str = Column(String(length=3), ForeignKey("currencies.iso"))
+    settlement_currency: str = Column(String(length=3))
     asset_type: str = Column(String)
     basic_asset: UUID = Column(postgresql.UUID)
     basic_asset_size: Decimal = Column(Numeric(28, 9))

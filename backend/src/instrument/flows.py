@@ -1,20 +1,20 @@
 from typing import Any, Callable, Dict, List, Literal
 
 from sqlalchemy.dialects.postgresql import insert
+from src.config import settings
+from src.db.session import get_sync_session
+from src.instrument.models import ETF, Bond, Currency, Future, Instrument, Option, Share
+from src.utils import quotation_to_decimal
 from tinkoff.invest import Bond as TBond
 from tinkoff.invest import Client
+from tinkoff.invest import Currency as TCurrency
 from tinkoff.invest import Etf as TETF
 from tinkoff.invest import Future as TFuture
 from tinkoff.invest import InstrumentStatus
 from tinkoff.invest import Option as TOption
 from tinkoff.invest import Share as TShare
 
-from src.config import settings
-from src.db.session import get_sync_session
-from src.instrument.models import ETF, Bond, Currency, Future, Instrument, Option, Share
-from src.utils import quotation_to_decimal
-
-TinkoffInstrument = TETF | TBond | TShare | TFuture | TOption
+TinkoffInstrument = TETF | TBond | TShare | TFuture | TOption | TCurrency
 
 
 class BaseUpdateInstrumentFlow:
@@ -28,6 +28,7 @@ class BaseUpdateInstrumentFlow:
     _additional_fields: Dict[str, Callable[[TinkoffInstrument], Any]] = {
         "uid": lambda x: x.uid,
     }
+
     _base_fields: Dict[str, Callable] = {
         "uid": lambda x: x.uid,
         "type": lambda x: x.__class__.__name__.lower(),
@@ -52,6 +53,8 @@ class BaseUpdateInstrumentFlow:
                 return Option
             case "futures":
                 return Future
+            case "currencies":
+                return Currency
 
     def _get_instrument_fields(
         self,
@@ -132,6 +135,7 @@ class UpdateSharesFlow(BaseUpdateInstrumentFlow):
 
 class UpdateFuturesFlow(BaseUpdateInstrumentFlow):
     instrument = "futures"
+
     _additional_fields = {
         "uid": lambda x: x.uid,
         "futures_type": lambda x: x.futures_type,
@@ -159,54 +163,10 @@ class UpdateOptionsFlow(BaseUpdateInstrumentFlow):
     }
 
 
-class UpdateCurrenciesFlow:
-    BLACKLIST = ["xau", "xag"]
-    ADDITIONAL_CURRENCUES = [
-        {
-            "iso": "nok",
-            "name": "Норвежская крона",
-            "figi": None,
-            "uid": None,
-            "ticker": None,
-            "lot": None,
-        },
-        {
-            "iso": "sek",
-            "name": "Шведская крона",
-            "figi": None,
-            "uid": None,
-            "ticker": None,
-            "lot": None,
-        },
-    ]
+class UpdateCurrenciesFlow(BaseUpdateInstrumentFlow):
+    instrument = "currencies"
 
-    def run(self, *args, **kwargs):
-        with Client(settings.TINKOFF_TOKEN) as client:
-            currencies = client.instruments.currencies(
-                instrument_status=InstrumentStatus(2)
-            )
-
-        currencies = [
-            {
-                "iso": c.iso_currency_name,
-                "figi": c.figi,
-                "uid": c.uid,
-                "ticker": c.ticker,
-                "lot": c.lot,
-                "name": c.name,
-            }
-            for c in currencies.instruments
-            if c.iso_currency_name not in self.BLACKLIST
-        ]
-
-        currencies.extend(self.ADDITIONAL_CURRENCUES)
-
-        db = next(get_sync_session())
-
-        stmt = (
-            insert(Currency)
-            .values(currencies)
-            .on_conflict_do_nothing(index_elements=["iso"])
-        )
-        db.execute(stmt)
-        db.commit()
+    _additional_fields = {
+        "uid": lambda x: x.uid,
+        "iso": lambda x: x.iso_currency_name,
+    }
