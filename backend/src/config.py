@@ -49,6 +49,9 @@ class Settings(BaseSettings):
 
     TINKOFF_TOKEN: str
 
+    JWT_SECRET: str
+    JWT_LIFETIME: int
+
 
 settings = Settings()
 
