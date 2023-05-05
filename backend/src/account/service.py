@@ -5,13 +5,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient
-
 from src.account.models import Account, Subaccount
-from src.account.schemas import AccountCreate, SubaccountUpdate
+from src.account.schemas import AccountCreate, AccountUpdate, SubaccountUpdate
 from src.account.tinkoff import get_account_subaccounts
 from src.exceptions import ObjectAlreadyExists
 from src.user.models import User
+
+from tinkoff.invest import AsyncClient
 
 
 async def get_account_by_id(
@@ -72,14 +72,22 @@ async def create_account(
     return account
 
 
+async def update_account(
+    session: AsyncSession, *, data: AccountUpdate, account: Account
+) -> Account:
+    for k, v in data.dict(exclude_unset=True).items():
+        setattr(account, k, v)
+    session.add(account)
+    await session.commit()
+    await session.refresh(account)
+    return account
+
+
 async def update_subaccount(
     session: AsyncSession, *, subaccount: Subaccount, data: SubaccountUpdate
 ) -> Subaccount:
-    data_dict = data.json(exclude_unset=True)
-    for field in jsonable_encoder(subaccount):
-        if field in data_dict:
-            setattr(subaccount, field, data_dict[field])
-
+    for k, v in data.dict(exclude_unset=True).items():
+        setattr(subaccount, k, v)
     session.add(subaccount)
     await session.commit()
     await session.refresh(subaccount)

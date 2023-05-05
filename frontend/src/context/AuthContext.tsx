@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { createContext, useState } from "react";
-import { login as apiLogin } from "../api";
+import { login as apiLogin, register as apiRegister } from "../api";
 
 const AuthContext = createContext({});
 
@@ -13,7 +13,8 @@ export interface IAuthContextType {
   error: string;
   accessToken: string;
   user: any;
-  login: (username: string, password: string, persist: boolean) => boolean;
+  login: (email: string, password: string, persist: boolean) => boolean;
+  register: (email: string, password: string) => boolean;
   logout: () => void;
 }
 
@@ -29,14 +30,27 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
     localStorage.removeItem("access");
   };
 
-  const login = async (
-    username: string,
-    password: string,
-    persist: boolean
-  ) => {
+  const register = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await apiLogin(username, password);
+      await apiRegister(email, password);
+      return true;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        if (err?.response?.data?.detail == "REGISTER_USER_ALREADY_EXISTS") {
+          setError("User with this email already exists!");
+        }
+      }
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string, persist: boolean) => {
+    setIsLoading(true);
+    try {
+      const response = await apiLogin(email, password);
       setAccessToken(response.access_token);
       if (persist) {
         localStorage.setItem("access", response.access_token);
@@ -45,7 +59,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err?.response?.data?.detail == "LOGIN_BAD_CREDENTIALS") {
-          setError("Invalid username or password");
+          setError("Invalid username or password!");
         }
       }
       return false;
@@ -56,7 +70,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, accessToken, isLoading, error }}
+      value={{ login, logout, register, accessToken, isLoading, error }}
     >
       {children}
     </AuthContext.Provider>

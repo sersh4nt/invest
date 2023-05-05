@@ -12,6 +12,7 @@ import useAuth from "../../hooks/useAuth";
 
 interface NavbarProps {
   opened: boolean;
+  setOpened: (v: boolean) => void;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -82,7 +83,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Navbar: React.FC<NavbarProps> = ({ opened }) => {
+const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -99,10 +100,12 @@ const Navbar: React.FC<NavbarProps> = ({ opened }) => {
       className={cx(classes.link, {
         [classes.linkActive]: item.path === active,
       })}
+      href={item.path}
       key={item.label}
       onClick={(event) => {
         event.preventDefault();
         navigate(item.path);
+        setOpened(false);
       }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />

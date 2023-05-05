@@ -1,5 +1,5 @@
-import { AppShell, useMantineTheme } from "@mantine/core";
-import { useState } from "react";
+import { AppShell, LoadingOverlay, useMantineTheme } from "@mantine/core";
+import { Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Navbar from "./Navbar";
@@ -19,10 +19,18 @@ const Layout: React.FC = () => {
       }}
       navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
-      navbar={<Navbar opened={opened} />}
+      navbar={<Navbar opened={opened} setOpened={setOpened} />}
       header={<Header opened={opened} setOpened={setOpened} />}
     >
-      <Outlet />
+      <Suspense
+        fallback={
+          <div style={{ width: "100%", height: "100%", position: "relative" }}>
+            <LoadingOverlay visible />
+          </div>
+        }
+      >
+        <Outlet />
+      </Suspense>
     </AppShell>
   );
 };

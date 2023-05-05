@@ -1,9 +1,8 @@
 from typing import List
 
+import src.account.service as account_service
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
-import src.account.service as account_service
 from src.account.dependencies import get_user_account, get_user_subaccount
 from src.account.models import Account, Subaccount
 from src.account.schemas import (
@@ -36,6 +35,16 @@ async def get_accounts_list(
 ):
     accounts = await account_service.list_user_accounts(session, user=user)
     return accounts
+
+
+@router.put("/accounts/{account_id}", response_model=AccountScheme)
+async def edit_account(
+    data: AccountCreate,
+    account: Account = Depends(get_user_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    account = await account_service.update_account(session, data=data, account=account)
+    return account
 
 
 @router.get("/accounts/{account_id}", response_model=AccountScheme)

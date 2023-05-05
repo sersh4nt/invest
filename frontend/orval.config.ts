@@ -9,7 +9,7 @@ export default defineConfig({
       client: "react-query",
       override: {
         mutator: {
-          path: "src/utils/axiosInstance.ts",
+          path: "src/api/axios.ts",
           name: "customInstance",
         },
       },

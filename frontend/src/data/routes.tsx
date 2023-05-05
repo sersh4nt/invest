@@ -1,22 +1,38 @@
-import { IconSettings } from "@tabler/icons-react";
+import {
+  IconBriefcase,
+  IconColumns,
+  IconSettings,
+  IconUserCircle,
+} from "@tabler/icons-react";
 import { RouteObject } from "react-router-dom";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
+import Register from "../pages/Register";
+import { lazy } from "react";
+
+const Accounts = lazy(() => import("../pages/Accounts"));
+const Portfolio = lazy(() => import("../pages/Portfolio"));
 
 export const mainRoutes = [
   {
     path: "/",
-    label: "Home",
-    icon: IconSettings,
-    element: <IconSettings />,
+    label: "Portfolio",
+    icon: IconBriefcase,
+    element: <Portfolio />,
   },
   {
     path: "/orders",
     label: "Orders",
-    icon: IconSettings,
+    icon: IconColumns,
     element: <IconSettings />,
+  },
+  {
+    path: "/accounts",
+    label: "Accounts",
+    icon: IconUserCircle,
+    element: <Accounts />,
   },
 ];
 
@@ -37,6 +53,10 @@ export const routes: RouteObject[] = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "*",

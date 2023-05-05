@@ -1,10 +1,12 @@
 import {
   Burger,
+  Group,
   Header as MantineHeader,
   MediaQuery,
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import AccountSelector from "./AccountSelector";
 
 interface HeaderProps {
   opened: boolean;
@@ -26,7 +28,10 @@ const Header: React.FC<HeaderProps> = ({ opened, setOpened }) => {
             mr="xl"
           />
         </MediaQuery>
-        <Text>Invest</Text>
+        <Group position="apart" sx={{width: '100%'}}>
+          <Text>Invest</Text>
+          <AccountSelector />
+        </Group>
       </div>
     </MantineHeader>
   );

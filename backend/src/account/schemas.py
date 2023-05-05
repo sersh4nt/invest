@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class SubaccountBase(BaseModel):
     name: Optional[str]
     description: Optional[str]
-    is_enabled: Optional[bool] = False
+    is_enabled: bool = False
 
 
 class SubaccountUpdate(SubaccountBase):
@@ -24,17 +24,16 @@ class SubaccountScheme(SubaccountBase):
 
 
 class AccountBase(BaseModel):
-    token: str
     name: Optional[str] = None
     description: Optional[str] = None
 
 
 class AccountCreate(AccountBase):
-    pass
+    token: str
 
 
 class AccountUpdate(AccountBase):
-    pass
+    token: str
 
 
 class AccountScheme(AccountBase):
