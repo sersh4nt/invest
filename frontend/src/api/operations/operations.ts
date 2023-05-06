@@ -17,7 +17,9 @@ import type {
   OperationScheme,
   HTTPValidationError,
   ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams,
-  ActiveOrderScheme
+  ActiveOrderScheme,
+  OperationStats,
+  RevenueStats
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -113,6 +115,86 @@ export const useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet = <T
   const queryFn: QueryFunction<Awaited<ReturnType<typeof listActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet>>> = ({ signal }) => listActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet(subaccountId, requestOptions, signal);
 
   const query = useQuery<Awaited<ReturnType<typeof listActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get Daily Operations Stats
+ */
+export const getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet = (
+    subaccountId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<OperationStats>(
+      {url: `/api/v1/subaccounts/${subaccountId}/stats/operations`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getGetDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGetQueryKey = (subaccountId: number,) => [`/api/v1/subaccounts/${subaccountId}/stats/operations`];
+
+    
+export type GetDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGetQueryResult = NonNullable<Awaited<ReturnType<typeof getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet>>>
+export type GetDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGetQueryError = ErrorType<HTTPValidationError>
+
+export const useGetDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet = <TData = Awaited<ReturnType<typeof getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet>>, TError = ErrorType<HTTPValidationError>>(
+ subaccountId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGetQueryKey(subaccountId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet>>> = ({ signal }) => getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet(subaccountId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get Portfolio Revenue
+ */
+export const getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet = (
+    subaccountId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<RevenueStats>(
+      {url: `/api/v1/subaccounts/${subaccountId}/stats/revenue`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getGetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGetQueryKey = (subaccountId: number,) => [`/api/v1/subaccounts/${subaccountId}/stats/revenue`];
+
+    
+export type GetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGetQueryResult = NonNullable<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>>
+export type GetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGetQueryError = ErrorType<HTTPValidationError>
+
+export const useGetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet = <TData = Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>, TError = ErrorType<HTTPValidationError>>(
+ subaccountId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGetQueryKey(subaccountId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>> = ({ signal }) => getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet(subaccountId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   query.queryKey = queryKey;
 

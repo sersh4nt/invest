@@ -1,36 +1,44 @@
-import { Select } from "@mantine/core";
+import { Select, SelectItem } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetAccountsListApiV1AccountsGet } from "../../api/accounts/accounts";
-import useSubaccount from "../../hooks/useSubaccount";
+import {
+  activeSubaccountSelector,
+  setActiveSubaccount,
+} from "../../store/subaccountSlice";
 
 const AccountSelector: React.FC = () => {
-  const [accounts, setAccounts] = useState<any[]>([]);
-  const { subaccount, setSubaccount } = useSubaccount();
+  const dispatch = useDispatch();
+  const subaccount = useSelector(activeSubaccountSelector);
+
+  const [accounts, setAccounts] = useState<SelectItem[]>([]);
   const { data } = useGetAccountsListApiV1AccountsGet();
 
   useEffect(() => {
     if (!data) {
       return;
     }
-    setAccounts(
-      data
-        .map((acc) =>
-          acc.subaccounts.map((subacc) => ({
-            value: `${subacc.id}`,
-            label: `Subaccount #${subacc.id}`,
-            group: `Account #${acc.id}`,
-          }))
-        )
-        .flat(1)
-    );
+    const newAccounts = data
+      .map((acc) =>
+        acc.subaccounts.map((subacc) => ({
+          value: `${subacc.id}`,
+          label: `Subaccount #${subacc.id}`,
+          group: `Account #${acc.id}`,
+        }))
+      )
+      .flat(1);
+
+    setAccounts(newAccounts);
   }, [data]);
+
+  const handleChange = (s: string) => dispatch(setActiveSubaccount(s));
 
   return (
     <Select
       placeholder="Select account"
       data={accounts}
       value={subaccount}
-      onChange={setSubaccount}
+      onChange={handleChange}
     />
   );
 };

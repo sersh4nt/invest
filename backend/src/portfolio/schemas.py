@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
-
 from src.instrument.schemas import InstrumentScheme
 
 
@@ -51,3 +50,8 @@ class PortfolioScheme(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PortfolioCostStat(BaseModel):
+    cost: float
+    daily_gain: float

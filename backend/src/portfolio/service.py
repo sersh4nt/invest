@@ -5,7 +5,6 @@ from typing import List, Tuple
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
 from src.account.models import Subaccount
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
 
@@ -24,7 +23,6 @@ async def get_latest_portfolio(
         .filter(Portfolio.subaccount_id == subaccount.id)
         .order_by(Portfolio.date_added.desc())
     )
-    await session.commit()
     return portfolio.first()
 
 
@@ -39,8 +37,8 @@ async def get_portfolio_cost(
     stmt = (
         select(PortfolioCost.value.label("value"), Portfolio.date_added.label("ts"))
         .join(Portfolio)
-        .join(Subaccount, Subaccount.id == subaccount.id)
-        .filter(PortfolioCost.currency == currency)
+        .join(Subaccount)
+        .filter(PortfolioCost.currency == currency, Subaccount.id == subaccount.id)
         .order_by(Portfolio.date_added)
     )
 
@@ -52,3 +50,13 @@ async def get_portfolio_cost(
 
     values = await session.execute(stmt)
     return values.all()
+
+
+async def get_portfolio_cost_stat(
+    session: AsyncSession, *, subaccount: Subaccount
+) -> dict:
+    dt_from = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    last_portfolio = await get_latest_portfolio(session, subaccount=subaccount)
+    cost = await get_portfolio_cost(session, subaccount=subaccount, dt_from=dt_from)
+    current_cost = last_portfolio.cost[0].value
+    return {"cost": current_cost, "daily_gain": current_cost / cost[0][0]}

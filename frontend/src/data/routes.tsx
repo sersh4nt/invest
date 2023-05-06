@@ -14,6 +14,7 @@ import { lazy } from "react";
 
 const Accounts = lazy(() => import("../pages/Accounts"));
 const Portfolio = lazy(() => import("../pages/Portfolio"));
+const Arbitrage = lazy(() => import("../pages/Arbitrage"));
 
 export const mainRoutes = [
   {
@@ -43,10 +44,16 @@ export const routes: RouteObject[] = [
     children: [
       {
         element: <ProtectedRoute />,
-        children: mainRoutes.map((item) => ({
-          path: item.path,
-          element: item.element,
-        })),
+        children: [
+          {
+            path: "/arbitrage",
+            element: <Arbitrage />,
+          },
+          ...mainRoutes.map((item) => ({
+            path: item.path,
+            element: item.element,
+          })),
+        ],
       },
     ],
   },

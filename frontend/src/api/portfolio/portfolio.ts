@@ -17,7 +17,8 @@ import type {
   PortfolioScheme,
   HTTPValidationError,
   PortfolioCostList,
-  GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams
+  ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams,
+  PortfolioCostStat
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -76,11 +77,11 @@ export const useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet = <TD
 }
 
 /**
- * @summary Get Portfolio Cost
+ * @summary List Portfolio Cost
  */
-export const getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet = (
+export const listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet = (
     subaccountId: number,
-    params?: GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams,
+    params?: ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
       return customInstance<PortfolioCostList>(
@@ -91,28 +92,68 @@ export const getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet = (
     }
   
 
-export const getGetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryKey = (subaccountId: number,
-    params?: GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams,) => [`/api/v1/subaccounts/${subaccountId}/portfolio-cost`, ...(params ? [params]: [])];
+export const getListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryKey = (subaccountId: number,
+    params?: ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams,) => [`/api/v1/subaccounts/${subaccountId}/portfolio-cost`, ...(params ? [params]: [])];
 
     
-export type GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryResult = NonNullable<Awaited<ReturnType<typeof getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>>
-export type GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryError = ErrorType<HTTPValidationError>
+export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryResult = NonNullable<Awaited<ReturnType<typeof listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>>
+export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryError = ErrorType<HTTPValidationError>
 
-export const useGetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet = <TData = Awaited<ReturnType<typeof getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError = ErrorType<HTTPValidationError>>(
+export const useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet = <TData = Awaited<ReturnType<typeof listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError = ErrorType<HTTPValidationError>>(
  subaccountId: number,
-    params?: GetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+    params?: ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryKey(subaccountId,params);
+  const queryKey = queryOptions?.queryKey ?? getListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetQueryKey(subaccountId,params);
 
   
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>> = ({ signal }) => getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet(subaccountId,params, requestOptions, signal);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>> = ({ signal }) => listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet(subaccountId,params, requestOptions, signal);
 
-  const query = useQuery<Awaited<ReturnType<typeof getPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery<Awaited<ReturnType<typeof listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get Portfolio Cost Stat
+ */
+export const getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet = (
+    subaccountId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<PortfolioCostStat>(
+      {url: `/api/v1/subaccounts/${subaccountId}/stats/cost`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getGetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGetQueryKey = (subaccountId: number,) => [`/api/v1/subaccounts/${subaccountId}/stats/cost`];
+
+    
+export type GetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGetQueryResult = NonNullable<Awaited<ReturnType<typeof getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet>>>
+export type GetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGetQueryError = ErrorType<HTTPValidationError>
+
+export const useGetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet = <TData = Awaited<ReturnType<typeof getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet>>, TError = ErrorType<HTTPValidationError>>(
+ subaccountId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGetQueryKey(subaccountId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet>>> = ({ signal }) => getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet(subaccountId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   query.queryKey = queryKey;
 

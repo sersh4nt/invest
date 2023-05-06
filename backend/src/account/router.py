@@ -1,8 +1,9 @@
 from typing import List
 
-import src.account.service as account_service
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.account.service as account_service
 from src.account.dependencies import get_user_account, get_user_subaccount
 from src.account.models import Account, Subaccount
 from src.account.schemas import (

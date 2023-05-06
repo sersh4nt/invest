@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { LoginFormInput } from "../../store/authSlice";
 
 const LoginForm: React.FC = () => {
   const { login, isLoading, error, accessToken } = useAuth();
@@ -23,28 +24,20 @@ const LoginForm: React.FC = () => {
   }, [accessToken]);
 
   const { control, handleSubmit } = useForm({
-    defaultValues: { username: "", password: "", persist: true },
+    defaultValues: { email: "", password: "", persist: true },
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
-  const onSubmit = async ({
-    username,
-    password,
-    persist,
-  }: {
-    username: string;
-    password: string;
-    persist: boolean;
-  }) => {
-    await login(username, password, persist);
+  const onSubmit = async (data: LoginFormInput) => {
+    await login(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name="username"
+        name="email"
         rules={{ required: true }}
         render={({ field, fieldState }) => (
           <TextInput

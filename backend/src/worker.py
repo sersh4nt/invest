@@ -1,8 +1,10 @@
 from celery import Celery, chain, group
+from celery.schedules import crontab
 from sqlalchemy import select
 
 from src.account.models import Subaccount
 from src.config import settings
+from src.db import base  # noqa: F401
 from src.db.session import get_sync_session
 from src.instrument.flows import (
     UpdateBondsFlow,
@@ -17,9 +19,9 @@ from src.portfolio.flows import StorePortfolioFlow
 celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 
 
-# @celery.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(crontab("*/10"), store_portfolio.s())
+@celery.on_after_configure.connect
+def setup_periodic_tasks(sender: Celery, **kwargs):
+    sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
 
 
 @celery.task
@@ -31,7 +33,7 @@ def store_portfolio_by_subaccount_id(subaccount_id: int, *args, **kwargs):
 @celery.task
 def store_portfolio(*args, **kwargs):
     db = next(get_sync_session())
-    ids = db.execute(select(Subaccount.id).filter(Subaccount.is_enabled)).all()
+    ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
     return group(
         [store_portfolio_by_subaccount_id.s(id, *args, **kwargs) for id in ids]
     )()

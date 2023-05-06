@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  activeSubaccountSelector,
+  setActiveSubaccount,
+} from "../store/subaccountSlice";
+import { AppDispatch } from "../store";
 
 const useSubaccount = () => {
-  const [subaccount, rawSetSubaccount] = useState<string | null>(
-    localStorage.getItem("subaccount")
-  );
+  const dispatch = useDispatch<AppDispatch>();
+  const setSubaccount = (s: string) => dispatch(setActiveSubaccount(s));
 
-  const setSubaccount = (subaccount: string) => {
-    rawSetSubaccount(subaccount);
-    localStorage.setItem("subaccount", subaccount);
-  };
+  const subaccount = useSelector(activeSubaccountSelector);
 
   return { subaccount, setSubaccount };
 };

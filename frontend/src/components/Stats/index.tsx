@@ -2,10 +2,13 @@ import { Group, Paper, Text, createStyles, rem } from "@mantine/core";
 import {
   IconArrowDownRight,
   IconArrowUpRight,
+  IconBusinessplan,
+  IconCashBanknote,
   IconCoin,
   IconDiscount2,
   IconReceipt2,
   IconUserPlus,
+  IconWallet,
 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
@@ -39,6 +42,9 @@ const icons = {
   discount: IconDiscount2,
   receipt: IconReceipt2,
   coin: IconCoin,
+  wallet: IconWallet,
+  profit: IconBusinessplan,
+  orders: IconCashBanknote,
 };
 
 interface StatsProps {
@@ -46,9 +52,20 @@ interface StatsProps {
   icon: keyof typeof icons;
   value: string;
   diff: number;
+  additionalText: string;
+  withPercent?: boolean;
+  withDiffIcon?: boolean;
 }
 
-const Stats: React.FC<StatsProps> = ({ title, icon, value, diff }) => {
+const Stats: React.FC<StatsProps> = ({
+  title,
+  icon,
+  value,
+  diff,
+  additionalText,
+  withPercent = true,
+  withDiffIcon = true,
+}) => {
   const { classes } = useStyles();
 
   const Icon = icons[icon];
@@ -71,13 +88,16 @@ const Stats: React.FC<StatsProps> = ({ title, icon, value, diff }) => {
           fw={500}
           className={classes.diff}
         >
-          <span>{diff}%</span>
-          <DiffIcon size="1rem" stroke={1.5} />
+          <span>
+            {diff.toFixed(2)}
+            {withPercent && "%"}
+          </span>
+          {withDiffIcon && <DiffIcon size="1rem" stroke={1.5} />}
         </Text>
       </Group>
 
       <Text fz="xs" c="dimmed" mt={7}>
-        Compared to previous month
+        {additionalText}
       </Text>
     </Paper>
   );

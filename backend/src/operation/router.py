@@ -1,14 +1,18 @@
 from datetime import datetime
 from typing import Annotated, List
 
+import src.operation.service as operations_service
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-
-import src.operation.service as operations_service
 from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
 from src.db.session import get_async_session
-from src.operation.schemas import ActiveOrderScheme, OperationScheme
+from src.operation.schemas import (
+    ActiveOrderScheme,
+    OperationScheme,
+    OperationStats,
+    RevenueStats,
+)
 from src.utils import quotation_to_decimal
 
 router = APIRouter(tags=["operations"])
@@ -57,3 +61,33 @@ async def list_active_orders(
         }
         for order in orders
     ]
+
+
+@router.get(
+    "/subaccounts/{subaccount_id}/stats/operations",
+    response_model=OperationStats,
+    tags=["stats"],
+)
+async def get_daily_operations_stats(
+    subaccount: Subaccount = Depends(get_user_subaccount),
+    session: AsyncSession = Depends(get_async_session),
+):
+    response = await operations_service.get_operations_stats(
+        session, subaccount=subaccount
+    )
+    return response
+
+
+@router.get(
+    "/subaccounts/{subaccount_id}/stats/revenue",
+    response_model=RevenueStats,
+    tags=["stats"],
+)
+async def get_portfolio_revenue(
+    subaccount: Subaccount = Depends(get_user_subaccount),
+    session: AsyncSession = Depends(get_async_session),
+):
+    result = await operations_service.get_portfolio_revenue(
+        session, subaccount=subaccount
+    )
+    return result

@@ -39,3 +39,13 @@ class ActiveOrderScheme(BaseModel):
     price: float
     type: str
     date: datetime
+
+
+class OperationStats(BaseModel):
+    daily_count: int
+    total_commission: float
+
+
+class RevenueStats(BaseModel):
+    daily_volume: float
+    profit: float
