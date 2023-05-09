@@ -12,7 +12,15 @@ import "chartjs-adapter-date-fns";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { Line } from "react-chartjs-2";
 
-import { Button, Flex, Group, Paper, Skeleton, Text } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Group,
+  Paper,
+  Select,
+  Skeleton,
+  Text,
+} from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet } from "../../api/portfolio/portfolio";
@@ -56,12 +64,14 @@ interface ChartData {
 const BalanceChart: React.FC = () => {
   const chartRef = useRef<ChartJS<"line", ChartData[]>>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [range, setRange] = useState<string>("today");
 
   const subaccount = useSelector(activeSubaccountSelector);
 
   const { data, isLoading } =
     useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet(
-      Number(subaccount)
+      Number(subaccount),
+      { range }
     );
 
   const handleReset = () => {
@@ -84,10 +94,28 @@ const BalanceChart: React.FC = () => {
 
   return (
     <Skeleton visible={isLoading}>
-      <Paper withBorder h="315px" p="md">
+      <Paper withBorder h="315px" p="sm">
         <Group position="apart">
           <Text>Subaccount balance</Text>
-          <Button onClick={handleReset}>Reset zoom</Button>
+          <Group>
+            <Select
+              size="xs"
+              placeholder="Select date range"
+              data={[
+                { value: "today", label: "Today" },
+                { value: "week", label: "This week" },
+                { value: "month", label: "This month" },
+                { value: "year", label: "This year" },
+                { value: "all", label: "All values" },
+              ]}
+              value={range}
+              onChange={(v) => setRange(v ?? "all")}
+              w={120}
+            />
+            <Button onClick={handleReset} size="xs">
+              Reset zoom
+            </Button>
+          </Group>
         </Group>
         <Flex sx={{ height: "calc(100% - 2rem)" }}>
           <Line

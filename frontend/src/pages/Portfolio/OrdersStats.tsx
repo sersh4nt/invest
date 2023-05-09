@@ -13,7 +13,7 @@ const OrdersStats: React.FC = () => {
     );
 
   return (
-    <Skeleton visible={isLoading || !data}>
+    <Skeleton visible={isLoading}>
       <Stats
         title="Daily orders completed"
         icon="orders"

@@ -15,6 +15,8 @@ const Accounts = lazy(() => import("../pages/Accounts"));
 const Portfolio = lazy(() => import("../pages/Portfolio"));
 const Arbitrage = lazy(() => import("../pages/Arbitrage"));
 const Orders = lazy(() => import("../pages/Orders"));
+const Workers = lazy(() => import("../pages/Workers"));
+const Robots = lazy(() => import("../pages/Robots"));
 
 export const mainRoutes = [
   {
@@ -34,6 +36,18 @@ export const mainRoutes = [
     label: "Accounts",
     icon: IconUserCircle,
     element: <Accounts />,
+  },
+  {
+    path: "/robots",
+    label: "Robots",
+    icon: IconUserCircle,
+    element: <Robots />,
+  },
+  {
+    path: "/workers",
+    label: "Workers",
+    icon: IconUserCircle,
+    element: <Workers />,
   },
 ];
 

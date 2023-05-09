@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import List, Tuple
+from typing import List, Literal, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,22 +31,26 @@ async def get_portfolio_cost(
     *,
     subaccount: Subaccount,
     currency: str = "rub",
-    dt_from: datetime | None = None,
-    dt_to: datetime | None = None
+    range: Literal["today", "week", "month", "year", "all"] = "all"
 ) -> List[Tuple[Decimal, datetime]]:
     stmt = (
-        select(PortfolioCost.value.label("value"), Portfolio.date_added.label("ts"))
+        select(PortfolioCost.value, Portfolio.date_added)
         .join(Portfolio)
         .join(Subaccount)
         .filter(PortfolioCost.currency == currency, Subaccount.id == subaccount.id)
         .order_by(Portfolio.date_added)
     )
 
-    if dt_from is not None:
-        stmt.filter(Portfolio.date_added >= dt_from)
+    now = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    if range == "week":
+        now = now - timedelta(days=now.weekday())
+    elif range == "month":
+        now = now.replace(day=1)
+    elif range == "year":
+        now = now.replace(month=1)
 
-    if dt_to is not None:
-        stmt.filter(Portfolio.date_added <= dt_to)
+    if range != "all":
+        stmt = stmt.filter(Portfolio.date_added >= now)
 
     values = await session.execute(stmt)
     return values.all()
@@ -55,9 +59,8 @@ async def get_portfolio_cost(
 async def get_portfolio_cost_stat(
     session: AsyncSession, *, subaccount: Subaccount
 ) -> dict:
-    dt_from = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     last_portfolio = await get_latest_portfolio(session, subaccount=subaccount)
-    cost = await get_portfolio_cost(session, subaccount=subaccount, dt_from=dt_from)
+    cost = await get_portfolio_cost(session, subaccount=subaccount, range="today")
     if last_portfolio is None:
         return {"cost": 0, "daily_gain": 0}
     current_cost = last_portfolio.cost[0].value

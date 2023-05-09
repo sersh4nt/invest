@@ -1,6 +1,8 @@
+import uuid
 from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, func
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -15,3 +17,7 @@ class AuditMixin:
 
 class IntegerIDPKMixin:
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+
+
+class UUIDPKMixin:
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, index=True)

@@ -7,11 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
 from src.db.session import get_async_session
-from src.portfolio.schemas import (
-    PortfolioCostList,
-    PortfolioCostStat,
-    PortfolioScheme,
-)
+from src.portfolio.schemas import PortfolioCostList, PortfolioCostStat, PortfolioScheme
 
 router = APIRouter(tags=["portfolio"])
 
@@ -36,12 +32,14 @@ async def get_latest_portfolio(
 async def list_portfolio_cost(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-    dt_from: Annotated[datetime | None, Query(alias="from")] = None,
-    dt_to: Annotated[datetime | None, Query(alias="to")] = None,
     currency: str = "rub",
+    range: str = "all",
 ):
     values = await portfolio_service.get_portfolio_cost(
-        session, subaccount=subaccount, currency=currency, dt_from=dt_from, dt_to=dt_to
+        session,
+        subaccount=subaccount,
+        currency=currency,
+        range=range,
     )
     return {
         "values": [{"value": v[0], "ts": v[1]} for v in values],

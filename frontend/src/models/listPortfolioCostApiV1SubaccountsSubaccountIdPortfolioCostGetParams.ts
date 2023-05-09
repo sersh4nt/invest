@@ -5,4 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams = { from?: string; to?: string; currency?: string };
+export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams = { currency?: string; range?: string };
