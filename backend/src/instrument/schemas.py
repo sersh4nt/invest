@@ -11,6 +11,7 @@ class InstrumentScheme(BaseModel):
     ticker: str
     currency: str
     name: str
+    lot: int
     image_link: Optional[str] = None
 
     class Config:

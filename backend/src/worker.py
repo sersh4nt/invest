@@ -1,7 +1,6 @@
 from celery import Celery, chain, group
 from celery.schedules import crontab
 from sqlalchemy import select
-
 from src.account.models import Subaccount
 from src.config import settings
 from src.db import base  # noqa: F401
@@ -14,6 +13,7 @@ from src.instrument.flows import (
     UpdateOptionsFlow,
     UpdateSharesFlow,
 )
+from src.operation.flows import StoreSubaccountOperationsFlow
 from src.portfolio.flows import StorePortfolioFlow
 
 celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
@@ -28,6 +28,9 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
 def store_portfolio_by_subaccount_id(subaccount_id: int, *args, **kwargs):
     flow = StorePortfolioFlow()
     flow.run(subaccount_id, *args, **kwargs)
+
+    flow = StoreSubaccountOperationsFlow(subaccount_id)
+    flow.run(*args, **kwargs)
 
 
 @celery.task

@@ -14,30 +14,30 @@ from src.operation.schemas import (
     RevenueStats,
 )
 from src.utils import quotation_to_decimal
+from src.models import PaginationOpts, Page
 
 router = APIRouter(tags=["operations"])
 
 
 @router.get(
-    "/subaccounts/{subaccount_id}/operations", response_model=List[OperationScheme]
+    "/subaccounts/{subaccount_id}/operations", response_model=Page[OperationScheme]
 )
 async def list_operations(
     subaccount: Subaccount = Depends(get_user_subaccount),
     dt_from: Annotated[datetime | None, Query(alias="from")] = None,
     dt_to: Annotated[datetime | None, Query(alias="to")] = None,
-    page_size: Annotated[int, Query(gt=0)] = 50,
-    page: Annotated[int, Query(ge=0)] = 0,
     session: AsyncSession = Depends(get_async_session),
+    pagination: PaginationOpts = Depends(),
 ):
-    operations = await operations_service.get_operations(
+    print(pagination.page, pagination.page_size)
+    operations, count = await operations_service.get_operations(
         session,
         subaccount=subaccount,
         dt_from=dt_from,
         dt_to=dt_to,
-        page=page,
-        page_size=page_size,
+        pagination=pagination,
     )
-    return operations
+    return {"count": count, "page": pagination.page or 0, "items": operations}
 
 
 @router.get(

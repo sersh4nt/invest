@@ -1,7 +1,6 @@
 import {
   IconBriefcase,
   IconColumns,
-  IconSettings,
   IconUserCircle,
 } from "@tabler/icons-react";
 import { RouteObject } from "react-router-dom";
@@ -15,6 +14,7 @@ import { lazy } from "react";
 const Accounts = lazy(() => import("../pages/Accounts"));
 const Portfolio = lazy(() => import("../pages/Portfolio"));
 const Arbitrage = lazy(() => import("../pages/Arbitrage"));
+const Orders = lazy(() => import("../pages/Orders"));
 
 export const mainRoutes = [
   {
@@ -27,7 +27,7 @@ export const mainRoutes = [
     path: "/orders",
     label: "Orders",
     icon: IconColumns,
-    element: <IconSettings />,
+    element: <Orders />,
   },
   {
     path: "/accounts",

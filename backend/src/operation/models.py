@@ -26,6 +26,11 @@ class Operation(Base, IntegerIDPKMixin):
     date: datetime = Column(DateTime(timezone=True))
 
     subaccount = relationship("Subaccount", back_populates="operations")
+    instrument = relationship(
+        "Instrument",
+        primaryjoin="Instrument.figi==Operation.instrument_figi",
+        foreign_keys=[instrument_figi],
+    )
     trades = relationship("OperationTrade", back_populates="operation")
 
 

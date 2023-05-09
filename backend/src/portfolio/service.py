@@ -58,5 +58,7 @@ async def get_portfolio_cost_stat(
     dt_from = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     last_portfolio = await get_latest_portfolio(session, subaccount=subaccount)
     cost = await get_portfolio_cost(session, subaccount=subaccount, dt_from=dt_from)
+    if last_portfolio is None:
+        return {"cost": 0, "daily_gain": 0}
     current_cost = last_portfolio.cost[0].value
     return {"cost": current_cost, "daily_gain": current_cost / cost[0][0]}

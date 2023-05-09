@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { OperationTradeScheme } from './operationTradeScheme';
+import type { InstrumentScheme } from './instrumentScheme';
 
 export interface OperationScheme {
   broker_id: string;
@@ -14,8 +15,8 @@ export interface OperationScheme {
   type: string;
   state: string;
   quantity: number;
-  instrument_figi?: string;
   commission?: number;
   date: string;
   trades: OperationTradeScheme[];
+  instrument?: InstrumentScheme;
 }

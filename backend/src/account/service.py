@@ -4,13 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient
-
 from src.account.models import Account, Subaccount
 from src.account.schemas import AccountCreate, AccountUpdate, SubaccountUpdate
 from src.account.tinkoff import get_account_subaccounts
 from src.exceptions import ObjectAlreadyExists
 from src.user.models import User
+from tinkoff.invest import AccessLevel, AsyncClient
 
 
 async def get_account_by_id(
@@ -50,25 +49,54 @@ async def create_account(
     async with AsyncClient(data.token) as client:
         subaccounts = await get_account_subaccounts(client)
 
-    account = Account(
-        **data.dict(),
-        user_id=user.id,
-        subaccounts=[
-            Subaccount(
-                broker_id=subaccount.id,
-                type=subaccount.type.name,
-                opened_date=subaccount.opened_date,
-            )
-            for subaccount in subaccounts
-        ]
+    subaccounts = [
+        s
+        for s in subaccounts
+        if s.access_level == AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS
+    ]
+
+    obj = await session.scalars(
+        select(Account)
+        .filter(Account.user_id == user.id, Account.token == data.token)
+        .options(selectinload(Account.subaccounts))
     )
-    session.add(account)
+    obj = obj.first()
+
+    if obj is None:
+        obj = Account(
+            **data.dict(),
+            user_id=user.id,
+            subaccounts=[
+                Subaccount(
+                    broker_id=subaccount.id,
+                    type=subaccount.type.name,
+                    opened_date=subaccount.opened_date,
+                    name=subaccount.name,
+                )
+                for subaccount in subaccounts
+            ]
+        )
+    else:
+        obj.name = data.name
+        obj.description = data.description
+        for subaccount in subaccounts:
+            if any(acc.broker_id == subaccount.id for acc in obj.subaccounts):
+                continue
+            obj.subaccounts.append(
+                Subaccount(
+                    broker_id=subaccount.id,
+                    type=subaccount.type.name,
+                    opened_date=subaccount.opened_date,
+                    name=subaccount.name,
+                )
+            )
+    session.add(obj)
     try:
         await session.commit()
     except IntegrityError as e:
         await session.rollback()
         raise ObjectAlreadyExists() from e
-    return account
+    return obj
 
 
 async def update_account(

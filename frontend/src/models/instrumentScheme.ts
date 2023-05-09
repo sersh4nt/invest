@@ -12,5 +12,6 @@ export interface InstrumentScheme {
   ticker: string;
   currency: string;
   name: string;
+  lot: number;
   image_link?: string;
 }

@@ -36,7 +36,9 @@ const columns = [
     header: "Cost",
     accessorFn: (row: PortfolioPositionScheme) =>
       `${
-        Math.round(row.current_price * row.quantity * 100) / 100
+        Math.round(
+          row.current_price * row.quantity * row.instrument.lot * 100
+        ) / 100
       } ${currencyToSymbol(row.instrument.currency)}`,
     id: "cost",
     maxSize: 50,
@@ -51,7 +53,12 @@ const columns = [
     sortingFn: (
       rowA: MRT_Row<PortfolioPositionScheme>,
       rowB: MRT_Row<PortfolioPositionScheme>
-    ) => rowA.original.expected_yield > rowB.original.expected_yield,
+    ) =>
+      rowA.original.expected_yield > rowB.original.expected_yield
+        ? 1
+        : rowA.original.expected_yield == rowB.original.expected_yield
+        ? 0
+        : -1,
     id: "yield",
     maxSize: 50,
   },
@@ -81,7 +88,7 @@ const PortfolioTable: React.FC = () => {
         columns={columns}
         data={rows}
         state={{ isLoading }}
-        initialState={{ density: "xs" }}
+        initialState={{ density: "xs", sorting: [{ id: "yield", desc: true }] }}
       />
     </Paper>
   );

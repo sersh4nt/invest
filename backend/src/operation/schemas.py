@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from src.instrument.schemas import InstrumentScheme
 
 from pydantic import BaseModel
 
@@ -21,10 +22,10 @@ class OperationScheme(BaseModel):
     type: str
     state: str
     quantity: int
-    instrument_figi: Optional[str]
     commission: Optional[float]
     date: datetime
     trades: List[OperationTradeScheme]
+    instrument: Optional[InstrumentScheme]
 
     class Config:
         orm_mode = True

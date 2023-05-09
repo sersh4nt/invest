@@ -14,7 +14,7 @@ import type {
   QueryKey
 } from 'react-query'
 import type {
-  OperationScheme,
+  PageOperationScheme,
   HTTPValidationError,
   ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams,
   ActiveOrderScheme,
@@ -45,7 +45,7 @@ export const listOperationsApiV1SubaccountsSubaccountIdOperationsGet = (
     params?: ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-      return customInstance<OperationScheme[]>(
+      return customInstance<PageOperationScheme>(
       {url: `/api/v1/subaccounts/${subaccountId}/operations`, method: 'get',
         params, signal
     },

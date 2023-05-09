@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 import src.portfolio.service as portfolio_service
 from sqlalchemy import func, select
@@ -8,6 +8,8 @@ from sqlalchemy.orm import selectinload
 from src.account.models import Account, Subaccount
 from src.operation.models import Operation
 from tinkoff.invest import AsyncClient, OrderState
+from src.models import PaginationOpts
+from src.instrument.models import Instrument
 
 
 async def get_operations(
@@ -16,26 +18,41 @@ async def get_operations(
     subaccount: Subaccount,
     dt_from: datetime | None = None,
     dt_to: datetime | None = None,
-    page: int = 0,
-    page_size: int = 50
-) -> List[Operation]:
+    pagination: PaginationOpts = None
+) -> Tuple[List[Operation], int]:
     stmt = (
         select(Operation)
         .filter(Operation.subaccount_id == subaccount.id)
-        .options(selectinload(Operation.trades))
+        .join(Instrument, Operation.instrument_figi == Instrument.figi, isouter=True)
+        .options(selectinload(Operation.trades), selectinload(Operation.instrument))
         .order_by(Operation.date.desc())
-        .limit(page_size)
-        .offset(page_size * page)
     )
 
+    cnt_stmt = select(func.count(Operation.id)).filter(
+        Operation.subaccount_id == subaccount.id
+    )
+
+    if (
+        pagination is not None
+        and pagination.page is not None
+        and pagination.page_size is not None
+    ):
+        offset = pagination.page * pagination.page_size
+        limit = pagination.page_size
+        stmt = stmt.offset(offset).limit(limit)
+
     if dt_from is not None:
-        stmt.filter(Operation.date >= dt_from)
+        stmt = stmt.filter(Operation.date >= dt_from)
+        cnt_stmt = cnt_stmt.filter(Operation.date >= dt_from)
 
     if dt_to is not None:
-        stmt.filter(Operation.date <= dt_to)
+        stmt = stmt.filter(Operation.date <= dt_to)
+        cnt_stmt = cnt_stmt.filter(Operation.date <= dt_to)
 
     result = await session.scalars(stmt)
-    return result.all()
+    count = await session.scalar(cnt_stmt)
+
+    return result.all(), count
 
 
 async def get_active_orders(
@@ -68,7 +85,7 @@ async def get_operations_stats(
             Operation.subaccount_id == subaccount.id
         )
     )
-    return {"daily_count": cnt, "total_commission": commission}
+    return {"daily_count": cnt or 0, "total_commission": commission or 0}
 
 
 async def get_portfolio_revenue(
@@ -79,9 +96,11 @@ async def get_portfolio_revenue(
             Operation.subaccount_id == subaccount.id
         )
     )
+
     portfolio = await portfolio_service.get_latest_portfolio(
         session, subaccount=subaccount
     )
+
     dt_from = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     daily_volume = await session.scalar(
         select(func.sum(func.abs(Operation.payment))).filter(
@@ -89,7 +108,10 @@ async def get_portfolio_revenue(
         )
     )
 
+    revenue = revenue or 0
+    daily_volume = daily_volume or 0
+
     if portfolio is not None:
         revenue += portfolio.cost[0].value
 
-    return {"daily_volume": daily_volume or 0, "profit": revenue}
+    return {"daily_volume": daily_volume, "profit": revenue}

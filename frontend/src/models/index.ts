@@ -16,6 +16,7 @@ export * from './listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetPa
 export * from './operationScheme';
 export * from './operationStats';
 export * from './operationTradeScheme';
+export * from './pageOperationScheme';
 export * from './portfolioCostList';
 export * from './portfolioCostScheme';
 export * from './portfolioCostStat';

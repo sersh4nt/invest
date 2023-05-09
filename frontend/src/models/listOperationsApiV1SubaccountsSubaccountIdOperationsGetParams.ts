@@ -5,4 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams = { from?: string; to?: string; page_size?: number; page?: number };
+export type ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams = { from?: string; to?: string; page?: number; page_size?: number };

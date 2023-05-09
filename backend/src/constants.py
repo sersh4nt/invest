@@ -8,5 +8,5 @@ POSTGRES_INDEXES_NAMING_CONVENTION = {
 
 
 class ErrorCode:
-    INVALID_TINKOFF_TOKEN = "Authentication token is missing or invalid"
-    OBJECT_ALREADY_EXISTS = "Object you're trying to create is already exists"
+    INVALID_TINKOFF_TOKEN = "Token is missing or invalid"
+    OBJECT_ALREADY_EXISTS = "Object you're trying to create already exists"
