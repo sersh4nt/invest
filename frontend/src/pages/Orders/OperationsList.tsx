@@ -1,4 +1,12 @@
-import { ActionIcon, Button, Center, Divider, Group, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Center,
+  Divider,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 
 import { useEffect, useMemo } from "react";
@@ -32,8 +40,6 @@ const OperationsList: React.FC = () => {
       },
     }
   );
-
-  console.log(isFetching);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -81,7 +87,7 @@ const OperationsList: React.FC = () => {
       <Stack spacing="xs" style={{ flex: "1 1 0", overflowY: "auto" }}>
         {operations}
         <span>
-          <Center py='xs'>
+          <Center py="xs">
             <Button
               ref={ref}
               loading={isFetchingNextPage}

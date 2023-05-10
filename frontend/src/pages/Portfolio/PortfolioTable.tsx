@@ -5,14 +5,14 @@ import { useSelector } from "react-redux";
 import { useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet } from "../../api/portfolio/portfolio";
 import { PortfolioPositionScheme } from "../../models";
 import { activeSubaccountSelector } from "../../store/subaccountSlice";
-import { currencyToSymbol } from "../../utils";
+import { withCurrency } from "../../utils/strings";
 
 const columns = [
   {
     header: "Name",
     accessorFn: (row: PortfolioPositionScheme) => (
       <Group spacing="sm">
-        <Avatar radius="xl" size="sm" />
+        <Avatar radius="xl" size="sm" src={row.instrument.image_link} />
         <Text>{row.instrument.name}</Text>
       </Group>
     ),
@@ -24,22 +24,27 @@ const columns = [
   },
   {
     header: "Price",
-    accessorKey: "current_price",
+    id: "current_price",
+    accessorFn: (row: PortfolioPositionScheme) =>
+      withCurrency(row.current_price, row.instrument.currency),
     maxSize: 50,
   },
   {
     header: "Average",
-    accessorKey: "average_price",
+    id: "average_price",
+    accessorFn: (row: PortfolioPositionScheme) =>
+      withCurrency(row.average_price, row.instrument.currency),
     maxSize: 50,
   },
   {
     header: "Cost",
     accessorFn: (row: PortfolioPositionScheme) =>
-      `${
+      withCurrency(
         Math.round(
           row.current_price * row.quantity * row.instrument.lot * 100
-        ) / 100
-      } ${currencyToSymbol(row.instrument.currency)}`,
+        ) / 100,
+        row.instrument.currency
+      ),
     id: "cost",
     maxSize: 50,
   },
@@ -47,7 +52,7 @@ const columns = [
     header: "Yield",
     accessorFn: (row: PortfolioPositionScheme) => (
       <Text color={row.expected_yield > 0 ? "teal" : "red"}>
-        {row.expected_yield}
+        {withCurrency(row.expected_yield, row.instrument.currency)}
       </Text>
     ),
     sortingFn: (

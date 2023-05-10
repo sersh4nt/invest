@@ -7,7 +7,7 @@ import OrderCard from "./OrderCard";
 const OrdersList: React.FC = () => {
   const { subaccount } = useSubaccount();
 
-  const { data, isLoading, refetch } =
+  const { data, isFetching, refetch } =
     useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet(
       Number(subaccount)
     );
@@ -20,7 +20,7 @@ const OrdersList: React.FC = () => {
         <Group position="apart" m={0}>
           <Text>Active orders</Text>
           <Group spacing="xs">
-            <ActionIcon loading={isLoading}>
+            <ActionIcon loading={isFetching}>
               <IconRefresh onClick={handleRefetch} />
             </ActionIcon>
             <ActionIcon>

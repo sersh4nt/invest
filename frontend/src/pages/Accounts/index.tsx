@@ -27,8 +27,8 @@ const Accounts: React.FC = () => {
           cols={4}
           spacing="lg"
           breakpoints={[
-            { maxWidth: "md", cols: 3, spacing: "md" },
-            { maxWidth: "sm", cols: 2, spacing: "sm" },
+            { maxWidth: "xl", cols: 3 },
+            { maxWidth: "md", cols: 2, spacing: "md" },
             { maxWidth: "xs", cols: 1, spacing: "sm" },
           ]}
         >

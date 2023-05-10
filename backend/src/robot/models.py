@@ -10,7 +10,7 @@ from src.db.mixins import AuditMixin, IntegerIDPKMixin
 class Robot(Base, IntegerIDPKMixin, AuditMixin):
     __tablename__ = "robots"
 
-    creator_ud: uuid.UUID = Column(UUID, ForeignKey("users.id"))
+    creator_id: uuid.UUID = Column(UUID, ForeignKey("users.id"))
     image: str = Column(String, nullable=False)
     config: dict = Column(JSONB, default={})
     name: str = Column(String)
@@ -25,9 +25,11 @@ class Worker(Base, IntegerIDPKMixin, AuditMixin):
 
     robot_id: int = Column(BigInteger, ForeignKey("robots.id"))
     user_id: uuid.UUID = Column(UUID, ForeignKey("users.id"))
+    subaccount_id: int = Column(BigInteger, ForeignKey("subaccounts.id"))
     config: dict = Column(JSONB, default={})
     is_enabled: bool = Column(Boolean, default=False)
+    container_name: str = Column(String)
 
 
-class RobotBacktestResult(Base, IntegerIDPKMixin):
-    robot_id: int = Column(BigInteger, ForeignKey("robots.id"))
+# class RobotBacktestResult(Base, IntegerIDPKMixin):
+#     robot_id: int = Column(BigInteger, ForeignKey("robots.id"))

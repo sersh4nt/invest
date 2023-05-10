@@ -61,7 +61,7 @@ async def get_portfolio_cost_stat(
 ) -> dict:
     last_portfolio = await get_latest_portfolio(session, subaccount=subaccount)
     cost = await get_portfolio_cost(session, subaccount=subaccount, range="today")
-    if last_portfolio is None:
+    if last_portfolio is None or len(cost) == 0:
         return {"cost": 0, "daily_gain": 0}
     current_cost = last_portfolio.cost[0].value
     return {"cost": current_cost, "daily_gain": current_cost / cost[0][0]}
