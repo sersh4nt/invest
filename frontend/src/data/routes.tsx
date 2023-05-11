@@ -17,6 +17,7 @@ const Arbitrage = lazy(() => import("../pages/Arbitrage"));
 const Orders = lazy(() => import("../pages/Orders"));
 const Workers = lazy(() => import("../pages/Workers"));
 const Robots = lazy(() => import("../pages/Robots"));
+const WorkerDetailed = lazy(() => import("../pages/WorkerDetailed"));
 
 export const mainRoutes = [
   {
@@ -59,6 +60,10 @@ export const routes: RouteObject[] = [
       {
         element: <ProtectedRoute />,
         children: [
+          {
+            path: "/workers/:workerId",
+            element: <WorkerDetailed />,
+          },
           {
             path: "/arbitrage",
             element: <Arbitrage />,

@@ -4,12 +4,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from tinkoff.invest import AccessLevel, AsyncClient
+
 from src.account.models import Account, Subaccount
 from src.account.schemas import AccountCreate, AccountUpdate, SubaccountUpdate
 from src.account.tinkoff import get_account_subaccounts
 from src.exceptions import ObjectAlreadyExists
 from src.user.models import User
-from tinkoff.invest import AccessLevel, AsyncClient
 
 
 async def get_account_by_id(

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
-from src.instrument.schemas import InstrumentScheme
 
 from pydantic import BaseModel
+from src.instrument.schemas import InstrumentScheme
 
 
 class OperationTradeScheme(BaseModel):
@@ -35,7 +35,7 @@ class ActiveOrderScheme(BaseModel):
     broker_id: str
     lots_requested: int
     lots_executed: int
-    instrument_figi: str
+    instrument: InstrumentScheme
     direction: str
     price: float
     type: str

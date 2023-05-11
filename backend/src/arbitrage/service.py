@@ -4,6 +4,7 @@ from decimal import Decimal
 from itertools import permutations
 
 import httpx
+
 from src.arbitrage.schemas import ArbitrageResult
 
 PAIRS = [
@@ -122,7 +123,7 @@ async def calculate_results(
         get_p2p_rate(initial_amount, symbols, payment_methods),
     )
 
-    results = []
+    results: list[ArbitrageResult] = []
 
     for depth in range(2, deals + 2):
         for permutation in permutations(symbols, r=depth):
@@ -143,6 +144,9 @@ async def calculate_results(
 
                     revenue = result - initial_amount
                     revenue_relative = revenue / initial_amount
+
+                    if revenue <= 0:
+                        continue
 
                     results.append(
                         ArbitrageResult(

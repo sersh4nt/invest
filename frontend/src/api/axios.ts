@@ -26,7 +26,7 @@ AXIOS_INSTANCE.interceptors.request.use((config) => {
 AXIOS_INSTANCE.interceptors.response.use(
   (value) => value,
   (error) => {
-    if (error?.response?.status == 403) {
+    if (error?.response?.status == 401) {
       store.dispatch(logout());
     }
     return Promise.reject(error);

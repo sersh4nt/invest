@@ -50,20 +50,30 @@ const columns = [
   },
   {
     header: "Yield",
-    accessorFn: (row: PortfolioPositionScheme) => (
-      <Text color={row.expected_yield > 0 ? "teal" : "red"}>
-        {withCurrency(row.expected_yield, row.instrument.currency)}
-      </Text>
-    ),
+    accessorFn: (row: PortfolioPositionScheme) => {
+      const value = row.expected_yield + row.current_nkd + row.var_margin;
+      return (
+        <Text color={value > 0 ? "teal" : value < 0 ? "red" : "default"}>
+          {withCurrency(value, row.instrument.currency)}
+        </Text>
+      );
+    },
     sortingFn: (
       rowA: MRT_Row<PortfolioPositionScheme>,
       rowB: MRT_Row<PortfolioPositionScheme>
-    ) =>
-      rowA.original.expected_yield > rowB.original.expected_yield
-        ? 1
-        : rowA.original.expected_yield == rowB.original.expected_yield
-        ? 0
-        : -1,
+    ) => {
+      const valueA =
+        rowA.original.expected_yield +
+        rowA.original.current_nkd +
+        rowA.original.var_margin;
+      const valueB =
+        rowB.original.expected_yield +
+        rowB.original.current_nkd +
+        rowA.original.var_margin;
+      if (valueA == valueB) return 0;
+      if (valueA > valueB) return 1;
+      return -1;
+    },
     id: "yield",
     maxSize: 50,
   },

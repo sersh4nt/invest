@@ -1,5 +1,6 @@
-import src.arbitrage.service as arbitrage_service
 from fastapi import APIRouter, Query
+
+import src.arbitrage.service as arbitrage_service
 from src.arbitrage.schemas import ArbitrageResult
 
 router = APIRouter(tags=["arbitrage"])

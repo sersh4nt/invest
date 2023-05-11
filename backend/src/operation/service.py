@@ -1,15 +1,16 @@
 from datetime import datetime
 from typing import List, Tuple
 
-import src.portfolio.service as portfolio_service
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from src.account.models import Account, Subaccount
-from src.operation.models import Operation
 from tinkoff.invest import AsyncClient, OrderState
-from src.models import PaginationOpts
+
+import src.portfolio.service as portfolio_service
+from src.account.models import Account, Subaccount
 from src.instrument.models import Instrument
+from src.models import PaginationOpts
+from src.operation.models import Operation
 
 
 async def get_operations(
@@ -57,7 +58,7 @@ async def get_operations(
 
 async def get_active_orders(
     session: AsyncSession, *, subaccount: Subaccount
-) -> List[OrderState]:
+) -> Tuple[List[OrderState], List[Instrument]]:
     token = (
         await session.scalars(
             select(Account.token).filter(Account.id == subaccount.account_id)
@@ -66,7 +67,12 @@ async def get_active_orders(
 
     async with AsyncClient(token) as client:
         orders = await client.orders.get_orders(account_id=subaccount.broker_id)
-    return orders.orders
+
+    figis = {o.figi for o in orders.orders}
+    instruments = await session.scalars(
+        select(Instrument).filter(Instrument.figi.in_(figis))
+    )
+    return orders.orders, instruments.all()
 
 
 async def get_operations_stats(

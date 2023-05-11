@@ -16,7 +16,6 @@ class Robot(Base, IntegerIDPKMixin, AuditMixin):
     name: str = Column(String)
     description: str = Column(Text)
 
-    users = relationship("User", secondary="workers", back_populates="robots")
     creator = relationship("User")
 
 
@@ -30,6 +29,6 @@ class Worker(Base, IntegerIDPKMixin, AuditMixin):
     is_enabled: bool = Column(Boolean, default=False)
     container_name: str = Column(String)
 
-
-# class RobotBacktestResult(Base, IntegerIDPKMixin):
-#     robot_id: int = Column(BigInteger, ForeignKey("robots.id"))
+    user = relationship("User", back_populates="workers")
+    robot = relationship("Robot")
+    subaccount = relationship("Subaccount")

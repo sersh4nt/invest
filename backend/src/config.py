@@ -52,6 +52,8 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     JWT_LIFETIME: int
 
+    DOCKER_URI: str
+
 
 settings = Settings()
 

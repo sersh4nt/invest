@@ -19,6 +19,7 @@ tinkoff-investments = "^0.2.0b54"
 celery = {extras = ["redis"], version = "^5.2.7"}
 psycopg = {extras = ["binary"], version = "^3.1.8"}
 httpx = "^0.24.0"
+docker = "^6.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
