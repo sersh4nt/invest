@@ -3,6 +3,7 @@ import uuid
 from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
+
 from src.db.base_class import Base
 from src.db.mixins import AuditMixin, IntegerIDPKMixin
 

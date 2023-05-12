@@ -17,7 +17,8 @@ import type {
   PortfolioCostStat,
   HTTPValidationError,
   OperationStats,
-  RevenueStats
+  RevenueStats,
+  WorkersStats
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -149,6 +150,46 @@ export const useGetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet =
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>> = ({ signal }) => getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet(subaccountId, requestOptions, signal);
 
   const query = useQuery<Awaited<ReturnType<typeof getPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(subaccountId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get Active Workers Count
+ */
+export const getActiveWorkersCountApiV1WorkersStatsActiveGet = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<WorkersStats>(
+      {url: `/api/v1/workers/stats/active`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getGetActiveWorkersCountApiV1WorkersStatsActiveGetQueryKey = () => [`/api/v1/workers/stats/active`];
+
+    
+export type GetActiveWorkersCountApiV1WorkersStatsActiveGetQueryResult = NonNullable<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>>
+export type GetActiveWorkersCountApiV1WorkersStatsActiveGetQueryError = ErrorType<unknown>
+
+export const useGetActiveWorkersCountApiV1WorkersStatsActiveGet = <TData = Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetActiveWorkersCountApiV1WorkersStatsActiveGetQueryKey();
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>> = ({ signal }) => getActiveWorkersCountApiV1WorkersStatsActiveGet(requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError, TData>(queryKey, queryFn, queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   query.queryKey = queryKey;
 

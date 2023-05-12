@@ -1,15 +1,17 @@
 import {
   IconBriefcase,
   IconColumns,
+  IconRobot,
+  IconSettings2,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
-import { lazy } from "react";
 
 const Accounts = lazy(() => import("../pages/Accounts"));
 const Portfolio = lazy(() => import("../pages/Portfolio"));
@@ -41,13 +43,13 @@ export const mainRoutes = [
   {
     path: "/robots",
     label: "Robots",
-    icon: IconUserCircle,
+    icon: IconRobot,
     element: <Robots />,
   },
   {
     path: "/workers",
     label: "Workers",
-    icon: IconUserCircle,
+    icon: IconSettings2,
     element: <Workers />,
   },
 ];

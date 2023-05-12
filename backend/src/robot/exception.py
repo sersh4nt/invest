@@ -1,4 +1,4 @@
-from src.exceptions import BadRequest
+from src.exceptions import BadRequest, NotFound
 
 
 class SubaccountNotFoundError(BadRequest):
@@ -7,3 +7,7 @@ class SubaccountNotFoundError(BadRequest):
 
 class RobotNotFoundError(BadRequest):
     DETAIL = "Robot not found!"
+
+
+class WorkerNotFoundError(NotFound):
+    DETAIL = "Worker not found!"

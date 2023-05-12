@@ -23,7 +23,10 @@ import type {
   PageWorkerScheme,
   ListWorkersApiV1WorkersGetParams,
   WorkerScheme,
-  WorkerCreate
+  WorkerCreate,
+  WorkersStats,
+  ContainerStatus,
+  GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -160,4 +163,127 @@ export const createWorkerApiV1WorkersPost = (
 
       return useMutation<Awaited<ReturnType<typeof createWorkerApiV1WorkersPost>>, TError, {data: WorkerCreate}, TContext>(mutationFn, mutationOptions)
     }
+    /**
+ * @summary Get Active Workers Count
+ */
+export const getActiveWorkersCountApiV1WorkersStatsActiveGet = (
     
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<WorkersStats>(
+      {url: `/api/v1/workers/stats/active`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getGetActiveWorkersCountApiV1WorkersStatsActiveGetQueryKey = () => [`/api/v1/workers/stats/active`];
+
+    
+export type GetActiveWorkersCountApiV1WorkersStatsActiveGetQueryResult = NonNullable<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>>
+export type GetActiveWorkersCountApiV1WorkersStatsActiveGetQueryError = ErrorType<unknown>
+
+export const useGetActiveWorkersCountApiV1WorkersStatsActiveGet = <TData = Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetActiveWorkersCountApiV1WorkersStatsActiveGetQueryKey();
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>> = ({ signal }) => getActiveWorkersCountApiV1WorkersStatsActiveGet(requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getActiveWorkersCountApiV1WorkersStatsActiveGet>>, TError, TData>(queryKey, queryFn, queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Read Worker
+ */
+export const readWorkerApiV1WorkersWorkerIdGet = (
+    workerId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<WorkerScheme>(
+      {url: `/api/v1/workers/${workerId}`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getReadWorkerApiV1WorkersWorkerIdGetQueryKey = (workerId: number,) => [`/api/v1/workers/${workerId}`];
+
+    
+export type ReadWorkerApiV1WorkersWorkerIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof readWorkerApiV1WorkersWorkerIdGet>>>
+export type ReadWorkerApiV1WorkersWorkerIdGetQueryError = ErrorType<HTTPValidationError>
+
+export const useReadWorkerApiV1WorkersWorkerIdGet = <TData = Awaited<ReturnType<typeof readWorkerApiV1WorkersWorkerIdGet>>, TError = ErrorType<HTTPValidationError>>(
+ workerId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof readWorkerApiV1WorkersWorkerIdGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getReadWorkerApiV1WorkersWorkerIdGetQueryKey(workerId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof readWorkerApiV1WorkersWorkerIdGet>>> = ({ signal }) => readWorkerApiV1WorkersWorkerIdGet(workerId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof readWorkerApiV1WorkersWorkerIdGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(workerId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get Worker Status
+ */
+export const getWorkerStatusApiV1WorkersWorkerIdStatusGet = (
+    workerId: number,
+    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<ContainerStatus>(
+      {url: `/api/v1/workers/${workerId}/status`, method: 'get',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey = (workerId: number,
+    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams,) => [`/api/v1/workers/${workerId}/status`, ...(params ? [params]: [])];
+
+    
+export type GetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryResult = NonNullable<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>>
+export type GetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryError = ErrorType<HTTPValidationError>
+
+export const useGetWorkerStatusApiV1WorkersWorkerIdStatusGet = <TData = Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError = ErrorType<HTTPValidationError>>(
+ workerId: number,
+    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey(workerId,params);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>> = ({ signal }) => getWorkerStatusApiV1WorkersWorkerIdStatusGet(workerId,params, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(workerId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+

@@ -1,9 +1,23 @@
-import src.robot.service as robot_service
-from fastapi import APIRouter, Depends
+import asyncio
+from collections import Counter
+from datetime import datetime
+from typing import Annotated, List
+
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.robot.service as robot_service
 from src.db.session import get_async_session
 from src.models import Page, PaginationOpts
-from src.robot.schemas import RobotScheme, WorkerCreate, WorkerScheme
+from src.robot.dependencies import get_user_worker_by_id, get_user_workers
+from src.robot.models import Worker
+from src.robot.schemas import (
+    ContainerStatus,
+    RobotScheme,
+    WorkerCreate,
+    WorkerScheme,
+    WorkersStats,
+)
 from src.user.dependencies import get_current_user
 from src.user.models import User
 
@@ -44,3 +58,27 @@ async def create_worker(
     worker, status = await robot_service.create_worker(session, data=data, user=user)
     worker.status = status
     return worker
+
+
+@router.get("/workers/stats/active", tags=["stats"], response_model=WorkersStats)
+async def get_active_workers_count(workers: List[Worker] = Depends(get_user_workers)):
+    tasks = [robot_service.get_worker_status(worker) for worker in workers]
+    results = await asyncio.gather(*tasks)
+    return Counter(results)
+
+
+@router.get("/workers/{worker_id}", response_model=WorkerScheme)
+async def read_worker(worker: Worker = Depends(get_user_worker_by_id)):
+    return worker
+
+
+@router.get("/workers/{worker_id}/status", response_model=ContainerStatus)
+async def get_worker_status(
+    worker: Worker = Depends(get_user_worker_by_id),
+    logs_since: Annotated[datetime | None, Query(alias="logsSince")] = None,
+):
+    status, logs = await asyncio.gather(
+        robot_service.get_worker_status(worker),
+        robot_service.get_worker_logs(worker, logs_since),
+    )
+    return {"status": status, "logs": logs}

@@ -22,9 +22,8 @@ import {
   Text,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet } from "../../api/portfolio/portfolio";
-import { activeSubaccountSelector } from "../../store/subaccountSlice";
+import useSubaccount from "../../hooks/useSubaccount";
 
 ChartJS.register(
   Tooltip,
@@ -66,7 +65,7 @@ const BalanceChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [range, setRange] = useState<string>("today");
 
-  const subaccount = useSelector(activeSubaccountSelector);
+  const { subaccount } = useSubaccount();
 
   const { data, isLoading } =
     useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet(

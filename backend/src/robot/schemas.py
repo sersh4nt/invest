@@ -1,4 +1,5 @@
-from typing import Optional
+from datetime import datetime
+from typing import List, Optional
 
 from pydantic import BaseModel, ValidationError, validator
 
@@ -48,3 +49,23 @@ class WorkerScheme(WorkerBase):
 
     class Config:
         orm_mode = True
+
+
+class ContainerMessage(BaseModel):
+    date: datetime
+    message: str
+
+
+class ContainerStatus(BaseModel):
+    status: str
+    logs: List[ContainerMessage]
+
+
+class WorkersStats(BaseModel):
+    active: Optional[int]
+    created: Optional[int]
+    running: Optional[int]
+    restarting: Optional[int]
+    exited: Optional[int]
+    paused: Optional[int]
+    dead: Optional[int]

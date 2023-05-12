@@ -9,6 +9,7 @@ import {
   IconReceipt2,
   IconUserPlus,
   IconWallet,
+  IconSettings2,
 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
@@ -45,14 +46,15 @@ const icons = {
   wallet: IconWallet,
   profit: IconBusinessplan,
   orders: IconCashBanknote,
+  gear: IconSettings2,
 };
 
 interface StatsProps {
   title: string;
   icon: keyof typeof icons;
   value: string;
-  diff: number;
-  additionalText: string;
+  diff?: number;
+  additionalText?: string;
   withPercent?: boolean;
   withDiffIcon?: boolean;
 }
@@ -61,7 +63,7 @@ const Stats: React.FC<StatsProps> = ({
   title,
   icon,
   value,
-  diff,
+  diff = 0,
   additionalText,
   withPercent = true,
   withDiffIcon = true,
@@ -82,23 +84,27 @@ const Stats: React.FC<StatsProps> = ({
 
       <Group align="flex-end" spacing="xs" mt={25}>
         <Text className={classes.value}>{value}</Text>
-        <Text
-          color={diff > 0 ? "teal" : "red"}
-          fz="sm"
-          fw={500}
-          className={classes.diff}
-        >
-          <span>
-            {diff.toFixed(2)}
-            {withPercent && "%"}
-          </span>
-          {withDiffIcon && <DiffIcon size="1rem" stroke={1.5} />}
-        </Text>
+        {diff && (
+          <Text
+            color={diff > 0 ? "teal" : "red"}
+            fz="sm"
+            fw={500}
+            className={classes.diff}
+          >
+            <span>
+              {diff.toLocaleString("ru-RU", { maximumFractionDigits: 2 })}
+              {withPercent && "%"}
+            </span>
+            {withDiffIcon && <DiffIcon size="1rem" stroke={1.5} />}
+          </Text>
+        )}
       </Group>
 
-      <Text fz="xs" c="dimmed" mt={7}>
-        {additionalText}
-      </Text>
+      {additionalText && (
+        <Text fz="xs" c="dimmed" mt={7}>
+          {additionalText}
+        </Text>
+      )}
     </Paper>
   );
 };

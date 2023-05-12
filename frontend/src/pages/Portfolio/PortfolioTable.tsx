@@ -1,10 +1,9 @@
 import { Avatar, Group, Paper, Text } from "@mantine/core";
 import { MRT_ColumnDef, MRT_Row, MantineReactTable } from "mantine-react-table";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet } from "../../api/portfolio/portfolio";
+import useSubaccount from "../../hooks/useSubaccount";
 import { PortfolioPositionScheme } from "../../models";
-import { activeSubaccountSelector } from "../../store/subaccountSlice";
 import { withCurrency } from "../../utils/strings";
 
 const columns = [
@@ -80,7 +79,7 @@ const columns = [
 ] as MRT_ColumnDef[];
 
 const PortfolioTable: React.FC = () => {
-  const subaccount = useSelector(activeSubaccountSelector);
+  const { subaccount } = useSubaccount();
 
   const [rows, setRows] = useState<PortfolioPositionScheme[]>([]);
 

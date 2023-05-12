@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import docker
 from docker.models.containers import Container
 
@@ -17,3 +19,18 @@ def start_container(container: str | Container):
         container = client.containers.get(container)
     container.start()
     return container.status
+
+
+def get_status(container: str | Container) -> str:
+    if isinstance(container, str):
+        container = client.containers.get(container)
+    return container.status
+
+
+def get_logs(container: str | Container, logs_since: datetime | None = None) -> bytes:
+    if isinstance(container, str):
+        container = client.containers.get(container)
+    logs_kwargs = {"timestamps": True}
+    if logs_since is not None:
+        logs_kwargs["since"] = logs_since
+    return container.logs(**logs_kwargs)

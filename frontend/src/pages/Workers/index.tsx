@@ -31,7 +31,10 @@ const Workers: React.FC = () => {
             { maxWidth: "sm", cols: 1 },
           ]}
         >
-          {data && data.items.map((worker) => <WorkerCard worker={worker} />)}
+          {data &&
+            data.items.map((worker, key) => (
+              <WorkerCard worker={worker} key={key} />
+            ))}
         </SimpleGrid>
       </Skeleton>
       <Center my="md">

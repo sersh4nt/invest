@@ -1,8 +1,11 @@
+import asyncio
 import uuid
+from datetime import datetime
 from typing import List, Tuple
 
 import src.account.service as account_service
 import src.robot.docker as docker_service
+from dateutil import parser
 from docker.errors import APIError, ImageNotFound
 from fastapi.concurrency import run_in_threadpool
 from sqlalchemy import distinct, func, select
@@ -11,16 +14,25 @@ from sqlalchemy.orm import selectinload
 from src.models import PaginationOpts
 from src.robot.exception import RobotNotFoundError, SubaccountNotFoundError
 from src.robot.models import Robot, Worker
-from src.robot.schemas import WorkerCreate
+from src.robot.schemas import ContainerMessage, WorkerCreate
 from src.user.models import User
 from src.utils import paginate_stmt
 
 
-async def get_robot_by_id(session: AsyncSession, *, robot_id: int) -> Robot:
+async def get_worker_by_id(session: AsyncSession, *, worker_id: int) -> Worker | None:
+    result = await session.scalars(
+        select(Worker)
+        .filter(Worker.id == worker_id)
+        .options(selectinload(Worker.robot).selectinload(Robot.creator))
+    )
+    return result.one_or_none()
+
+
+async def get_robot_by_id(session: AsyncSession, *, robot_id: int) -> Robot | None:
     result = await session.scalars(
         select(Robot).filter(Robot.id == robot_id).options(selectinload(Robot.creator))
     )
-    return result.first()
+    return result.one_or_none()
 
 
 async def list_robots(
@@ -108,3 +120,22 @@ async def create_worker(
     await session.commit()
 
     return worker, status
+
+
+async def get_worker_status(worker: Worker) -> str:
+    status = await run_in_threadpool(docker_service.get_status, worker.container_name)
+    return status
+
+
+async def get_worker_logs(
+    worker: Worker, logs_since: datetime | None = None
+) -> List[ContainerMessage]:
+    logs = await run_in_threadpool(
+        docker_service.get_logs, worker.container_name, logs_since
+    )
+    lines: List[ContainerMessage] = []
+    if logs:
+        for line in logs.decode().strip().split("\n"):
+            date, message = line.split(" ", 1)
+            lines.append({"date": parser.isoparse(date), "message": message})
+    return lines

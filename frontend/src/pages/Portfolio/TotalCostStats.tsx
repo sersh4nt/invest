@@ -1,11 +1,10 @@
 import { Skeleton } from "@mantine/core";
-import { useSelector } from "react-redux";
 import { useGetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet } from "../../api/portfolio/portfolio";
 import Stats from "../../components/Stats";
-import { activeSubaccountSelector } from "../../store/subaccountSlice";
+import useSubaccount from "../../hooks/useSubaccount";
 
 const TotalCostStats: React.FC = () => {
-  const subaccount = useSelector(activeSubaccountSelector);
+  const { subaccount } = useSubaccount();
 
   const { data, isLoading } =
     useGetPortfolioCostStatApiV1SubaccountsSubaccountIdStatsCostGet(

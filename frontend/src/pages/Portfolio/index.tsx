@@ -1,10 +1,10 @@
 import { Grid, SimpleGrid, Stack } from "@mantine/core";
-import Stats from "../../components/Stats";
 import BalanceChart from "./BalanceChart";
 import OrdersStats from "./OrdersStats";
 import PortfolioTable from "./PortfolioTable";
 import RevenueStats from "./RevenueStats";
 import TotalCostStats from "./TotalCostStats";
+import WorkerStats from "./WorkerStats";
 
 const Portfolio: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const Portfolio: React.FC = () => {
             <TotalCostStats />
             <RevenueStats />
             <OrdersStats />
-            <Stats title="1" icon="discount" value="12300" diff={20} />
+            <WorkerStats />
           </SimpleGrid>
         </Grid.Col>
         <Grid.Col span={12} md={6} lg={7}>

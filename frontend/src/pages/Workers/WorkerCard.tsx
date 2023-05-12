@@ -13,7 +13,7 @@ const WorkerCard: React.FC<WorkerCardProps> = ({ worker }) => {
   const handleNavigate = () => naviagate(`/workers/${worker.id}`);
 
   return (
-    <Card padding="md">
+    <Card padding="md" withBorder>
       <Card.Section withBorder p="md">
         <Group position="apart">
           <Text>Worker #{worker.id}</Text>
