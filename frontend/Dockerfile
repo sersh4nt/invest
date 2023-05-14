@@ -7,7 +7,7 @@ RUN yarn
 
 COPY . .
 
-RUN npm run build
+RUN yarn build
 
 FROM nginx:1.23-alpine
 

@@ -11,33 +11,39 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
+    restart: unless-stopped
 
-  app:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  api:
     container_name: invest-api
+    build: ./backend
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - db
       - redis
     env_file:
-      - .env
-    build: .
+      - ./backend/.env
     ports:
       - "8000:8000"
-
-  redis:
-    image: redis:7-alpine
+    restart: unless-stopped
 
   celery-worker:
-    build: .
+    container_name: invest-celery-worker
+    build: ./backend
     env_file:
-      - .env
+      - ./backend/.env
     command: celery -A src.worker worker -l info -E
     depends_on:
       - db
       - redis
+    restart: unless-stopped
 
   celery-beat:
+    container_name: invest-celery-beat
     build: .
     env_file:
       - .env
@@ -45,6 +51,18 @@ services:
     depends_on:
       - db
       - redis
+    restart: unless-stopped
+
+  frontend:
+    container_name: invest-frontend
+    build: ./frontend
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    restart: unless-stopped
 
 volumes:
   db-data:
