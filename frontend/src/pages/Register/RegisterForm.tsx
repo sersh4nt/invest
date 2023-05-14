@@ -1,31 +1,26 @@
 import { Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
+import { RegisterFormInput } from "../../store/authSlice";
 
 const RegisterForm: React.FC = () => {
   const { register, isLoading, error } = useAuth();
 
   const { control, handleSubmit, getValues } = useForm({
-    defaultValues: { username: "", password: "", passwordConfirmation: "" },
+    defaultValues: { email: "", password: "", passwordConfirmation: "" },
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
-  const onSubmit = async ({
-    username,
-    password,
-  }: {
-    username: string;
-    password: string;
-  }) => {
-    await register(username, password);
+  const onSubmit = async (data: RegisterFormInput) => {
+    await register(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name="username"
+        name="email"
         rules={{ required: true }}
         render={({ field, fieldState }) => (
           <TextInput
