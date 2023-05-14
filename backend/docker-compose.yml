@@ -15,7 +15,7 @@ services:
   app:
     container_name: invest-api
     volumes:
-      - ./:/src
+      - /var/run/docker.sock:/var/run/docker.sock:rw
     depends_on:
       - db
       - redis
