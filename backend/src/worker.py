@@ -16,6 +16,7 @@ from src.instrument.flows import (
 )
 from src.operation.flows import StoreSubaccountOperationsFlow
 from src.portfolio.flows import StorePortfolioFlow
+from src.backtest.flows import BackTestStrategyFlow
 
 celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 
@@ -23,6 +24,13 @@ celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender: Celery, **kwargs):
     sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
+    sender.add_periodic_task(crontab("*"))
+
+
+@celery.task
+def store_operations_by_subaccount_id(subaccount_id: int, *args, **kwargs):
+    flow = StoreSubaccountOperationsFlow(subaccount_id)
+    flow.run(*args, **kwargs)
 
 
 @celery.task
@@ -30,8 +38,14 @@ def store_portfolio_by_subaccount_id(subaccount_id: int, *args, **kwargs):
     flow = StorePortfolioFlow()
     flow.run(subaccount_id, *args, **kwargs)
 
-    flow = StoreSubaccountOperationsFlow(subaccount_id)
-    flow.run(*args, **kwargs)
+
+@celery.task
+def store_operations(*args, **kwargs):
+    db = next(get_sync_session())
+    ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
+    return group(
+        [store_operations_by_subaccount_id.s(id, *args, **kwargs) for id in ids]
+    )()
 
 
 @celery.task
@@ -89,4 +103,10 @@ def update_options(*args, **kwargs):
 @celery.task
 def update_shares(*args, **kwargs):
     flow = UpdateSharesFlow()
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def backtest_strategy(data: dict, token: str, *args, **kwargs):
+    flow = BackTestStrategyFlow(data, token)
     flow.run(*args, **kwargs)
