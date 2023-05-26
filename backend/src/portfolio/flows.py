@@ -1,9 +1,10 @@
 from tinkoff.invest import Client
+from tinkoff.invest.exceptions import RequestError
 
 from src.account.models import Subaccount
 from src.db.session import get_sync_session
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
-from src.utils import quotation_to_decimal
+from src.common.utils import quotation_to_decimal
 
 
 class StorePortfolioFlow:
@@ -12,9 +13,13 @@ class StorePortfolioFlow:
         subaccount = session.get(Subaccount, subaccount_id)
 
         with Client(subaccount.account.token) as client:
-            portfolio_response = client.operations.get_portfolio(
-                account_id=subaccount.broker_id
-            )
+            try:
+                portfolio_response = client.operations.get_portfolio(
+                    account_id=subaccount.broker_id
+                )
+            except RequestError:
+                print(f"Got exception getting portfolio, exit...")
+                return
 
         positions = [
             PortfolioPosition(
@@ -42,4 +47,5 @@ class StorePortfolioFlow:
         )
         session.add(portfolio)
         session.commit()
+        session.close()
         return portfolio.id

@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.robot.service as robot_service
 from src.db.session import get_async_session
-from src.models import Page, PaginationOpts
+from src.common.pagination import Page, PaginationOpts
 from src.robot.dependencies import get_user_worker_by_id, get_user_workers
 from src.robot.models import Worker
 from src.robot.schemas import (

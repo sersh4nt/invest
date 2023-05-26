@@ -3,7 +3,7 @@ from decimal import Decimal
 from sqlalchemy.sql.selectable import Select
 from tinkoff.invest import MoneyValue, Quotation
 
-from src.models import PaginationOpts
+from src.common.pagination import PaginationOpts
 
 
 def quotation_to_decimal(q: Quotation | MoneyValue) -> Decimal:

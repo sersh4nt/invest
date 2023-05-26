@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from tinkoff.invest.exceptions import RequestError
 from tinkoff.invest import (
     Client,
     GetOperationsByCursorRequest,
@@ -13,7 +14,7 @@ from tinkoff.invest import (
 from src.account.models import Subaccount
 from src.db.session import get_sync_session
 from src.operation.models import Operation, OperationTrade
-from src.utils import quotation_to_decimal
+from src.common.utils import quotation_to_decimal
 
 
 class StoreSubaccountOperationsFlow:
@@ -82,6 +83,7 @@ class StoreSubaccountOperationsFlow:
 
         with Client(subaccount.account.token) as client:
             prev_cursor = None
+            failures = 0
             while True:
                 request = GetOperationsByCursorRequest(
                     account_id=subaccount.broker_id,
@@ -92,10 +94,17 @@ class StoreSubaccountOperationsFlow:
                     without_trades=False,
                     limit=1000,
                 )
+
                 if prev_cursor is not None:
                     setattr(request, "cursor", prev_cursor)
 
-                response = client.operations.get_operations_by_cursor(request)
+                try:
+                    response = client.operations.get_operations_by_cursor(request)
+                except RequestError:
+                    failures += 1
+                    if failures > 5:
+                        return
+                    continue
 
                 self._insert_operations_by_batch(
                     session=session, operations=response.items

@@ -13,7 +13,7 @@ from tinkoff.invest import Share as TShare
 from src.config import settings
 from src.db.session import get_sync_session
 from src.instrument.models import ETF, Bond, Currency, Future, Instrument, Option, Share
-from src.utils import quotation_to_decimal
+from src.common.utils import quotation_to_decimal
 
 TinkoffInstrument = TETF | TBond | TShare | TFuture | TOption | TCurrency
 

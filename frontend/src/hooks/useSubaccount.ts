@@ -7,7 +7,7 @@ import { AppDispatch } from "../store";
 
 const useSubaccount = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const setSubaccount = (s: string) => dispatch(setActiveSubaccount(s));
+  const setSubaccount = (s: string | null) => dispatch(setActiveSubaccount(s));
 
   const subaccount = useSelector(activeSubaccountSelector);
 

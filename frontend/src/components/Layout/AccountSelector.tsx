@@ -1,15 +1,10 @@
 import { Select, SelectItem } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useGetAccountsListApiV1AccountsGet } from "../../api/accounts/accounts";
-import {
-  activeSubaccountSelector,
-  setActiveSubaccount,
-} from "../../store/subaccountSlice";
+import useSubaccount from "../../hooks/useSubaccount";
 
 const AccountSelector: React.FC = () => {
-  const dispatch = useDispatch();
-  const subaccount = useSelector(activeSubaccountSelector);
+  const { subaccount, setSubaccount } = useSubaccount();
 
   const [accounts, setAccounts] = useState<SelectItem[]>([]);
   const { data } = useGetAccountsListApiV1AccountsGet();
@@ -27,15 +22,17 @@ const AccountSelector: React.FC = () => {
         }))
       )
       .flat(1);
-
     setAccounts(newAccounts);
+    if (!data.length) {
+      setSubaccount(null);
+    }
   }, [data]);
 
-  const handleChange = (s: string) => dispatch(setActiveSubaccount(s));
+  const handleChange = (s: string) => setSubaccount(s);
 
   return (
     <Select
-      placeholder="Select account"
+      placeholder={data?.length ? "Select account" : "No accounts"}
       data={accounts}
       value={subaccount}
       onChange={handleChange}

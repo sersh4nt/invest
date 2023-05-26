@@ -3,7 +3,7 @@ from typing import List
 from tinkoff.invest import Account as TinkoffAccount
 from tinkoff.invest.async_services import AsyncServices
 
-from src.decorators import tinkoff_validates
+from src.common.decorators import tinkoff_validates
 
 
 @tinkoff_validates

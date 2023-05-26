@@ -1,8 +1,16 @@
 import { Container, SimpleGrid } from "@mantine/core";
 import OrdersList from "./OrdersList";
 import OperationsList from "./OperationsList";
+import useSubaccount from "../../hooks/useSubaccount";
+import NoSubaccount from "../../components/NoSubaccount";
 
 const Orders: React.FC = () => {
+  const { subaccount } = useSubaccount();
+
+  if (!subaccount) {
+    return <NoSubaccount />;
+  }
+
   return (
     <Container size="sm" style={{ height: "100%" }}>
       <SimpleGrid

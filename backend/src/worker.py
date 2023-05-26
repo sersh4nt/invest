@@ -24,7 +24,7 @@ celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender: Celery, **kwargs):
     sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
-    sender.add_periodic_task(crontab("*"))
+    sender.add_periodic_task(crontab("*"), store_operations.s())
 
 
 @celery.task
@@ -43,6 +43,7 @@ def store_portfolio_by_subaccount_id(subaccount_id: int, *args, **kwargs):
 def store_operations(*args, **kwargs):
     db = next(get_sync_session())
     ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
+    db.close()
     return group(
         [store_operations_by_subaccount_id.s(id, *args, **kwargs) for id in ids]
     )()
@@ -52,6 +53,7 @@ def store_operations(*args, **kwargs):
 def store_portfolio(*args, **kwargs):
     db = next(get_sync_session())
     ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
+    db.close()
     return group(
         [store_portfolio_by_subaccount_id.s(id, *args, **kwargs) for id in ids]
     )()

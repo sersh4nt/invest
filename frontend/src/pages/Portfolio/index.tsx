@@ -5,8 +5,23 @@ import PortfolioTable from "./PortfolioTable";
 import RevenueStats from "./RevenueStats";
 import TotalCostStats from "./TotalCostStats";
 import WorkerStats from "./WorkerStats";
+import useSubaccount from "../../hooks/useSubaccount";
+import { useGetAccountsListApiV1AccountsGet } from "../../api/accounts/accounts";
+import NoAccounts from "../../components/NoAccounts";
+import NoSubaccount from "../../components/NoSubaccount";
 
 const Portfolio: React.FC = () => {
+  const { subaccount } = useSubaccount();
+  const { data: accounts } = useGetAccountsListApiV1AccountsGet();
+
+  if (!accounts?.length) {
+    return <NoAccounts />;
+  }
+
+  if (!subaccount) {
+    return <NoSubaccount />;
+  }
+
   return (
     <Stack>
       <Grid>

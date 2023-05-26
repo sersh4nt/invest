@@ -8,14 +8,14 @@ import src.operation.service as operations_service
 from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
 from src.db.session import get_async_session
-from src.models import Page, PaginationOpts
+from src.common.pagination import Page, PaginationOpts
 from src.operation.schemas import (
     ActiveOrderScheme,
     OperationScheme,
     OperationStats,
     RevenueStats,
 )
-from src.utils import quotation_to_decimal
+from src.common.utils import quotation_to_decimal
 
 router = APIRouter(tags=["operations"])
 

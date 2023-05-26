@@ -58,7 +58,6 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async ({ email, password }: RegisterFormInput, thunkAPI) => {
-    thunkAPI.dispatch(setIsLoading(true));
     try {
       await axiosInstance.post<UserRead>("/api/v1/auth/register", {
         email,
@@ -72,8 +71,6 @@ export const register = createAsyncThunk(
         }
       }
       return false;
-    } finally {
-      thunkAPI.dispatch(setIsLoading(false));
     }
   }
 );
@@ -104,6 +101,16 @@ const authSlice = createSlice({
         state.error = "";
       }),
       builder.addCase(login.rejected, (state) => {
+        state.isLoading = false;
+      }),
+      builder.addCase(register.pending, (state) => {
+        state.isLoading = true;
+        state.error = "";
+      }),
+      builder.addCase(register.rejected, (state) => {
+        state.isLoading = false;
+      }),
+      builder.addCase(register.fulfilled, (state) => {
         state.isLoading = false;
       });
   },

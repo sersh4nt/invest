@@ -2,9 +2,11 @@ import { Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import { RegisterFormInput } from "../../store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm: React.FC = () => {
-  const { register, isLoading, error } = useAuth();
+  const navigate = useNavigate();
+  const { register, isLoading, error, login } = useAuth();
 
   const { control, handleSubmit, getValues } = useForm({
     defaultValues: { email: "", password: "", passwordConfirmation: "" },
@@ -13,7 +15,11 @@ const RegisterForm: React.FC = () => {
   });
 
   const onSubmit = async (data: RegisterFormInput) => {
-    await register(data);
+    const isRegistered = await register(data);
+    if (isRegistered) {
+      login({ ...data, persist: true });
+      navigate("/");
+    }
   };
 
   return (

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.robot.service as robot_service
 from src.db.session import get_async_session
-from src.exceptions import PermissionDenied
+from src.common.exceptions import PermissionDenied
 from src.robot.exception import WorkerNotFoundError
 from src.robot.models import Worker
 from src.user.dependencies import get_current_user

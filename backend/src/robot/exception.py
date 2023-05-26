@@ -1,4 +1,4 @@
-from src.exceptions import BadRequest, NotFound
+from src.common.exceptions import BadRequest, NotFound
 
 
 class SubaccountNotFoundError(BadRequest):

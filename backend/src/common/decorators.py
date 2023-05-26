@@ -2,7 +2,7 @@ import functools
 
 from tinkoff.invest.exceptions import AioUnauthenticatedError
 
-from src.exceptions import InvalidTinkoffToken
+from src.common.exceptions import InvalidTinkoffToken
 
 
 def tinkoff_validates(func):

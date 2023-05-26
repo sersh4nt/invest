@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from src.constants import ErrorCode
+from src.common.constants import ErrorCode
 
 
 class DetailedHTTPException(HTTPException):

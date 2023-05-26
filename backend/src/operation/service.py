@@ -9,7 +9,7 @@ from tinkoff.invest import AsyncClient, OrderState
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
 from src.instrument.models import Instrument
-from src.models import PaginationOpts
+from src.common.pagination import PaginationOpts
 from src.operation.models import Operation
 
 
