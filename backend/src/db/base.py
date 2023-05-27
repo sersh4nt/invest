@@ -1,4 +1,5 @@
 from src.account.models import Account, Subaccount  # noqa: F401
+from src.backtest.models import BacktestResult  # noqa: F401
 from src.instrument.models import (  # noqa: F401
     ETF,
     Bond,

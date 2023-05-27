@@ -8,7 +8,7 @@ from src.db.mixins import AuditMixin
 class User(SQLAlchemyBaseUserTableUUID, Base, AuditMixin):
     __tablename__ = "users"
 
-    accounts = relationship("Account", back_populates="user")
+    accounts = relationship("Account", back_populates="user", lazy="selectin")
     workers = relationship("Worker", back_populates="user")
 
     def __str__(self) -> str:

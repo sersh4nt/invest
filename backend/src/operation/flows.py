@@ -3,18 +3,18 @@ from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from tinkoff.invest.exceptions import RequestError
 from tinkoff.invest import (
     Client,
     GetOperationsByCursorRequest,
     OperationItem,
     OperationState,
 )
+from tinkoff.invest.exceptions import RequestError
 
 from src.account.models import Subaccount
+from src.common.utils import quotation_to_decimal
 from src.db.session import get_sync_session
 from src.operation.models import Operation, OperationTrade
-from src.common.utils import quotation_to_decimal
 
 
 class StoreSubaccountOperationsFlow:

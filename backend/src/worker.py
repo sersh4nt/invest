@@ -3,6 +3,7 @@ from celery.schedules import crontab
 from sqlalchemy import select
 
 from src.account.models import Subaccount
+from src.backtest.flows import BackTestStrategyFlow
 from src.config import settings
 from src.db import base  # noqa: F401
 from src.db.session import get_sync_session
@@ -16,7 +17,6 @@ from src.instrument.flows import (
 )
 from src.operation.flows import StoreSubaccountOperationsFlow
 from src.portfolio.flows import StorePortfolioFlow
-from src.backtest.flows import BackTestStrategyFlow
 
 celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 
@@ -109,6 +109,6 @@ def update_shares(*args, **kwargs):
 
 
 @celery.task
-def backtest_strategy(data: dict, token: str, *args, **kwargs):
-    flow = BackTestStrategyFlow(data, token)
+def backtest_strategy(data: dict, user_id: str, strategy_name: str, *args, **kwargs):
+    flow = BackTestStrategyFlow(data, user_id, strategy_name)
     flow.run(*args, **kwargs)

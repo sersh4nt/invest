@@ -4,12 +4,21 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.robot.service as robot_service
+from src.common.exceptions import NotFound, PermissionDenied
 from src.db.session import get_async_session
-from src.common.exceptions import PermissionDenied
 from src.robot.exception import WorkerNotFoundError
 from src.robot.models import Worker
 from src.user.dependencies import get_current_user
 from src.user.models import User
+
+
+async def get_robot_by_id(
+    robot_id: int, session: AsyncSession = Depends(get_async_session)
+):
+    robot = await robot_service.get_robot_by_id(session, robot_id=robot_id)
+    if robot is None:
+        raise NotFound()
+    return robot
 
 
 async def get_user_worker_by_id(

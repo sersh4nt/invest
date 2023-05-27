@@ -18,6 +18,7 @@ class Robot(Base, IntegerIDPKMixin, AuditMixin):
     description: str = Column(Text)
 
     creator = relationship("User")
+    backtests = relationship("BacktestResult", lazy="selectin")
 
 
 class Worker(Base, IntegerIDPKMixin, AuditMixin):

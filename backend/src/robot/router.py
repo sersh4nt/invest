@@ -7,10 +7,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.robot.service as robot_service
-from src.db.session import get_async_session
 from src.common.pagination import Page, PaginationOpts
-from src.robot.dependencies import get_user_worker_by_id, get_user_workers
-from src.robot.models import Worker
+from src.db.session import get_async_session
+from src.robot.dependencies import (
+    get_robot_by_id,
+    get_user_worker_by_id,
+    get_user_workers,
+)
+from src.robot.models import Robot, Worker
 from src.robot.schemas import (
     ContainerStatus,
     RobotScheme,
@@ -35,6 +39,11 @@ async def list_robots(
         robot.used_by = cnt
         items.append(robot)
     return {"count": count, "page": pagination.page or 0, "items": items}
+
+
+@router.get("/robots/{robot_id}/backtests")
+async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)):
+    return robot.backtests
 
 
 @router.get("/workers", response_model=Page[WorkerScheme])

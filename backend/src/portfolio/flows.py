@@ -2,9 +2,9 @@ from tinkoff.invest import Client
 from tinkoff.invest.exceptions import RequestError
 
 from src.account.models import Subaccount
+from src.common.utils import quotation_to_decimal
 from src.db.session import get_sync_session
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
-from src.common.utils import quotation_to_decimal
 
 
 class StorePortfolioFlow:
