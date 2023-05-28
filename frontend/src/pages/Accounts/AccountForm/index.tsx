@@ -45,28 +45,28 @@ const AccountForm: React.FC<AccountFormProps> = ({ visible, onClose }) => {
     <Modal
       opened={visible}
       onClose={onClose}
-      title="Create new account"
+      title="Создать новый аккаунт"
       size="auto"
     >
       <Stepper active={active} breakpoint="sm">
-        <Stepper.Step label="First step" description="Create account">
+        <Stepper.Step label="Шаг №1" description="Введите токен">
           <FirstStep onSuccess={onFirstStepSuccess} />
         </Stepper.Step>
 
-        <Stepper.Step label="Second step" description="Choose subaccounts">
+        <Stepper.Step label="Шаг №2" description="Выберете счета">
           {account && (
             <SecondStep account={account} onSuccess={onSecondStepSuccess} />
           )}
         </Stepper.Step>
-        <Stepper.Step label="Third step" description="You're all done!">
+        <Stepper.Step label="Шаг №3" description="Готово!">
           <Center>
             <Stack my={50}>
               <Group>
                 <IconCircleCheck color="teal" size={50} />
-                <Title>Success!</Title>
+                <Title>Успешно!</Title>
               </Group>
-              <Text>You're all set up!</Text>
-              <Button onClick={handleFinish}>Continue</Button>
+              <Text>Ваш аккаунт добавлен в систему!</Text>
+              <Button onClick={handleFinish}>Продолжить</Button>
             </Stack>
           </Center>
         </Stepper.Step>

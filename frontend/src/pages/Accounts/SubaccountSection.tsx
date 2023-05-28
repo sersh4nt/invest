@@ -27,13 +27,13 @@ const SubaccountSection: React.FC<SubaccountSectionProps> = ({
 
   return (
     <Card.Section inheritPadding py="xs" withBorder>
-      <Text>Subaccount №{subaccount.id}</Text>
-      {subaccount.name && <Text>Name: {subaccount.name}</Text>}
+      <Text>Счет №{subaccount.id}</Text>
+      {subaccount.name && <Text>Название: {subaccount.name}</Text>}
       {subaccount.description && (
-        <Text>Description: {subaccount.description}</Text>
+        <Text>Описание: {subaccount.description}</Text>
       )}
       <Group position="apart">
-        <Text>Enabled</Text>
+        <Text>Вести аналитику</Text>
         <Switch checked={checked} onChange={handleCheck} />
       </Group>
     </Card.Section>

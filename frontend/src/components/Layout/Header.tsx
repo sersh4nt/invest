@@ -5,8 +5,12 @@ import {
   MediaQuery,
   Text,
   useMantineTheme,
+  Image,
+  Anchor,
+  Grid,
 } from "@mantine/core";
 import AccountSelector from "./AccountSelector";
+import logo from "../../assets/logo.png";
 
 interface HeaderProps {
   opened: boolean;
@@ -28,10 +32,31 @@ const Header: React.FC<HeaderProps> = ({ opened, setOpened }) => {
             mr="xl"
           />
         </MediaQuery>
-        <Group position="apart" sx={{width: '100%'}}>
-          <Text>Invest</Text>
-          <AccountSelector />
-        </Group>
+        <Grid align="center" justify="space-between" w="100%">
+          <Grid.Col span="auto">
+            <Group align="end">
+              <Image src={logo} width={90} fit="contain" />
+              <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                <Text c="dimmed" fz="xs">
+                  {" "}
+                  by{" "}
+                  <Anchor
+                    span
+                    c="blue"
+                    inherit
+                    href="https://t.me/sersh4nt"
+                    target="_blank"
+                  >
+                    @sersh4nt
+                  </Anchor>
+                </Text>
+              </MediaQuery>
+            </Group>
+          </Grid.Col>
+          <Grid.Col span="content">
+            <AccountSelector />
+          </Grid.Col>
+        </Grid>
       </div>
     </MantineHeader>
   );

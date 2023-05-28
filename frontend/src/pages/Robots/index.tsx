@@ -39,7 +39,7 @@ const Robots: React.FC = () => {
         </SimpleGrid>
       </Skeleton>
 
-      <Modal opened={opened} onClose={close} title="Add new worker">
+      <Modal opened={opened} onClose={close} title="Добавить нового робота">
         <WorkerForm onSuccess={handleSuccess} robotId={robotId} />
       </Modal>
     </>

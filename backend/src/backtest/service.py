@@ -1,17 +1,25 @@
 from uuid import UUID
 
 import src.robot.service as robot_service
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from src.backtest.models import BacktestResult
 from src.backtest.schemas import BacktestCreate
 from src.common.exceptions import BadRequest
+from src.instrument.models import Instrument
 from src.robot.exception import RobotNotFoundError
 from src.user.models import User
 from src.worker import backtest_strategy
 
 
 async def get_result_by_id(session: AsyncSession, *, id: UUID) -> BacktestResult | None:
-    return await session.get(BacktestResult, id)
+    stmt = (
+        select(BacktestResult)
+        .filter(BacktestResult.id == id)
+        .options(selectinload(BacktestResult.instrument))
+    )
+    return (await session.scalars(stmt)).one_or_none()
 
 
 async def create_result(

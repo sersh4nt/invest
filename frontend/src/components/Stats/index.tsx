@@ -1,110 +1,57 @@
-import { Group, Paper, Text, createStyles, rem } from "@mantine/core";
-import {
-  IconArrowDownRight,
-  IconArrowUpRight,
-  IconBusinessplan,
-  IconCashBanknote,
-  IconCoin,
-  IconDiscount2,
-  IconReceipt2,
-  IconUserPlus,
-  IconWallet,
-  IconSettings2,
-} from "@tabler/icons-react";
+import { Group, Paper, Text, createStyles } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
-  value: {
-    fontSize: rem(24),
-    fontWeight: 700,
-    lineHeight: 1,
+  root: {
+    padding: `calc(${theme.spacing.xl} * 1.5)`,
   },
 
-  diff: {
-    lineHeight: 1,
-    display: "flex",
-    alignItems: "center",
-  },
-
-  icon: {
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[3]
-        : theme.colors.gray[4],
-  },
-
-  title: {
-    fontWeight: 700,
-    textTransform: "uppercase",
+  label: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
   },
 }));
 
-const icons = {
-  user: IconUserPlus,
-  discount: IconDiscount2,
-  receipt: IconReceipt2,
-  coin: IconCoin,
-  wallet: IconWallet,
-  profit: IconBusinessplan,
-  orders: IconCashBanknote,
-  gear: IconSettings2,
-};
-
 interface StatsProps {
   title: string;
-  icon: keyof typeof icons;
-  value: string;
-  diff?: number;
-  additionalText?: string;
-  withPercent?: boolean;
-  withDiffIcon?: boolean;
+  value: JSX.Element | string;
+  icon?: JSX.Element;
+  addContent?: JSX.Element;
 }
 
 const Stats: React.FC<StatsProps> = ({
   title,
-  icon,
   value,
-  diff = 0,
-  additionalText,
-  withPercent = true,
-  withDiffIcon = true,
+  icon = null,
+  addContent = null,
 }) => {
   const { classes } = useStyles();
-
-  const Icon = icons[icon];
-  const DiffIcon = diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
   return (
     <Paper withBorder p="md" radius="md" key={title}>
       <Group position="apart">
-        <Text size="xs" color="dimmed" className={classes.title}>
-          {title}
-        </Text>
-        <Icon className={classes.icon} size="1.4rem" stroke={1.5} />
-      </Group>
-
-      <Group align="flex-end" spacing="xs" mt={25}>
-        <Text className={classes.value}>{value}</Text>
-        {diff && (
+        <div>
           <Text
-            color={diff > 0 ? "teal" : "red"}
-            fz="sm"
-            fw={500}
-            className={classes.diff}
+            c="dimmed"
+            tt="uppercase"
+            fw={700}
+            fz="xs"
+            className={classes.label}
           >
-            <span>
-              {diff.toLocaleString("ru-RU", { maximumFractionDigits: 2 })}
-              {withPercent && "%"}
-            </span>
-            {withDiffIcon && <DiffIcon size="1rem" stroke={1.5} />}
+            {title}
           </Text>
-        )}
+          <Text fw={700} fz="xl">
+            {value}
+          </Text>
+        </div>
+        {icon}
       </Group>
 
-      {additionalText && (
-        <Text fz="xs" c="dimmed" mt={7}>
-          {additionalText}
-        </Text>
-      )}
+      {addContent}
+      {/* <Text c="dimmed" fz="sm" mt="md">
+        <Text component="span" c={diff > 0 ? "teal" : "red"} fw={700}>
+          {diff}%
+        </Text>{" "}
+        {diff > 0 ? "increase" : "decrease"} compared to last month
+      </Text> */}
     </Paper>
   );
 };

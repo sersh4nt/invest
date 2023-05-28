@@ -39,7 +39,7 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
             {...field}
             error={fieldState.error?.message}
             withAsterisk
-            label="Enter your broker acount token"
+            label="Введите токен аккаунта, полученный у брокера"
             placeholder="t.hc703098rfh20913epuj0qwxcasd"
           />
         )}
@@ -50,8 +50,8 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
         render={({ field }) => (
           <TextInput
             {...field}
-            label="Account name"
-            placeholder="I. e. my account"
+            label="Название аккаунта"
+            placeholder="Аккаунт с облигациями"
           />
         )}
         control={control}
@@ -61,8 +61,8 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
         render={({ field }) => (
           <TextInput
             {...field}
-            label="Account description"
-            placeholder="I. e. bonds account"
+            label="Описание аккаунта"
+            placeholder="Этот аккаунт был создан 01.01.2019"
           />
         )}
         control={control}

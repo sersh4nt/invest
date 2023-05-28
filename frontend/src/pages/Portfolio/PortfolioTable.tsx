@@ -8,7 +8,7 @@ import { withCurrency } from "../../utils/strings";
 
 const columns = [
   {
-    header: "Name",
+    header: "Название",
     accessorFn: (row: PortfolioPositionScheme) => (
       <Group spacing="sm">
         <Avatar radius="xl" size="sm" src={row.instrument.image_link} />
@@ -17,26 +17,26 @@ const columns = [
     ),
   },
   {
-    header: "Quantity",
+    header: "Количество",
     accessorKey: "quantity",
     maxSize: 50,
   },
   {
-    header: "Price",
+    header: "Цена",
     id: "current_price",
     accessorFn: (row: PortfolioPositionScheme) =>
       withCurrency(row.current_price, row.instrument.currency),
     maxSize: 50,
   },
   {
-    header: "Average",
+    header: "Средняя",
     id: "average_price",
     accessorFn: (row: PortfolioPositionScheme) =>
       withCurrency(row.average_price, row.instrument.currency),
     maxSize: 50,
   },
   {
-    header: "Cost",
+    header: "Стоимость",
     accessorFn: (row: PortfolioPositionScheme) =>
       withCurrency(
         Math.round(
@@ -48,7 +48,7 @@ const columns = [
     maxSize: 50,
   },
   {
-    header: "Yield",
+    header: "Прибыль",
     accessorFn: (row: PortfolioPositionScheme) => {
       const value = row.expected_yield + row.current_nkd + row.var_margin;
       return (

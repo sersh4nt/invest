@@ -31,7 +31,7 @@ const RegisterForm: React.FC = () => {
         render={({ field, fieldState }) => (
           <TextInput
             {...field}
-            label="Email"
+            label="E-mail"
             placeholder="admin@izdev.ru"
             withAsterisk
             error={fieldState?.error?.message}
@@ -45,7 +45,7 @@ const RegisterForm: React.FC = () => {
         render={({ field, fieldState }) => (
           <PasswordInput
             {...field}
-            label="Password"
+            label="Пароль"
             placeholder="********"
             withAsterisk
             mt="md"
@@ -60,13 +60,13 @@ const RegisterForm: React.FC = () => {
           required: true,
           validate: (value: string) => {
             const { password } = getValues();
-            return value == password || "Passwords mismatch!";
+            return value == password || "Пароли не совпадают!";
           },
         }}
         render={({ field, fieldState }) => (
           <PasswordInput
             {...field}
-            label="Password confirmation"
+            label="Подтверждение пароля"
             placeholder="********"
             withAsterisk
             mt="md"
@@ -75,7 +75,7 @@ const RegisterForm: React.FC = () => {
         )}
       />
       <Button fullWidth mt="xl" type="submit" loading={isLoading}>
-        Register account
+        Зарегистрироваться
       </Button>
       {error && <Text color="red">{error}</Text>}
     </form>

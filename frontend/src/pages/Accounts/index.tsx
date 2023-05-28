@@ -46,7 +46,7 @@ const Accounts: React.FC = () => {
               color="teal"
               onClick={handleAddAccount}
             >
-              Add new account
+              Добавить аккаунт
             </Button>
           </Paper>
         </Center>

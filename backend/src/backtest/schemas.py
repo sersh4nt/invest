@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID, uuid4
+from src.instrument.schemas import InstrumentScheme
 
 from pydantic import BaseModel
 
@@ -22,12 +23,13 @@ class BacktestCreate(BaseModel):
 class BacktestRead(BacktestCreate):
     created_at: datetime
     updated_at: datetime
-    time_elapsed: float
+    time_elapsed: float | None = None
     is_started: bool
     is_finished: bool
     results: dict
-    relative_yield: float
-    absolute_yield: float
+    relative_yield: float | None = None
+    absolute_yield: float | None = None
+    instrument: InstrumentScheme | None = None
 
     class Config:
         orm_mode = True

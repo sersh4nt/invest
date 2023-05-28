@@ -15,7 +15,7 @@ const OperationFactory: React.FC<OperationProps> = ({ operation }) => {
     case "OUTPUT":
       return <InputOutput operation={operation} />;
     default:
-      return <div>Unknow operation type {operation.type}</div>;
+      return <div>Неизвестный тип операции: {operation.type}</div>;
   }
 };
 

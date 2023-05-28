@@ -6,6 +6,7 @@ import {
   login as loginAction,
   register as registerAction,
   logout as logoutAction,
+  setError as setErrorAction,
 } from "../store/authSlice";
 import { AppDispatch } from "../store";
 
@@ -15,9 +16,10 @@ const useAuth = () => {
 
   const login = (data: LoginFormInput) => dispatch(loginAction(data));
   const register = (data: RegisterFormInput) => dispatch(registerAction(data));
+  const setError = (error: string) => dispatch(setErrorAction(error));
   const logout = () => dispatch(logoutAction());
 
-  return { login, register, logout, ...auth };
+  return { login, register, logout, setError, ...auth };
 };
 
 export default useAuth;

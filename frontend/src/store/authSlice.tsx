@@ -47,7 +47,7 @@ export const login = createAsyncThunk(
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err?.response?.data?.detail == "LOGIN_BAD_CREDENTIALS") {
-          thunkAPI.dispatch(setError("Invalid username or password!"));
+          thunkAPI.dispatch(setError("Неправильный e-mail или пароль!"));
         }
       }
       return null;
@@ -67,10 +67,12 @@ export const register = createAsyncThunk(
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err?.response?.data?.detail == "REGISTER_USER_ALREADY_EXISTS") {
-          thunkAPI.dispatch(setError("User with this email already exists!"));
+          thunkAPI.dispatch(
+            setError("Пользователь с таким e-mail уже существует!")
+          );
         }
       }
-      return false;
+      throw err;
     }
   }
 );
@@ -94,14 +96,14 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.accessToken = action.payload;
       state.isLoading = false;
-      state.error = "";
     }),
       builder.addCase(login.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       }),
-      builder.addCase(login.rejected, (state) => {
+      builder.addCase(login.rejected, (state, action) => {
         state.isLoading = false;
+        console.log(action);
       }),
       builder.addCase(register.pending, (state) => {
         state.isLoading = true;

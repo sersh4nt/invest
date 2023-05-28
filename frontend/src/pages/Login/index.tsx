@@ -18,12 +18,12 @@ const Login: React.FC = () => {
           fontWeight: 900,
         })}
       >
-        Welcome back!
+        Добро пожаловать!
       </Title>
       <Text color="dimmed" size="sm" align="center" mt={5}>
-        Do not have an account yet?{" "}
+        Вы еще не зарегистрированы?{" "}
         <Anchor size="sm" component="button" onClick={handleRegister}>
-          Create account
+          Создать аккаунт
         </Anchor>
       </Text>
 

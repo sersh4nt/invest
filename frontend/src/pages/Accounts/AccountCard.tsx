@@ -10,7 +10,7 @@ const AccountCard: React.FC<AccountCardProps> = ({ account }) => {
   return (
     <Card withBorder shadow="sm" radius="md">
       <Card.Section withBorder inheritPadding py="xs">
-        <Text>Account №{account.id}</Text>
+        <Text>Аккаунт №{account.id}</Text>
       </Card.Section>
       {account.subaccounts.map((subaccount, key) => (
         <SubaccountSection subaccount={subaccount} key={key} />

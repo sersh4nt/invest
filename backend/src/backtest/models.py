@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import BigInteger, Boolean, Column, DateTime, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from src.db.base_class import Base
 from src.db.mixins import AuditMixin, UUIDPKMixin
@@ -24,3 +25,10 @@ class BacktestResult(Base, UUIDPKMixin, AuditMixin):
     relative_yield: float = Column(Float)
     absolute_yield: float = Column(Float)
     time_elapsed: float = Column(Float)
+
+    instrument = relationship(
+        "Instrument",
+        primaryjoin="Instrument.figi==BacktestResult.figi",
+        foreign_keys=[figi],
+        lazy="selectin",
+    )

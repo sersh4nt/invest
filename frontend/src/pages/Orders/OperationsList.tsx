@@ -78,7 +78,7 @@ const OperationsList: React.FC = () => {
   return (
     <Stack h="100%" sx={{ background: "#fff" }} spacing={0}>
       <Group position="apart" p="sm">
-        <Text>Completed orders</Text>
+        <Text>Исполненные заявки</Text>
         <ActionIcon loading={isFetching}>
           <IconRefresh onClick={() => refetch()} />
         </ActionIcon>
@@ -97,10 +97,10 @@ const OperationsList: React.FC = () => {
               sx={{ margin: "auto" }}
             >
               {isFetchingNextPage
-                ? "Loading more..."
+                ? "Загружаю еще..."
                 : hasNextPage
-                ? "Load more"
-                : "Nothing more to load"}
+                ? "Загрузить больше"
+                : "Загружать больше нечего"}
             </Button>
           </Center>
         </span>

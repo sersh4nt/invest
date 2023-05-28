@@ -18,7 +18,7 @@ const OrdersList: React.FC = () => {
     <div style={{ height: "100%", background: "#fff" }}>
       <Stack spacing="xs" h="100%" p="sm">
         <Group position="apart" m={0}>
-          <Text>Active orders</Text>
+          <Text>Активные заявки</Text>
           <Group spacing="xs">
             <ActionIcon loading={isFetching}>
               <IconRefresh onClick={handleRefetch} />
@@ -33,7 +33,7 @@ const OrdersList: React.FC = () => {
           data.map((item, key) => <OrderCard data={item} key={key} />)
         ) : (
           <Center my="auto">
-            <Text>No active orders found</Text>
+            <Text>Нет ни одной активной заявки</Text>
           </Center>
         )}
       </Stack>

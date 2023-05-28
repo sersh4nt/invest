@@ -16,8 +16,8 @@ const WorkerCard: React.FC<WorkerCardProps> = ({ worker }) => {
     <Card padding="md" withBorder>
       <Card.Section withBorder p="md">
         <Group position="apart">
-          <Text>Worker #{worker.id}</Text>
-          <Tooltip label="Show worker" withArrow>
+          <Text>Робот №{worker.id}</Text>
+          <Tooltip label="Посмотреть детали" withArrow>
             <ActionIcon onClick={handleNavigate}>
               <IconCircleArrowUpRight />
             </ActionIcon>
@@ -26,18 +26,18 @@ const WorkerCard: React.FC<WorkerCardProps> = ({ worker }) => {
       </Card.Section>
       <Card.Section p="md">
         <Group position="apart">
-          <Text>Image</Text>
+          <Text>Образ:</Text>
           <Text>{worker.robot.image}</Text>
         </Group>
         <Group position="apart">
-          <Text>Created by</Text>
+          <Text>Создатель:</Text>
           <Text>{worker.robot.creator}</Text>
         </Group>
       </Card.Section>
       <Card.Section p="md" withBorder>
         <Group position="apart">
-          <Text>Subaccount</Text>
-          <Text>#{worker.subaccount_id}</Text>
+          <Text>Счет:</Text>
+          <Text>№{worker.subaccount_id}</Text>
         </Group>
       </Card.Section>
     </Card>

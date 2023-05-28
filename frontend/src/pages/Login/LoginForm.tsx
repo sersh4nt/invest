@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Button,
   Checkbox,
   Group,
@@ -9,11 +8,12 @@ import {
 } from "@mantine/core";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { LoginFormInput } from "../../store/authSlice";
 
 const LoginForm: React.FC = () => {
+  const [params] = useSearchParams();
   const { login, isLoading, error, accessToken } = useAuth();
   const navigate = useNavigate();
 
@@ -24,7 +24,11 @@ const LoginForm: React.FC = () => {
   }, [accessToken]);
 
   const { control, handleSubmit } = useForm({
-    defaultValues: { email: "", password: "", persist: true },
+    defaultValues: {
+      email: params.get("email") ?? "",
+      password: params.get("password") ?? "",
+      persist: true,
+    },
     mode: "onChange",
     reValidateMode: "onChange",
   });
@@ -42,7 +46,7 @@ const LoginForm: React.FC = () => {
         render={({ field, fieldState }) => (
           <TextInput
             {...field}
-            label="Email"
+            label="E-mail"
             placeholder="admin@izdev.ru"
             withAsterisk
             error={fieldState?.error?.message}
@@ -56,8 +60,8 @@ const LoginForm: React.FC = () => {
         render={({ field, fieldState }) => (
           <PasswordInput
             {...field}
-            label="Password"
-            placeholder="Your password"
+            label="Пароль"
+            placeholder="********"
             withAsterisk
             mt="md"
             error={fieldState?.error?.message}
@@ -72,16 +76,13 @@ const LoginForm: React.FC = () => {
             <Checkbox
               checked={field.value}
               onChange={field.onChange}
-              label="Remember me"
+              label="Запомнить меня"
             />
           )}
         />
-        <Anchor component="button" size="sm">
-          Forgot password?
-        </Anchor>
       </Group>
       <Button fullWidth mt="xl" type="submit" loading={isLoading}>
-        Sign in
+        Войти
       </Button>
       {error && <Text color="red">{error}</Text>}
     </form>

@@ -20,6 +20,7 @@ import type {
   PageRobotScheme,
   HTTPValidationError,
   ListRobotsApiV1RobotsGetParams,
+  BacktestRead,
   PageWorkerScheme,
   ListWorkersApiV1WorkersGetParams,
   WorkerScheme,
@@ -79,6 +80,46 @@ export const useListRobotsApiV1RobotsGet = <TData = Awaited<ReturnType<typeof li
   const queryFn: QueryFunction<Awaited<ReturnType<typeof listRobotsApiV1RobotsGet>>> = ({ signal }) => listRobotsApiV1RobotsGet(params, requestOptions, signal);
 
   const query = useQuery<Awaited<ReturnType<typeof listRobotsApiV1RobotsGet>>, TError, TData>(queryKey, queryFn, queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary List Robot Backtests
+ */
+export const listRobotBacktestsApiV1RobotsRobotIdBacktestsGet = (
+    robotId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<BacktestRead[]>(
+      {url: `/api/v1/robots/${robotId}/backtests`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getListRobotBacktestsApiV1RobotsRobotIdBacktestsGetQueryKey = (robotId: number,) => [`/api/v1/robots/${robotId}/backtests`];
+
+    
+export type ListRobotBacktestsApiV1RobotsRobotIdBacktestsGetQueryResult = NonNullable<Awaited<ReturnType<typeof listRobotBacktestsApiV1RobotsRobotIdBacktestsGet>>>
+export type ListRobotBacktestsApiV1RobotsRobotIdBacktestsGetQueryError = ErrorType<HTTPValidationError>
+
+export const useListRobotBacktestsApiV1RobotsRobotIdBacktestsGet = <TData = Awaited<ReturnType<typeof listRobotBacktestsApiV1RobotsRobotIdBacktestsGet>>, TError = ErrorType<HTTPValidationError>>(
+ robotId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listRobotBacktestsApiV1RobotsRobotIdBacktestsGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListRobotBacktestsApiV1RobotsRobotIdBacktestsGetQueryKey(robotId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listRobotBacktestsApiV1RobotsRobotIdBacktestsGet>>> = ({ signal }) => listRobotBacktestsApiV1RobotsRobotIdBacktestsGet(robotId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof listRobotBacktestsApiV1RobotsRobotIdBacktestsGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(robotId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   query.queryKey = queryKey;
 

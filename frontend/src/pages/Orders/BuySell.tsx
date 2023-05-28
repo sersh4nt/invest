@@ -1,44 +1,43 @@
 import { Divider, Group, Stack, Text } from "@mantine/core";
 import OperationCard from "../../components/OperationCard";
 import { OperationProps } from "./OperationFactory";
-import { capitalize } from "lodash";
 import { withCurrency, asRuNumber } from "../../utils/strings";
 
 const BuySell: React.FC<OperationProps> = ({ operation }) => {
-  const topText = `${capitalize(operation.type)} ${
+  const topText = `${operation.type == "BUY" ? "Покупка" : "Продажа"} ${
     operation.quantity
-  } lots of ${operation.instrument?.name}`;
-  const bottomText = `Broker account`;
+  } лотов ${operation.instrument?.name}`;
+  const bottomText = `Брокерский счет`;
 
   const affix = (
     <Stack spacing={0} fz="sm">
       <Divider />
       <Group position="apart">
-        <Text>Lots</Text>
-        <Text>{asRuNumber(operation.quantity)} pc.</Text>
+        <Text>Количество лотов</Text>
+        <Text>{asRuNumber(operation.quantity)} шт.</Text>
       </Group>
       <Group position="apart">
-        <Text>Price</Text>
+        <Text>Цена</Text>
         <Text>{withCurrency(operation.price, operation.currency)}</Text>
       </Group>
       {operation.commission && (
         <Group position="apart">
-          <Text>Commission</Text>
+          <Text>Комиссия</Text>
           <Text>{withCurrency(operation.commission, operation.currency)}</Text>
         </Group>
       )}
       <Divider
         labelPosition="center"
         variant="dashed"
-        label={`${operation.trades.length} trade${
-          operation.trades.length > 1 ? "s" : ""
+        label={`${operation.trades.length} ${
+          operation.trades.length > 1 ? "сделки" : "сделка"
         }`}
       />
       {operation.trades.map((trade, key) => (
         <Group position="apart" key={key}>
           <Text>{new Date(trade.date).toLocaleString("ru-RU")}</Text>
           <Text>
-            {asRuNumber(trade.quantity)} pc.,{" "}
+            {asRuNumber(trade.quantity)} шт. по{" "}
             {withCurrency(trade.price, operation.currency)}
           </Text>
         </Group>

@@ -1,6 +1,7 @@
-import { Skeleton } from "@mantine/core";
-import Stats from "../../components/Stats";
+import { Skeleton, Text, ThemeIcon } from "@mantine/core";
+import { IconSettings2 } from "@tabler/icons-react";
 import { useGetActiveWorkersCountApiV1WorkersStatsActiveGet } from "../../api/robots/robots";
+import Stats from "../../components/Stats";
 
 const WorkerStats: React.FC = () => {
   const { data, isLoading } =
@@ -9,16 +10,22 @@ const WorkerStats: React.FC = () => {
   return (
     <Skeleton visible={isLoading}>
       <Stats
-        title="Workers"
-        icon="gear"
+        title="Активные роботы"
+        icon={
+          <ThemeIcon color="gray" variant="light" size={38} radius="md">
+            <IconSettings2 size="1.8rem" stroke={1.5} />
+          </ThemeIcon>
+        }
         value={(data?.active ?? 0).toString()}
-        diff={Object.entries(data ?? {}).reduce(
-          (cnt, [_, v]) => (cnt += Number(v)),
-          0
-        )}
-        additionalText="Total workers"
-        withPercent={false}
-        withDiffIcon={false}
+        addContent={
+          <Text>
+            {Object.entries(data ?? {}).reduce(
+              (cnt, [_, v]) => (cnt += Number(v)),
+              0
+            )}{" "}
+            всего роботов
+          </Text>
+        }
       />
     </Skeleton>
   );

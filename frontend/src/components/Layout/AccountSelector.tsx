@@ -14,12 +14,15 @@ const AccountSelector: React.FC = () => {
       return;
     }
     const newAccounts = data
+      .sort((a, b) => a.id - b.id)
       .map((acc) =>
-        acc.subaccounts.map((subacc) => ({
-          value: `${subacc.id}`,
-          label: `Subaccount #${subacc.id}`,
-          group: `Account #${acc.id}`,
-        }))
+        acc.subaccounts
+          .sort((a, b) => a.id - b.id)
+          .map((subacc) => ({
+            value: `${subacc.id}`,
+            label: `Счет #${subacc.id}`,
+            group: `Аккаунт #${acc.id}`,
+          }))
       )
       .flat(1);
     setAccounts(newAccounts);
@@ -32,10 +35,11 @@ const AccountSelector: React.FC = () => {
 
   return (
     <Select
-      placeholder={data?.length ? "Select account" : "No accounts"}
+      placeholder={data?.length ? "Выберете аккаунт" : "Нет аккаунтов"}
       data={accounts}
       value={subaccount}
       onChange={handleChange}
+      sx={{ width: 150 }}
     />
   );
 };

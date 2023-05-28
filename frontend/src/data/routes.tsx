@@ -4,6 +4,7 @@ import {
   IconRobot,
   IconSettings2,
   IconUserCircle,
+  IconHistory,
 } from "@tabler/icons-react";
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
@@ -20,37 +21,51 @@ const Orders = lazy(() => import("../pages/Orders"));
 const Workers = lazy(() => import("../pages/Workers"));
 const Robots = lazy(() => import("../pages/Robots"));
 const WorkerDetailed = lazy(() => import("../pages/WorkerDetailed"));
+const Backtest = lazy(() => import("../pages/Backtest"));
+const RobotBacktest = lazy(() => import("../pages/Backtest/RobotBacktest"));
 
 export const mainRoutes = [
   {
     path: "/",
-    label: "Portfolio",
+    label: "Портфель",
     icon: IconBriefcase,
     element: <Portfolio />,
   },
   {
     path: "/orders",
-    label: "Orders",
+    label: "Заявки",
     icon: IconColumns,
     element: <Orders />,
   },
   {
     path: "/accounts",
-    label: "Accounts",
+    label: "Аккаунты",
     icon: IconUserCircle,
     element: <Accounts />,
   },
   {
     path: "/robots",
-    label: "Robots",
+    label: "Образы роботов",
     icon: IconRobot,
     element: <Robots />,
   },
   {
     path: "/workers",
-    label: "Workers",
+    label: "Мои роботы",
     icon: IconSettings2,
     element: <Workers />,
+  },
+  {
+    path: "/backtest",
+    label: "Бэк-тестирование",
+    icon: IconHistory,
+    element: <Backtest />,
+    children: [
+      {
+        path: "/backtest/:robotId",
+        element: <RobotBacktest />,
+      },
+    ],
   },
 ];
 
@@ -66,6 +81,7 @@ export const routes: RouteObject[] = [
             path: "/workers/:workerId",
             element: <WorkerDetailed />,
           },
+
           {
             path: "/arbitrage",
             element: <Arbitrage />,
@@ -73,6 +89,7 @@ export const routes: RouteObject[] = [
           ...mainRoutes.map((item) => ({
             path: item.path,
             element: item.element,
+            children: item.children,
           })),
         ],
       },

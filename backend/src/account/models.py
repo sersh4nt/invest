@@ -17,7 +17,7 @@ class Account(Base, IntegerIDPKMixin):
     description: str = Column(Text)
 
     user = relationship("User", back_populates="accounts")
-    subaccounts = relationship("Subaccount", back_populates="account")
+    subaccounts = relationship("Subaccount", back_populates="account", lazy="selectin")
 
 
 class Subaccount(Base, IntegerIDPKMixin):
@@ -31,6 +31,6 @@ class Subaccount(Base, IntegerIDPKMixin):
     is_enabled: bool = Column(Boolean, default=False, nullable=False)
     opened_date: datetime = Column(DateTime(timezone=True))
 
-    account = relationship("Account", back_populates="subaccounts")
+    account = relationship("Account", back_populates="subaccounts", lazy="selectin")
     portfolio = relationship("Portfolio", back_populates="subaccount")
     operations = relationship("Operation", back_populates="subaccount")

@@ -98,7 +98,9 @@ const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
   const links = mainRoutes.map((item) => (
     <a
       className={cx(classes.link, {
-        [classes.linkActive]: item.path === active,
+        [classes.linkActive]:
+          (active.startsWith(item.path) && item.path != "/") ||
+          (item.path == "/" && active == "/"),
       })}
       href={item.path}
       key={item.label}
@@ -120,7 +122,7 @@ const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
       p="md"
       hidden={!opened}
       hiddenBreakpoint="sm"
-      width={{ sm: 200, lg: 300 }}
+      width={{ sm: 300 }}
     >
       <MantiveNavbar.Section grow>{links}</MantiveNavbar.Section>
       <MantiveNavbar.Section>
@@ -133,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
           }}
         >
           <IconLogout className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
+          <span>Выйти</span>
         </a>
       </MantiveNavbar.Section>
     </MantiveNavbar>

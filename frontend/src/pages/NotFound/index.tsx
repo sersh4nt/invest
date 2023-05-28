@@ -59,19 +59,19 @@ const NotFound: React.FC = () => {
   return (
     <Container className={classes.root}>
       <div className={classes.label}>404</div>
-      <Title className={classes.title}>You have found a secret place.</Title>
+      <Title className={classes.title}>Вы нашли секретное место.</Title>
       <Text
         color="dimmed"
         size="lg"
         align="center"
         className={classes.description}
       >
-        Unfortunately, this is only a 404 page. You may have mistyped the
-        address, or the page has been moved to another URL.
+        К сожалению, это страница 404. Вы могли неправильно указать адрес или
+        страница была перемещена на другой адрес.
       </Text>
       <Group position="center">
         <Button variant="subtle" size="md" onClick={handleClick}>
-          Take me back to home page
+          Верните меня на домашнюю страницу
         </Button>
       </Group>
     </Container>

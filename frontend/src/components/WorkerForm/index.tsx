@@ -73,7 +73,7 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
     const newAccounts: SelectItem[] = rawAccounts
       .map((acc) =>
         acc.subaccounts.map((item) => ({
-          label: `Subaccount #${item.id}`,
+          label: `Счет №${item.id}`,
           value: item.id.toString(),
         }))
       )
@@ -86,12 +86,12 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing="sm">
           <Controller
-            rules={{ required: "This field is required!" }}
+            rules={{ required: "Данное поле обязательнО!" }}
             control={control}
             name="robot_id"
             render={({ field }) => (
               <Select
-                label="Select robot"
+                label="Выберете робота"
                 data={robots}
                 {...field}
                 withAsterisk
@@ -99,12 +99,12 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
             )}
           />
           <Controller
-            rules={{ required: "This field is required!" }}
+            rules={{ required: "Данное поле обязательнО!" }}
             control={control}
             name="subaccount_id"
             render={({ field }) => (
               <Select
-                label="Select subaccount"
+                label="Выберете счет"
                 data={accounts}
                 {...field}
                 withAsterisk
@@ -118,7 +118,7 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
               <ParseJSONField
                 field={field}
                 fieldState={fieldState}
-                label="Settings"
+                label="Настройки"
                 required
               />
             )}
@@ -127,11 +127,11 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
             control={control}
             name="is_enabled"
             render={({ field: { value, ...rest } }) => (
-              <Checkbox label="Is enabled" {...rest} checked={value} />
+              <Checkbox label="Включить робота" {...rest} checked={value} />
             )}
           />
           <Button type="submit" loading={isLoading}>
-            Submit
+            Сохранить
           </Button>
         </Stack>
       </form>

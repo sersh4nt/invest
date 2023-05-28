@@ -12,7 +12,7 @@ const Orders: React.FC = () => {
   }
 
   return (
-    <Container size="sm" style={{ height: "100%" }}>
+    <Container size="sm" style={{ height: "100%" }} p={0}>
       <SimpleGrid
         cols={2}
         style={{ height: "100%" }}

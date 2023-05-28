@@ -24,6 +24,7 @@ from src.robot.schemas import (
 )
 from src.user.dependencies import get_current_user
 from src.user.models import User
+from src.backtest.schemas import BacktestRead
 
 router = APIRouter(tags=["robots"], dependencies=[Depends(get_current_user)])
 
@@ -35,13 +36,14 @@ async def list_robots(
 ):
     robots, count = await robot_service.list_robots(session, pagination=pagination)
     items = []
-    for robot, cnt in robots:
+    for robot, cnt, avg_yield in robots:
         robot.used_by = cnt
+        robot.avg_yield = avg_yield
         items.append(robot)
     return {"count": count, "page": pagination.page or 0, "items": items}
 
 
-@router.get("/robots/{robot_id}/backtests")
+@router.get("/robots/{robot_id}/backtests", response_model=list[BacktestRead])
 async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)):
     return robot.backtests
 

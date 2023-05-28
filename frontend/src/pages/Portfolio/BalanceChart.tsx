@@ -93,26 +93,26 @@ const BalanceChart: React.FC = () => {
 
   return (
     <Skeleton visible={isLoading}>
-      <Paper withBorder h="315px" p="sm">
+      <Paper withBorder h="481px" p="sm">
         <Group position="apart">
-          <Text>Subaccount balance</Text>
+          <Text>Изменение баланса счета</Text>
           <Group>
             <Select
               size="xs"
-              placeholder="Select date range"
+              placeholder="Выберете диапазон"
               data={[
-                { value: "today", label: "Today" },
-                { value: "week", label: "This week" },
-                { value: "month", label: "This month" },
-                { value: "year", label: "This year" },
-                { value: "all", label: "All values" },
+                { value: "today", label: "Сегодня" },
+                { value: "week", label: "На этой неделе" },
+                { value: "month", label: "В этом месяце" },
+                { value: "year", label: "В этом году" },
+                { value: "all", label: "Все значения" },
               ]}
               value={range}
               onChange={(v) => setRange(v ?? "all")}
               w={120}
             />
             <Button onClick={handleReset} size="xs">
-              Reset zoom
+              Сбросить масштаб
             </Button>
           </Group>
         </Group>

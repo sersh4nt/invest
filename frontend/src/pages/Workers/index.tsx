@@ -44,10 +44,10 @@ const Workers: React.FC = () => {
           color="teal"
           onClick={open}
         >
-          Add new worker
+          Создать нового робота
         </Button>
       </Center>
-      <Modal opened={opened} onClose={close} title="Add new worker">
+      <Modal opened={opened} onClose={close} title="Создать нового робота">
         <WorkerForm onSuccess={handleSuccess} />
       </Modal>
     </>

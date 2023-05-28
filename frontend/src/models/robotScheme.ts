@@ -14,4 +14,5 @@ export interface RobotScheme {
   id: number;
   creator: string;
   used_by?: number;
+  avg_yield?: number;
 }

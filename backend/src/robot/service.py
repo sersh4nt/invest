@@ -5,7 +5,7 @@ from typing import List, Tuple
 from dateutil import parser
 from docker.errors import APIError, ImageNotFound
 from fastapi.concurrency import run_in_threadpool
-from sqlalchemy import distinct, func, select
+from sqlalchemy import distinct, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -17,6 +17,7 @@ from src.robot.exception import RobotNotFoundError, SubaccountNotFoundError
 from src.robot.models import Robot, Worker
 from src.robot.schemas import ContainerMessage, WorkerCreate
 from src.user.models import User
+from src.backtest.models import BacktestResult
 
 
 async def get_worker_by_id(session: AsyncSession, *, worker_id: int) -> Worker | None:
@@ -37,12 +38,24 @@ async def get_robot_by_id(session: AsyncSession, *, robot_id: int) -> Robot | No
 
 async def list_robots(
     session: AsyncSession, *, pagination: PaginationOpts = None
-) -> Tuple[Tuple[List[Robot], int], int]:
+) -> Tuple[Tuple[List[Robot], int, float], int]:
     stmt = (
-        select(Robot, func.count(distinct(Worker.user_id)).label("used_by"))
-        .join(Worker)
+        select(
+            Robot,
+            func.count(distinct(Worker.user_id)).label("used_by"),
+            func.avg(
+                BacktestResult.relative_yield
+                * 31536000
+                / (
+                    func.extract("epoch", BacktestResult.date_to)
+                    - func.extract("epoch", BacktestResult.date_from)
+                )
+            ).label("avg_yield"),
+        )
+        .join(Worker, isouter=True)
+        .join(BacktestResult, isouter=True)
         .options(selectinload(Robot.creator))
-        .group_by(Robot)
+        .group_by(Robot.id)
     )
     stmt = paginate_stmt(stmt, pagination)
     results = await session.execute(stmt)

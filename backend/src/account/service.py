@@ -40,6 +40,7 @@ async def list_user_accounts(session: AsyncSession, *, user: User) -> List[Accou
         select(Account)
         .filter(Account.user_id == user.id)
         .options(selectinload(Account.subaccounts))
+        .order_by(Account.id)
     )
     return accounts.all()
 

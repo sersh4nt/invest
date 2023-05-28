@@ -8,7 +8,7 @@ const InputOutput: React.FC<OperationProps> = ({ operation }) => {
     <OperationCard
       {...operation}
       topText={topText}
-      bottomText="Broker account"
+      bottomText="Брокерский счет"
     />
   );
 };

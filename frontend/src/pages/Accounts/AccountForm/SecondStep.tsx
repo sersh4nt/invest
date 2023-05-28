@@ -1,15 +1,16 @@
 import {
-  Stack,
+  Button,
+  Center,
   Divider,
+  Group,
+  Stack,
+  Switch,
   Text,
   Title,
-  Group,
-  Switch,
-  Button,
 } from "@mantine/core";
-import { AccountScheme } from "../../../models";
 import React, { useState } from "react";
 import { useEditSubaccountApiV1SubaccountsSubaccountIdPut } from "../../../api/accounts/accounts";
+import { AccountScheme } from "../../../models";
 
 interface SecondStepProps {
   account: AccountScheme;
@@ -45,22 +46,22 @@ const SecondStep: React.FC<SecondStepProps> = ({ account, onSuccess }) => {
       await Promise.all(tasks);
       onSuccess();
     } catch (err) {
-      setError("Some error occured during requests...");
+      setError("При отправлении запроса возникла ошибка...");
     }
   };
 
   return (
     <Stack>
-      <Title order={4}>Account #{account.id}</Title>
-      {account.name && <Text>Name: {account.name}</Text>}
-      {account.description && <Text>Description: {account.description}</Text>}
+      <Title order={4}>Аккаунт №{account.id}</Title>
+      {account.name && <Text>Название: {account.name}</Text>}
+      {account.description && <Text>Описание: {account.description}</Text>}
       {account.subaccounts.map((item, key) => (
         <React.Fragment key={key}>
           <Divider my="sx" />
-          <Title order={4}>Subaccount #{item.broker_id}</Title>
-          {item.name && <Text>Name: {item.name}</Text>}
+          <Title order={4}>Счет №{item.broker_id}</Title>
+          {item.name && <Text>Название: {item.name}</Text>}
           <Group position="apart">
-            <Text>Enabled</Text>
+            <Text>Вести аналитику</Text>
             <Switch
               checked={enabled[key]}
               onChange={(e) => handleEnable(e, key)}
@@ -68,9 +69,11 @@ const SecondStep: React.FC<SecondStepProps> = ({ account, onSuccess }) => {
           </Group>
         </React.Fragment>
       ))}
-      <Button onClick={handleSave} loading={isLoading}>
-        Save changes
-      </Button>
+      <Center>
+        <Button onClick={handleSave} loading={isLoading}>
+          Сохранить изменения
+        </Button>
+      </Center>
       {error && <Text color="red">{error}</Text>}
     </Stack>
   );

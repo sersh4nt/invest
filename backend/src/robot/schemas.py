@@ -19,6 +19,7 @@ class RobotScheme(RobotBase):
     id: int
     creator: str
     used_by: int = 0
+    avg_yield: float | None = None
 
     @validator("creator", pre=True)
     def set_creator(cls, v):
