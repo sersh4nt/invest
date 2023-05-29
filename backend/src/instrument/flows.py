@@ -30,7 +30,7 @@ class BaseUpdateInstrumentFlow:
         "uid": lambda x: x.uid,
     }
 
-    _base_fields: Dict[str, Callable] = {
+    _base_fields: Dict[str, Callable[[TinkoffInstrument], Any]] = {
         "uid": lambda x: x.uid,
         "type": lambda x: x.__class__.__name__.lower(),
         "figi": lambda x: getattr(x, "figi", None),
@@ -40,6 +40,7 @@ class BaseUpdateInstrumentFlow:
         "name": lambda x: x.name,
         "min_price_increment": lambda x: quotation_to_decimal(x.min_price_increment),
         "position_uid": lambda x: x.position_uid,
+        "is_tradable": lambda x: x.api_trade_available_flag,
     }
 
     def _get_orm_class(self):
@@ -96,6 +97,7 @@ class BaseUpdateInstrumentFlow:
 
             session.execute(stmt)
             session.commit()
+        session.close()
 
     def run(self, *args, **kwargs):
         instruments = self._get_instruments()

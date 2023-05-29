@@ -136,6 +136,14 @@ class BackTestStrategyFlow:
     def run(self, *args, **kwargs):
         session = next(get_sync_session())
 
+        obj = session.get(BacktestResult, self.uid)
+        if obj is None:
+            return
+
+        obj.is_started = True
+        session.add(obj)
+        session.commit()
+
         (
             self.cache_volume,
             self.backtest_volume,

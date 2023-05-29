@@ -1,6 +1,6 @@
 import { OperationScheme } from "../../models";
 import BuySell from "./BuySell";
-import InputOutput from "./InputOutput";
+import DefaultOperation from "./InputOutput";
 
 export interface OperationProps {
   operation: OperationScheme;
@@ -13,7 +13,11 @@ const OperationFactory: React.FC<OperationProps> = ({ operation }) => {
       return <BuySell operation={operation} />;
     case "INPUT":
     case "OUTPUT":
-      return <InputOutput operation={operation} />;
+    case "TAX":
+    case "TAX_CORRECTION":
+    case "DIVIDEND_TAX":
+    case "DIVIDEND":
+      return <DefaultOperation operation={operation} />;
     default:
       return <div>Неизвестный тип операции: {operation.type}</div>;
   }

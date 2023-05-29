@@ -39,10 +39,10 @@ const OperationCard: React.FC<OperationCardProps> = ({
       p={8}
       style={{
         background: "rgb(73, 80, 87)",
-        cursor: "pointer",
+        cursor: affix && "pointer",
         color: "#fff",
       }}
-      onClick={handleExpand}
+      onClick={affix && handleExpand}
     >
       <Flex fz="sm" wrap="nowrap" gap={6}>
         <Avatar radius="xl" size={40} src={avatarSrc} />

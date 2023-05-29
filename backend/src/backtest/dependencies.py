@@ -1,8 +1,9 @@
 from uuid import UUID
 
-import src.backtest.service as backtest_service
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.backtest.service as backtest_service
 from src.common.exceptions import NotFound
 from src.db.session import get_async_session
 

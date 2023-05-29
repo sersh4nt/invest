@@ -19,12 +19,8 @@ def decimal_to_quotation(d: Decimal, currency: str | None = None) -> Quotation:
 
 
 def paginate_stmt(stmt: Select, pagination: PaginationOpts = None):
-    if (
-        pagination is not None
-        and pagination.page is not None
-        and pagination.page_size is not None
-    ):
-        offset = pagination.page * pagination.page_size
+    if pagination is not None and pagination.page_size is not None:
+        offset = (pagination.page or 0) * pagination.page_size
         limit = pagination.page_size
         stmt = stmt.offset(offset).limit(limit)
     return stmt

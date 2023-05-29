@@ -3,6 +3,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ValidationError, validator
 
+from src.backtest.schemas import BacktestRead
+
 
 class RobotBase(BaseModel):
     image: str
@@ -70,3 +72,8 @@ class WorkersStats(BaseModel):
     exited: Optional[int]
     paused: Optional[int]
     dead: Optional[int]
+
+
+class RobotBacktestScheme(BaseModel):
+    backtests: list[BacktestRead]
+    avg_yield: float | None

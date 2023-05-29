@@ -2,7 +2,16 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import relationship
 
@@ -23,6 +32,7 @@ class Instrument(Base):
     min_price_increment: Decimal = Column(Numeric(28, 9))
     image_link: str = Column(String)
     position_uid: UUID = Column(postgresql.UUID, index=True)
+    is_tradable: bool = Column(Boolean)
 
     __mapper_args__ = {
         "polymorphic_identity": "instrument",

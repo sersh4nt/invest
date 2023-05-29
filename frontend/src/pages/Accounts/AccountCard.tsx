@@ -12,7 +12,7 @@ const AccountCard: React.FC<AccountCardProps> = ({ account }) => {
       <Card.Section withBorder inheritPadding py="xs">
         <Text>Аккаунт №{account.id}</Text>
       </Card.Section>
-      {account.subaccounts.map((subaccount, key) => (
+      {account.subaccounts.sort((a, b) => a.id - b.id).map((subaccount, key) => (
         <SubaccountSection subaccount={subaccount} key={key} />
       ))}
     </Card>

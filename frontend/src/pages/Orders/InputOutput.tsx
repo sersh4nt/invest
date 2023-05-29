@@ -2,8 +2,19 @@ import { capitalize } from "lodash";
 import OperationCard from "../../components/OperationCard";
 import { OperationProps } from "./OperationFactory";
 
-const InputOutput: React.FC<OperationProps> = ({ operation }) => {
-  const topText = capitalize(operation.type);
+const textMap = new Map(
+  Object.entries({
+    DIVIDEND: "Выплата дивидендов",
+    DIVIDEND_TAX: "Удержание налога по дивидендам",
+    TAX: "Выплата дивидендов",
+    INPUT: "Пополнение счета",
+    OUTPUT: "Вывод со счета",
+    TAX_CORRECTION: "Корректировка налога",
+  })
+);
+
+const DefaultOperation: React.FC<OperationProps> = ({ operation }) => {
+  const topText = capitalize(textMap.get(operation.type));
   return (
     <OperationCard
       {...operation}
@@ -13,4 +24,4 @@ const InputOutput: React.FC<OperationProps> = ({ operation }) => {
   );
 };
 
-export default InputOutput;
+export default DefaultOperation;

@@ -1,13 +1,13 @@
 from uuid import UUID
 
-import src.robot.service as robot_service
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
+import src.robot.service as robot_service
 from src.backtest.models import BacktestResult
 from src.backtest.schemas import BacktestCreate
 from src.common.exceptions import BadRequest
-from src.instrument.models import Instrument
 from src.robot.exception import RobotNotFoundError
 from src.user.models import User
 from src.worker import backtest_strategy
@@ -35,7 +35,7 @@ async def create_result(
     if robot is None:
         raise RobotNotFoundError()
 
-    results = BacktestResult(**data.dict(), is_started=True)
+    results = BacktestResult(**data.dict())
     session.add(results)
     await session.commit()
     await session.refresh(results)

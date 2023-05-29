@@ -11,7 +11,7 @@ class PaginationOpts:
     def __init__(
         self,
         page: Optional[int] = Query(None, ge=0),
-        page_size: Optional[int] = Query(50, ge=1, le=1000),
+        page_size: Optional[int] = Query(None, ge=1, le=1000),
     ):
         self.page = page
         self.page_size = page_size

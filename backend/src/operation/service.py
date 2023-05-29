@@ -9,6 +9,7 @@ from tinkoff.invest import AsyncClient, OrderState
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
 from src.common.pagination import PaginationOpts
+from src.common.utils import paginate_stmt
 from src.instrument.models import Instrument
 from src.operation.models import Operation
 
@@ -33,14 +34,7 @@ async def get_operations(
         Operation.subaccount_id == subaccount.id
     )
 
-    if (
-        pagination is not None
-        and pagination.page is not None
-        and pagination.page_size is not None
-    ):
-        offset = pagination.page * pagination.page_size
-        limit = pagination.page_size
-        stmt = stmt.offset(offset).limit(limit)
+    stmt = paginate_stmt(stmt, pagination)
 
     if dt_from is not None:
         stmt = stmt.filter(Operation.date >= dt_from)

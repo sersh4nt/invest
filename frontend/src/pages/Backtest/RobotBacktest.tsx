@@ -1,25 +1,39 @@
-import { Card, ScrollArea, Skeleton, SimpleGrid } from "@mantine/core";
-import { useParams } from "react-router-dom";
+import { SimpleGrid, Skeleton, Text } from "@mantine/core";
 import { useListRobotBacktestsApiV1RobotsRobotIdBacktestsGet } from "../../api/robots/robots";
+import BacktestCard from "./BacktestCard";
 
-const RobotBacktest: React.FC = () => {
-  const { robotId } = useParams();
+interface RobotBacktestProps {
+  robotId?: string;
+}
+
+const RobotBacktest: React.FC<RobotBacktestProps> = ({ robotId }) => {
   const { data, isLoading } =
     useListRobotBacktestsApiV1RobotsRobotIdBacktestsGet(Number(robotId));
   return (
-    <Skeleton visible={isLoading}>
-      <ScrollArea offsetScrollbars>
-        <SimpleGrid cols={1}>
+    <Skeleton visible={isLoading} height="100%">
+      {(data?.backtests.length ?? 0) > 0 ? (
+        <SimpleGrid
+          cols={1}
+          breakpoints={[
+            { minWidth: "lg", cols: 2 },
+            { minWidth: "xl", cols: 3 },
+          ]}
+        >
           {data &&
-            data
-              .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-              .map((item, key) => (
-                <Card withBorder key={key}>
-                  123
-                </Card>
-              ))}
+            data.backtests
+              .sort(
+                (a, b) =>
+                  new Date(b.created_at).getTime() -
+                  new Date(a.created_at).getTime()
+              )
+              .map((item, key) => <BacktestCard backtest={item} key={key} />)}
         </SimpleGrid>
-      </ScrollArea>
+      ) : (
+        <Text>
+          У данного робота нет тестовых данных. Вы можете начать новое
+          тестирование
+        </Text>
+      )}
     </Skeleton>
   );
 };

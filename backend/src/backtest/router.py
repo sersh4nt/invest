@@ -9,7 +9,7 @@ from src.db.session import get_async_session
 from src.user.dependencies import get_current_user
 from src.user.models import User
 
-router = APIRouter(prefix="/backtest")
+router = APIRouter(prefix="/backtest", tags=["backtest"])
 
 
 @router.post("")

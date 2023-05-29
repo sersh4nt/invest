@@ -1,15 +1,28 @@
 from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID, uuid4
-from src.instrument.schemas import InstrumentScheme
 
-from pydantic import BaseModel
+from fastapi_filter.contrib.sqlalchemy import Filter
+from pydantic import BaseModel, Field
+
+from src.backtest.models import BacktestResult
+from src.instrument.schemas import InstrumentScheme
 
 INTERVALS_AVAILABLE = ["1min", "5min", "15min", "hour", "day"]
 
 
+class BacktestFilter(Filter):
+    date_from: datetime | None
+    date_to: datetime | None
+    interval_raw: str | None
+    order_by: str | None
+
+    class Constants(Filter.Constants):
+        model = BacktestResult
+
+
 class BacktestCreate(BaseModel):
-    id: UUID | None = uuid4()
+    id: UUID = Field(default_factory=uuid4)
     robot_id: int
     figi: str
     date_from: datetime

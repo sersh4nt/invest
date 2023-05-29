@@ -20,7 +20,7 @@ import type {
   PageRobotScheme,
   HTTPValidationError,
   ListRobotsApiV1RobotsGetParams,
-  BacktestRead,
+  RobotBacktestScheme,
   PageWorkerScheme,
   ListWorkersApiV1WorkersGetParams,
   WorkerScheme,
@@ -93,7 +93,7 @@ export const listRobotBacktestsApiV1RobotsRobotIdBacktestsGet = (
     robotId: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-      return customInstance<BacktestRead[]>(
+      return customInstance<RobotBacktestScheme>(
       {url: `/api/v1/robots/${robotId}/backtests`, method: 'get', signal
     },
       options);

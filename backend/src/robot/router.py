@@ -1,12 +1,12 @@
 import asyncio
 from collections import Counter
 from datetime import datetime
+from statistics import mean
 from typing import Annotated, List
 
+import src.robot.service as robot_service
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-
-import src.robot.service as robot_service
 from src.common.pagination import Page, PaginationOpts
 from src.db.session import get_async_session
 from src.robot.dependencies import (
@@ -17,6 +17,7 @@ from src.robot.dependencies import (
 from src.robot.models import Robot, Worker
 from src.robot.schemas import (
     ContainerStatus,
+    RobotBacktestScheme,
     RobotScheme,
     WorkerCreate,
     WorkerScheme,
@@ -24,7 +25,6 @@ from src.robot.schemas import (
 )
 from src.user.dependencies import get_current_user
 from src.user.models import User
-from src.backtest.schemas import BacktestRead
 
 router = APIRouter(tags=["robots"], dependencies=[Depends(get_current_user)])
 
@@ -43,9 +43,13 @@ async def list_robots(
     return {"count": count, "page": pagination.page or 0, "items": items}
 
 
-@router.get("/robots/{robot_id}/backtests", response_model=list[BacktestRead])
+@router.get("/robots/{robot_id}/backtests", response_model=RobotBacktestScheme)
 async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)):
-    return robot.backtests
+    backtests = robot.backtests
+    avg_yield = (
+        mean([b.relative_yield for b in backtests]) if len(backtests) > 1 else None
+    )
+    return {"backtests": robot.backtests, "avg_yield": avg_yield}
 
 
 @router.get("/workers", response_model=Page[WorkerScheme])
