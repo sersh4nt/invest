@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["sersh4nt <rektf12@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+fastapi = "^0.95.1"
+sqlalchemy = "^2.0.9"
+alembic = "^1.10.3"
+gunicorn = "^20.1.0"
+uvicorn = "^0.21.1"
+fastapi-users = {extras = ["sqlalchemy"], version = "^10.4.2"}
+asyncpg = "^0.27.0"
+pydantic = {extras = ["dotenv"], version = "^1.10.7"}
+tinkoff-investments = "^0.2.0b54"
+celery = {extras = ["redis"], version = "^5.2.7"}
+psycopg = {extras = ["binary"], version = "^3.1.8"}
+httpx = "^0.24.0"
+docker = "^6.1.1"
+fastapi-filter = {extras = ["sqlalchemy"], version = "^0.6.0"}
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+autoflake = "^2.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
