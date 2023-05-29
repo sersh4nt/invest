@@ -1,7 +1,23 @@
-import { Avatar, Text, Flex, Paper, Stack, Group } from "@mantine/core";
+import {
+  ActionIcon,
+  Avatar,
+  Flex,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 import { capitalize } from "lodash";
-import { ActiveOrderScheme } from "../../models";
 import { memo } from "react";
+import { useQueryClient } from "react-query";
+import {
+  getListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGetQueryKey,
+  useCancelOrderApiV1CancelPost,
+} from "../../api/operations/operations";
+import useSubaccount from "../../hooks/useSubaccount";
+import { ActiveOrderScheme } from "../../models";
 import { withCurrency } from "../../utils/strings";
 
 interface OrderCardProps {
@@ -9,13 +25,34 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
+  const client = useQueryClient();
+  const { subaccount } = useSubaccount();
+  const { mutateAsync, isLoading } = useCancelOrderApiV1CancelPost();
+
+  const handleCancel = async () => {
+    try {
+      const response = await mutateAsync({
+        data: { order_id: data.broker_id, subaccount_id: Number(subaccount) },
+      });
+      if (response) {
+        client.invalidateQueries(
+          getListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGetQueryKey(
+            Number(subaccount)
+          )
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Paper
       radius="sm"
       p={8}
       style={{ background: "rgb(73, 80, 87)", color: "#fff" }}
     >
-      <Flex fz="sm" wrap="nowrap" gap={6}>
+      <Flex fz="sm" wrap="nowrap" gap={8}>
         <Avatar
           radius="xl"
           size={40}
@@ -46,6 +83,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
             </Text>
           </Group>
         </Stack>
+        <Tooltip label="Отменить заявку" withArrow>
+          <ActionIcon
+            my="auto"
+            color="red"
+            variant="outline"
+            onClick={handleCancel}
+            loading={isLoading}
+          >
+            <IconTrash />
+          </ActionIcon>
+        </Tooltip>
       </Flex>
     </Paper>
   );

@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import docker
 import docker.errors
 from docker.models.containers import Container
-
 from src.config import settings
 
 client = docker.DockerClient(settings.DOCKER_URI)
@@ -48,5 +47,43 @@ def get_logs(container: str | Container, logs_since: datetime | None = None) -> 
         return b""
     logs_kwargs = {"timestamps": True}
     if logs_since is not None:
+        if logs_since.tzinfo is not None:
+            logs_since = logs_since.replace(tzinfo=None)
         logs_kwargs["since"] = logs_since
     return container.logs(**logs_kwargs)
+
+
+def start_worker(container: str | Container) -> str:
+    if isinstance(container, str):
+        container = get_container_by_name(container)
+    if container is None:
+        return "NOT_FOUND"
+
+    if container.status == "RUNNING":
+        return "ALREADY_RUNNING"
+
+    container.start()
+    return "STARTED"
+
+
+def stop_worker(container: str | Container) -> str:
+    if isinstance(container, str):
+        container = get_container_by_name(container)
+    if container is None:
+        return "NOT_FOUND"
+
+    if container.status == "CREATED" or container.status == "EXITED":
+        return "ALREADY_STOPPED"
+
+    container.stop()
+    return "STOPPED"
+
+
+def restart_worker(container: str | Container) -> str:
+    if isinstance(container, str):
+        container = get_container_by_name(container)
+    if container is None:
+        return "NOT_FOUND"
+
+    container.restart()
+    return "RESTARTED"

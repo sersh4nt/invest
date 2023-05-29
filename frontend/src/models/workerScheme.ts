@@ -4,12 +4,11 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { WorkerSchemeConfig } from './workerSchemeConfig';
 import type { RobotScheme } from './robotScheme';
 
 export interface WorkerScheme {
   subaccount_id: number;
-  config: WorkerSchemeConfig;
+  config?: unknown;
   id: number;
   robot: RobotScheme;
   container_name: string;

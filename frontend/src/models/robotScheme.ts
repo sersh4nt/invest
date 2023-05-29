@@ -4,13 +4,12 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { RobotSchemeConfig } from './robotSchemeConfig';
 
 export interface RobotScheme {
   image: string;
   name: string;
   description?: string;
-  config?: RobotSchemeConfig;
+  config?: unknown;
   id: number;
   creator: string;
   used_by?: number;

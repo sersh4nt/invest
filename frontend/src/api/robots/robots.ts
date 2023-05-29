@@ -26,8 +26,8 @@ import type {
   WorkerScheme,
   WorkerCreate,
   WorkersStats,
-  ContainerStatus,
-  GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams
+  ContainerMessage,
+  GetWorkerLogsApiV1WorkersWorkerIdLogsGetParams
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -289,37 +289,33 @@ export const useReadWorkerApiV1WorkersWorkerIdGet = <TData = Awaited<ReturnType<
  */
 export const getWorkerStatusApiV1WorkersWorkerIdStatusGet = (
     workerId: number,
-    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-      return customInstance<ContainerStatus>(
-      {url: `/api/v1/workers/${workerId}/status`, method: 'get',
-        params, signal
+      return customInstance<string>(
+      {url: `/api/v1/workers/${workerId}/status`, method: 'get', signal
     },
       options);
     }
   
 
-export const getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey = (workerId: number,
-    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams,) => [`/api/v1/workers/${workerId}/status`, ...(params ? [params]: [])];
+export const getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey = (workerId: number,) => [`/api/v1/workers/${workerId}/status`];
 
     
 export type GetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryResult = NonNullable<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>>
 export type GetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryError = ErrorType<HTTPValidationError>
 
 export const useGetWorkerStatusApiV1WorkersWorkerIdStatusGet = <TData = Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError = ErrorType<HTTPValidationError>>(
- workerId: number,
-    params?: GetWorkerStatusApiV1WorkersWorkerIdStatusGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+ workerId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey(workerId,params);
+  const queryKey = queryOptions?.queryKey ?? getGetWorkerStatusApiV1WorkersWorkerIdStatusGetQueryKey(workerId);
 
   
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>> = ({ signal }) => getWorkerStatusApiV1WorkersWorkerIdStatusGet(workerId,params, requestOptions, signal);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>> = ({ signal }) => getWorkerStatusApiV1WorkersWorkerIdStatusGet(workerId, requestOptions, signal);
 
   const query = useQuery<Awaited<ReturnType<typeof getWorkerStatusApiV1WorkersWorkerIdStatusGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(workerId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -328,3 +324,153 @@ export const useGetWorkerStatusApiV1WorkersWorkerIdStatusGet = <TData = Awaited<
   return query;
 }
 
+/**
+ * @summary Get Worker Logs
+ */
+export const getWorkerLogsApiV1WorkersWorkerIdLogsGet = (
+    workerId: number,
+    params?: GetWorkerLogsApiV1WorkersWorkerIdLogsGetParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<ContainerMessage[]>(
+      {url: `/api/v1/workers/${workerId}/logs`, method: 'get',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetWorkerLogsApiV1WorkersWorkerIdLogsGetQueryKey = (workerId: number,
+    params?: GetWorkerLogsApiV1WorkersWorkerIdLogsGetParams,) => [`/api/v1/workers/${workerId}/logs`, ...(params ? [params]: [])];
+
+    
+export type GetWorkerLogsApiV1WorkersWorkerIdLogsGetQueryResult = NonNullable<Awaited<ReturnType<typeof getWorkerLogsApiV1WorkersWorkerIdLogsGet>>>
+export type GetWorkerLogsApiV1WorkersWorkerIdLogsGetQueryError = ErrorType<HTTPValidationError>
+
+export const useGetWorkerLogsApiV1WorkersWorkerIdLogsGet = <TData = Awaited<ReturnType<typeof getWorkerLogsApiV1WorkersWorkerIdLogsGet>>, TError = ErrorType<HTTPValidationError>>(
+ workerId: number,
+    params?: GetWorkerLogsApiV1WorkersWorkerIdLogsGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getWorkerLogsApiV1WorkersWorkerIdLogsGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetWorkerLogsApiV1WorkersWorkerIdLogsGetQueryKey(workerId,params);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkerLogsApiV1WorkersWorkerIdLogsGet>>> = ({ signal }) => getWorkerLogsApiV1WorkersWorkerIdLogsGet(workerId,params, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof getWorkerLogsApiV1WorkersWorkerIdLogsGet>>, TError, TData>(queryKey, queryFn, {enabled: !!(workerId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Start Worker
+ */
+export const startWorkerApiV1WorkersWorkerIdStartPost = (
+    workerId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<string>(
+      {url: `/api/v1/workers/${workerId}/start`, method: 'post'
+    },
+      options);
+    }
+  
+
+
+    export type StartWorkerApiV1WorkersWorkerIdStartPostMutationResult = NonNullable<Awaited<ReturnType<typeof startWorkerApiV1WorkersWorkerIdStartPost>>>
+    
+    export type StartWorkerApiV1WorkersWorkerIdStartPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useStartWorkerApiV1WorkersWorkerIdStartPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof startWorkerApiV1WorkersWorkerIdStartPost>>, TError,{workerId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof startWorkerApiV1WorkersWorkerIdStartPost>>, {workerId: number}> = (props) => {
+          const {workerId} = props ?? {};
+
+          return  startWorkerApiV1WorkersWorkerIdStartPost(workerId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof startWorkerApiV1WorkersWorkerIdStartPost>>, TError, {workerId: number}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
+ * @summary Stop Worker
+ */
+export const stopWorkerApiV1WorkersWorkerIdStopPost = (
+    workerId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<string>(
+      {url: `/api/v1/workers/${workerId}/stop`, method: 'post'
+    },
+      options);
+    }
+  
+
+
+    export type StopWorkerApiV1WorkersWorkerIdStopPostMutationResult = NonNullable<Awaited<ReturnType<typeof stopWorkerApiV1WorkersWorkerIdStopPost>>>
+    
+    export type StopWorkerApiV1WorkersWorkerIdStopPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useStopWorkerApiV1WorkersWorkerIdStopPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof stopWorkerApiV1WorkersWorkerIdStopPost>>, TError,{workerId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof stopWorkerApiV1WorkersWorkerIdStopPost>>, {workerId: number}> = (props) => {
+          const {workerId} = props ?? {};
+
+          return  stopWorkerApiV1WorkersWorkerIdStopPost(workerId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof stopWorkerApiV1WorkersWorkerIdStopPost>>, TError, {workerId: number}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
+ * @summary Restart Worker
+ */
+export const restartWorkerApiV1WorkersWorkerIdRestartPost = (
+    workerId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<string>(
+      {url: `/api/v1/workers/${workerId}/restart`, method: 'post'
+    },
+      options);
+    }
+  
+
+
+    export type RestartWorkerApiV1WorkersWorkerIdRestartPostMutationResult = NonNullable<Awaited<ReturnType<typeof restartWorkerApiV1WorkersWorkerIdRestartPost>>>
+    
+    export type RestartWorkerApiV1WorkersWorkerIdRestartPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useRestartWorkerApiV1WorkersWorkerIdRestartPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof restartWorkerApiV1WorkersWorkerIdRestartPost>>, TError,{workerId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof restartWorkerApiV1WorkersWorkerIdRestartPost>>, {workerId: number}> = (props) => {
+          const {workerId} = props ?? {};
+
+          return  restartWorkerApiV1WorkersWorkerIdRestartPost(workerId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof restartWorkerApiV1WorkersWorkerIdRestartPost>>, TError, {workerId: number}, TContext>(mutationFn, mutationOptions)
+    }
+    

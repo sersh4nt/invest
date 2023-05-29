@@ -5,9 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface WorkerCreate {
+export interface CancelOrderScheme {
   subaccount_id: number;
-  config?: unknown;
-  is_enabled: boolean;
-  robot_id: number;
+  order_id: string;
 }

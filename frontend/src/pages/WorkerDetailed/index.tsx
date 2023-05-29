@@ -1,17 +1,21 @@
-import { Grid } from "@mantine/core";
-import WorkerLogs from "./WorkerLogs";
+import { Flex } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import WorkerInfo from "./WorkerInfo";
+import WorkerLogs from "./WorkerLogs";
 
 const WorkerDetailed: React.FC = () => {
+  const matches = useMediaQuery("(min-width: 65em)");
+  console.log(matches);
+
   return (
-    <Grid>
-      <Grid.Col span={12} lg={8} sm={6} md={7}>
-        <WorkerLogs />
-      </Grid.Col>
-      <Grid.Col span={12} lg={4} sm={6} md={5}>
+    <Flex direction={matches ? "row" : "column"} gap="md" h="100%">
+      <div style={{ flex: "0 0 auto" }}>
         <WorkerInfo />
-      </Grid.Col>
-    </Grid>
+      </div>
+      <div style={{ flex: "1" }}>
+        <WorkerLogs />
+      </div>
+    </Flex>
   );
 };
 

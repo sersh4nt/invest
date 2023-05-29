@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, ValidationError, validator
-
 from src.backtest.schemas import BacktestRead
 
 
@@ -10,7 +9,7 @@ class RobotBase(BaseModel):
     image: str
     name: str
     description: Optional[str]
-    config: dict = {}
+    config: Any
 
 
 class RobotCreate(RobotBase):
@@ -36,7 +35,7 @@ class RobotScheme(RobotBase):
 
 class WorkerBase(BaseModel):
     subaccount_id: int
-    config: dict
+    config: Any
 
 
 class WorkerCreate(WorkerBase):
@@ -57,11 +56,6 @@ class WorkerScheme(WorkerBase):
 class ContainerMessage(BaseModel):
     date: datetime
     message: str
-
-
-class ContainerStatus(BaseModel):
-    status: str
-    logs: List[ContainerMessage]
 
 
 class WorkersStats(BaseModel):

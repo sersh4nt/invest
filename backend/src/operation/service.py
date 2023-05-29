@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient, OrderState
+from tinkoff.invest import AsyncClient, OrderState, AioRequestError
 
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
@@ -115,3 +115,14 @@ async def get_portfolio_revenue(
         revenue += portfolio.cost[0].value
 
     return {"daily_volume": daily_volume, "profit": revenue}
+
+
+async def cancel_order(subaccount: Subaccount, order_id: str) -> True:
+    async with AsyncClient(subaccount.account.token) as client:
+        try:
+            await client.orders.cancel_order(
+                account_id=subaccount.broker_id, order_id=order_id
+            )
+            return True
+        except AioRequestError:
+            return False

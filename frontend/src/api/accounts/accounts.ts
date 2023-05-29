@@ -272,4 +272,39 @@ export const editSubaccountApiV1SubaccountsSubaccountIdPut = (
 
       return useMutation<Awaited<ReturnType<typeof editSubaccountApiV1SubaccountsSubaccountIdPut>>, TError, {subaccountId: number;data: SubaccountUpdate}, TContext>(mutationFn, mutationOptions)
     }
+    /**
+ * @summary Cancel All Orders
+ */
+export const cancelAllOrdersApiV1SubaccountsSubaccountIdPost = (
+    subaccountId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<unknown>(
+      {url: `/api/v1/subaccounts/${subaccountId}`, method: 'post'
+    },
+      options);
+    }
+  
+
+
+    export type CancelAllOrdersApiV1SubaccountsSubaccountIdPostMutationResult = NonNullable<Awaited<ReturnType<typeof cancelAllOrdersApiV1SubaccountsSubaccountIdPost>>>
+    
+    export type CancelAllOrdersApiV1SubaccountsSubaccountIdPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useCancelAllOrdersApiV1SubaccountsSubaccountIdPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof cancelAllOrdersApiV1SubaccountsSubaccountIdPost>>, TError,{subaccountId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof cancelAllOrdersApiV1SubaccountsSubaccountIdPost>>, {subaccountId: number}> = (props) => {
+          const {subaccountId} = props ?? {};
+
+          return  cancelAllOrdersApiV1SubaccountsSubaccountIdPost(subaccountId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof cancelAllOrdersApiV1SubaccountsSubaccountIdPost>>, TError, {subaccountId: number}, TContext>(mutationFn, mutationOptions)
+    }
     

@@ -16,7 +16,7 @@ from src.robot.dependencies import (
 )
 from src.robot.models import Robot, Worker
 from src.robot.schemas import (
-    ContainerStatus,
+    ContainerMessage,
     RobotBacktestScheme,
     RobotScheme,
     WorkerCreate,
@@ -60,6 +60,10 @@ async def list_workers(
     workers, count = await robot_service.list_workers(
         session, pagination=pagination, user=user
     )
+    tasks = [robot_service.get_worker_status(w) for w in workers]
+    statuses = await asyncio.gather(*tasks)
+    for worker, status in zip(workers, statuses):
+        worker.status = status
     return {"count": count, "page": pagination.page or 0, "items": workers}
 
 
@@ -86,13 +90,35 @@ async def read_worker(worker: Worker = Depends(get_user_worker_by_id)):
     return worker
 
 
-@router.get("/workers/{worker_id}/status", response_model=ContainerStatus)
-async def get_worker_status(
+@router.get("/workers/{worker_id}/status", response_model=str)
+async def get_worker_status(worker: Worker = Depends(get_user_worker_by_id)):
+    return await robot_service.get_worker_status(worker)
+
+
+@router.get("/workers/{worker_id}/logs", response_model=list[ContainerMessage])
+async def get_worker_logs(
     worker: Worker = Depends(get_user_worker_by_id),
     logs_since: Annotated[datetime | None, Query(alias="logsSince")] = None,
 ):
-    status, logs = await asyncio.gather(
-        robot_service.get_worker_status(worker),
-        robot_service.get_worker_logs(worker, logs_since),
-    )
-    return {"status": status, "logs": logs}
+    return await robot_service.get_worker_logs(worker, logs_since)
+
+
+@router.post("/workers/{worker_id}/start", response_model=str)
+async def start_worker(
+    worker: Worker = Depends(get_user_worker_by_id),
+):
+    return await robot_service.start_worker(worker)
+
+
+@router.post("/workers/{worker_id}/stop", response_model=str)
+async def stop_worker(
+    worker: Worker = Depends(get_user_worker_by_id),
+):
+    return await robot_service.stop_worker(worker)
+
+
+@router.post("/workers/{worker_id}/restart", response_model=str)
+async def restart_worker(
+    worker: Worker = Depends(get_user_worker_by_id),
+):
+    return await robot_service.restart_worker(worker)
