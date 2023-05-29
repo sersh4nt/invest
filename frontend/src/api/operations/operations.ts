@@ -5,11 +5,14 @@
  * OpenAPI spec version: 0.1.0
  */
 import {
-  useQuery
+  useQuery,
+  useMutation
 } from 'react-query'
 import type {
   UseQueryOptions,
+  UseMutationOptions,
   QueryFunction,
+  MutationFunction,
   UseQueryResult,
   QueryKey
 } from 'react-query'
@@ -19,7 +22,8 @@ import type {
   ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams,
   ActiveOrderScheme,
   OperationStats,
-  RevenueStats
+  RevenueStats,
+  CancelOrderScheme
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -201,3 +205,41 @@ export const useGetPortfolioRevenueApiV1SubaccountsSubaccountIdStatsRevenueGet =
   return query;
 }
 
+/**
+ * @summary Cancel Order
+ */
+export const cancelOrderApiV1CancelPost = (
+    cancelOrderScheme: CancelOrderScheme,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<boolean>(
+      {url: `/api/v1/cancel`, method: 'post',
+      headers: {'Content-Type': 'application/json', },
+      data: cancelOrderScheme
+    },
+      options);
+    }
+  
+
+
+    export type CancelOrderApiV1CancelPostMutationResult = NonNullable<Awaited<ReturnType<typeof cancelOrderApiV1CancelPost>>>
+    export type CancelOrderApiV1CancelPostMutationBody = CancelOrderScheme
+    export type CancelOrderApiV1CancelPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useCancelOrderApiV1CancelPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof cancelOrderApiV1CancelPost>>, TError,{data: CancelOrderScheme}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof cancelOrderApiV1CancelPost>>, {data: CancelOrderScheme}> = (props) => {
+          const {data} = props ?? {};
+
+          return  cancelOrderApiV1CancelPost(data,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof cancelOrderApiV1CancelPost>>, TError, {data: CancelOrderScheme}, TContext>(mutationFn, mutationOptions)
+    }
+    

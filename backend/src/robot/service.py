@@ -1,16 +1,17 @@
+import json
 import uuid
+from copy import deepcopy
 from datetime import datetime
 from typing import List, Tuple
 
+import src.account.service as account_service
+import src.robot.docker as docker_service
 from dateutil import parser
 from docker.errors import APIError, ImageNotFound
 from fastapi.concurrency import run_in_threadpool
 from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
-import src.account.service as account_service
-import src.robot.docker as docker_service
 from src.backtest.models import BacktestResult
 from src.common.pagination import PaginationOpts
 from src.common.utils import paginate_stmt
@@ -92,10 +93,19 @@ async def create_worker(
     if robot is None:
         raise RobotNotFoundError()
 
+    instruments_cfg = []
+    for cfg in data.config:
+        local_config = deepcopy(cfg)
+        figi = local_config.pop("figi", None)
+        if figi is None:
+            continue
+        instruments_cfg.append(
+            {"figi": figi, "strategy": {"name": robot.name, "parameters": local_config}}
+        )
+
     env = {
-        **robot.config,
-        **data.config,
-        "BROKER_ID": subaccount.broker_id,
+        "INSTRUMENTS": json.dumps(instruments_cfg),
+        "ACCOUNT_ID": subaccount.broker_id,
         "TOKEN": subaccount.account.token,
     }
     image = robot.image
@@ -152,3 +162,20 @@ async def get_worker_logs(
             date, message = line.split(" ", 1)
             lines.append({"date": parser.isoparse(date), "message": message})
     return lines
+
+
+async def start_worker(worker: Worker):
+    status = await run_in_threadpool(docker_service.start_worker, worker.container_name)
+    return status
+
+
+async def stop_worker(worker: Worker):
+    status = await run_in_threadpool(docker_service.stop_worker, worker.container_name)
+    return status
+
+
+async def restart_worker(worker: Worker):
+    status = await run_in_threadpool(
+        docker_service.restart_worker, worker.container_name
+    )
+    return status

@@ -68,3 +68,8 @@ async def edit_subaccount(
         session, subaccount=subaccount, data=data
     )
     return subaccount
+
+
+@router.post("/subaccounts/{subaccount_id}")
+async def cancel_all_orders(subaccount: Subaccount = Depends(get_user_subaccount)):
+    return await account_service.cancel_all_orders(subaccount)

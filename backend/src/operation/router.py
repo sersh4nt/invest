@@ -1,17 +1,19 @@
 from datetime import datetime
 from typing import Annotated, List
 
+import src.account.service as account_service
+import src.operation.service as operations_service
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-
-import src.operation.service as operations_service
 from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
+from src.common.exceptions import BadRequest
 from src.common.pagination import Page, PaginationOpts
 from src.common.utils import quotation_to_decimal
 from src.db.session import get_async_session
 from src.operation.schemas import (
     ActiveOrderScheme,
+    CancelOrderScheme,
     OperationScheme,
     OperationStats,
     RevenueStats,
@@ -95,3 +97,16 @@ async def get_portfolio_revenue(
         session, subaccount=subaccount
     )
     return result
+
+
+@router.post("/cancel", response_model=bool)
+async def cancel_order(
+    data: CancelOrderScheme,
+    session: AsyncSession = Depends(get_async_session),
+):
+    subaccount = await account_service.get_subaccount_by_id(
+        session, subaccount_id=data.subaccount_id
+    )
+    if subaccount is None:
+        raise BadRequest()
+    return await operations_service.cancel_order(subaccount, data.order_id)

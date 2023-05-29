@@ -40,7 +40,10 @@ const columns = [
     accessorFn: (row: PortfolioPositionScheme) =>
       withCurrency(
         Math.round(
-          row.current_price * row.quantity * row.instrument.lot * 100
+          row.current_price *
+            row.quantity *
+            (row.instrument.type != "currency" ? row.instrument.lot : 1) *
+            100
         ) / 100,
         row.instrument.currency
       ),

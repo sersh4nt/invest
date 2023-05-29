@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
-
 from src.instrument.schemas import InstrumentScheme
 
 
@@ -51,3 +50,8 @@ class OperationStats(BaseModel):
 class RevenueStats(BaseModel):
     daily_volume: float
     profit: float
+
+
+class CancelOrderScheme(BaseModel):
+    subaccount_id: int
+    order_id: str

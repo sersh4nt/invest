@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 
 from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, String, Text
@@ -13,7 +14,7 @@ class Robot(Base, IntegerIDPKMixin, AuditMixin):
 
     creator_id: uuid.UUID = Column(UUID, ForeignKey("users.id"))
     image: str = Column(String, nullable=False)
-    config: dict = Column(JSONB, default={})
+    config: Any = Column(JSONB)
     name: str = Column(String)
     description: str = Column(Text)
 
@@ -27,7 +28,7 @@ class Worker(Base, IntegerIDPKMixin, AuditMixin):
     robot_id: int = Column(BigInteger, ForeignKey("robots.id"))
     user_id: uuid.UUID = Column(UUID, ForeignKey("users.id"))
     subaccount_id: int = Column(BigInteger, ForeignKey("subaccounts.id"))
-    config: dict = Column(JSONB, default={})
+    config: Any = Column(JSONB)
     is_enabled: bool = Column(Boolean, default=False)
     container_name: str = Column(String)
 

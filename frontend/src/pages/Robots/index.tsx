@@ -1,4 +1,4 @@
-import { Modal, SimpleGrid, Skeleton } from "@mantine/core";
+import { Modal, SimpleGrid, Skeleton, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,11 @@ const Robots: React.FC = () => {
         </SimpleGrid>
       </Skeleton>
 
-      <Modal opened={opened} onClose={close} title="Добавить нового робота">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Text>Добавить нового робота</Text>}
+      >
         <WorkerForm onSuccess={handleSuccess} robotId={robotId} />
       </Modal>
     </>

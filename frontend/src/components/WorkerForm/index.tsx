@@ -82,7 +82,7 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ robotId, onSuccess }) => {
   }, [rawAccounts]);
 
   return (
-    <Container size="md">
+    <Container size="md" p={0}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing="sm">
           <Controller
