@@ -43,6 +43,11 @@ const Backtest: React.FC = () => {
       getListRobotBacktestsApiV1RobotsRobotIdBacktestsGetQueryKey(Number(tab))
     );
 
+  const handleSuccess = () => {
+    close();
+    handleRefresh();
+  };
+
   return (
     <>
       <Flex
@@ -104,7 +109,7 @@ const Backtest: React.FC = () => {
         </Stack>
       </Flex>
       <Modal opened={opened} onClose={close} title="Начать новое тестирование">
-        <BacktestForm onSuccess={close} onCancel={close} />
+        <BacktestForm onSuccess={handleSuccess} onCancel={close} />
       </Modal>
     </>
   );

@@ -46,9 +46,8 @@ async def list_robots(
 @router.get("/robots/{robot_id}/backtests", response_model=RobotBacktestScheme)
 async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)):
     backtests = robot.backtests
-    avg_yield = (
-        mean([b.relative_yield for b in backtests]) if len(backtests) > 1 else None
-    )
+    vals = [b.relative_yield for b in backtests if b.relative_yield is not None]
+    avg_yield = mean(vals) if len(vals) > 1 else 0
     return {"backtests": robot.backtests, "avg_yield": avg_yield}
 
 
