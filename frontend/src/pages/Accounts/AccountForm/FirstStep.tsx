@@ -13,6 +13,8 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
 
   const { control, setError, getValues } = useForm({
     defaultValues: { token: "", name: "", description: "" },
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const handleCreate = async () => {
@@ -23,7 +25,7 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
       if (error instanceof AxiosError) {
         setError("token", {
           type: "custom",
-          message: error.response?.data.message,
+          message: error.response?.data.message ?? "Введен некорректный токен",
         });
       }
     }
@@ -69,7 +71,7 @@ const FirstStep: React.FC<FirstStepProps> = ({ onSuccess }) => {
       />
       <Center>
         <Button onClick={handleCreate} loading={isLoading}>
-          Next
+          Далее
         </Button>
       </Center>
     </Stack>
