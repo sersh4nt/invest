@@ -22,6 +22,7 @@ services:
     build: ./backend
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    command: bash -c ./cmd/start.sh
     depends_on:
       - db
       - redis
