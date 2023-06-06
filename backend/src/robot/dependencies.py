@@ -30,7 +30,7 @@ async def get_user_worker_by_id(
     if worker is None:
         raise WorkerNotFoundError()
 
-    if worker.user_id != user.id or not user.is_superuser:
+    if worker.user_id != user.id and not user.is_superuser:
         raise PermissionDenied()
 
     return worker
