@@ -4,9 +4,10 @@ from datetime import datetime
 from statistics import mean
 from typing import Annotated, List
 
-import src.robot.service as robot_service
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
+import src.robot.service as robot_service
 from src.common.pagination import Page, PaginationOpts
 from src.db.session import get_async_session
 from src.robot.dependencies import (

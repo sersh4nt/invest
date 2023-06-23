@@ -1,8 +1,9 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 import docker
 import docker.errors
 from docker.models.containers import Container
+
 from src.config import settings
 
 client = docker.DockerClient(settings.DOCKER_URI)

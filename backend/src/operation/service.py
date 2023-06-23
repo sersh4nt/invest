@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient, OrderState, AioRequestError
+from tinkoff.invest import AioRequestError, AsyncClient, OrderState
 
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount

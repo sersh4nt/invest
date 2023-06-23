@@ -42,8 +42,8 @@ const TotalCostStats: React.FC = () => {
         addContent={
           data?.daily_gain != undefined ? (
             <Text>
-              <Text span color={data.daily_gain < 0 ? "red" : "teal"}>
-                {asRuNumber(data.daily_gain)}%
+              <Text span color={data.daily_gain >= 1 ? "teal" : "red"}>
+                {asRuNumber((data.daily_gain - 1) * 100)}%
               </Text>{" "}
               с начала дня
             </Text>

@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ValidationError, validator
+
 from src.backtest.schemas import BacktestRead
 
 

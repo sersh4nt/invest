@@ -10,6 +10,10 @@ def quotation_to_decimal(q: Quotation | MoneyValue) -> Decimal:
     return Decimal(q.units) + Decimal(q.nano) / 1_000_000_000
 
 
+def quotation_to_float(q: Quotation | MoneyValue) -> float:
+    return float(q.units) + float(q.nano) / 1_000_000_000
+
+
 def decimal_to_quotation(d: Decimal, currency: str | None = None) -> Quotation:
     units = int(d)
     nano = int((d - units) * 1_000_000_000)

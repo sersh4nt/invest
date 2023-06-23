@@ -126,4 +126,3 @@ async def update_subaccount(
 async def cancel_all_orders(subaccount: Subaccount):
     async with AsyncClient(subaccount.account.token) as client:
         await client.cancel_all_orders(account_id=subaccount.broker_id)
-    

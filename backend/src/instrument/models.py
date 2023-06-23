@@ -6,6 +6,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
+    Float,
     ForeignKey,
     Integer,
     Numeric,
@@ -13,10 +14,11 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from src.db.base_class import Base
-from src.db.mixins import IntegerIDPKMixin
+from src.db.mixins import AuditMixin, IntegerIDPKMixin
 
 
 class Instrument(Base):
@@ -38,8 +40,6 @@ class Instrument(Base):
         "polymorphic_identity": "instrument",
         "polymorphic_on": "type",
     }
-
-    candles = relationship("Candle")
 
 
 class Currency(Instrument):
@@ -115,14 +115,38 @@ class Option(Instrument):
     __mapper_args__ = {"polymorphic_identity": "option"}
 
 
-class Candle(Base, IntegerIDPKMixin):
-    __tablename__ = "candles"
+class InstrumentMetrics(Base, IntegerIDPKMixin, AuditMixin):
+    __tablename__ = "instrument_metrics"
 
-    instrument_uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"))
-    high: Decimal = Column(Numeric(18, 9))
-    low: Decimal = Column(Numeric(18, 9))
-    open: Decimal = Column(Numeric(18, 9))
-    close: Decimal = Column(Numeric(18, 9))
-    volume: int = Column(Integer)
-    date: datetime = Column(DateTime(timezone=True))
-    resolution: str = Column(String)
+    figi: str = Column(String)
+    volatility: float = Column(Float)
+    buy_volume: float = Column(Float)
+    sell_volume: float = Column(Float)
+    spread: float = Column(Float)
+    last_price: float = Column(Float)
+    relative_price: float = Column(Float)
+    gain: float = Column(Float)
+
+    @hybrid_property
+    def volume(self) -> float:
+        return self.buy_volume + self.sell_volume
+
+    @volume.inplace.expression
+    @classmethod
+    def _volume_expression(cls):
+        return cls.buy_volume + cls.sell_volume
+
+    @hybrid_property
+    def vv(self) -> float:
+        return self.volatility * (self.buy_volume + self.sell_volume)
+
+    @vv.inplace.expression
+    @classmethod
+    def _vv_expression(cls):
+        return cls.volatility * (cls.buy_volume + cls.sell_volume)
+
+    instrument = relationship(
+        "Instrument",
+        primaryjoin="Instrument.figi==InstrumentMetrics.figi",
+        foreign_keys=[figi],
+    )

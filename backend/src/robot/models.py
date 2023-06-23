@@ -1,5 +1,5 @@
-from typing import Any
 import uuid
+from typing import Any
 
 from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
