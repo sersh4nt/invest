@@ -37,6 +37,7 @@ async def get_latest_portfolio(
         )
         .filter(Portfolio.subaccount_id == subaccount.id)
         .order_by(Portfolio.date_added.desc())
+        .limit(1)
     )
     return portfolio.first()
 

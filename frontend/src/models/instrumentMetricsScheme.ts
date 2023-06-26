@@ -8,11 +8,11 @@ import type { InstrumentScheme } from './instrumentScheme';
 
 export interface InstrumentMetricsScheme {
   instrument?: InstrumentScheme;
-  volatility?: number;
-  buy_volume?: number;
-  sell_volume?: number;
-  spread?: number;
-  last_price?: number;
-  relative_price?: number;
-  gain?: number;
+  volatility: number;
+  buy_volume: number;
+  sell_volume: number;
+  spread: number;
+  last_price: number;
+  relative_price: number;
+  gain: number;
 }
