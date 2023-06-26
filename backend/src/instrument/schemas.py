@@ -46,13 +46,13 @@ class InstrumentScheme(BaseModel):
 
 class InstrumentMetricsScheme(BaseModel):
     instrument: InstrumentScheme | None
-    volatility: float | None
-    buy_volume: float | None
-    sell_volume: float | None
-    spread: float | None
-    last_price: float | None
-    relative_price: float | None
-    gain: float | None
+    volatility: float
+    buy_volume: float
+    sell_volume: float
+    spread: float
+    last_price: float
+    relative_price: float
+    gain: float
 
     class Config:
         orm_mode = True

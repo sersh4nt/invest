@@ -9,8 +9,8 @@ const columns = [
   {
     accessorFn: (row: InstrumentMetricsScheme) => (
       <Group spacing="xs">
-        <Avatar src={row.instrument.image_link} radius="xl" size={24} />
-        {row.instrument.name}
+        <Avatar src={row.instrument?.image_link} radius="xl" size={24} />
+        {row.instrument?.name}
       </Group>
     ),
     header: "Инструмент",
@@ -41,7 +41,7 @@ const columns = [
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) =>
-      withCurrency(row.last_price * row.instrument.lot, "rub"),
+      withCurrency(row.last_price * (row.instrument?.lot ?? 1), "rub"),
     id: "last_price",
     header: "Цена",
   },
