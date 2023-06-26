@@ -1,13 +1,40 @@
-import { Card, JsonInput, Skeleton, Stack, Text } from "@mantine/core";
+import { Button, Card, JsonInput, Skeleton, Stack, Text } from "@mantine/core";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useReadWorkerApiV1WorkersWorkerIdGet } from "../../api/robots/robots";
+import {
+  useReadWorkerApiV1WorkersWorkerIdGet,
+  useUpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPut,
+  getReadWorkerApiV1WorkersWorkerIdGetQueryKey,
+} from "../../api/robots/robots";
 import WorkerControls from "./WorkerControls";
+import { useQueryClient } from "react-query";
 
 const WorkerInfo: React.FC = () => {
+  const queryClient = useQueryClient();
   const { workerId } = useParams();
   const { data, isLoading } = useReadWorkerApiV1WorkersWorkerIdGet(
     Number(workerId)
   );
+  const { mutateAsync, isLoading: settingsUpdating } =
+    useUpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPut();
+
+  const [settings, setSettings] = useState<string>(
+    JSON.stringify(data?.config, undefined, 2)
+  );
+
+  const handleSaveSettings = async () => {
+    try {
+      await mutateAsync({
+        workerId: Number(workerId),
+        data: JSON.parse(settings),
+      });
+      queryClient.invalidateQueries(
+        getReadWorkerApiV1WorkersWorkerIdGetQueryKey(Number(workerId))
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Skeleton visible={isLoading}>
@@ -20,7 +47,9 @@ const WorkerInfo: React.FC = () => {
               <Text>Название: {data.robot.name}</Text>
               <JsonInput
                 formatOnBlur
-                defaultValue={JSON.stringify(data.config, null, 2)}
+                defaultValue={JSON.stringify(data.config, undefined, 2)}
+                value={settings}
+                onChange={setSettings}
                 autosize
                 label={
                   <Text fz="md" fw={500}>
@@ -28,6 +57,9 @@ const WorkerInfo: React.FC = () => {
                   </Text>
                 }
               />
+              <Button onClick={handleSaveSettings} loading={settingsUpdating}>
+                Сохранить настройки
+              </Button>
               <Text>Привязан к счету №{data.subaccount_id}</Text>
             </Stack>
           </Card.Section>

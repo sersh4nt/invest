@@ -1,19 +1,18 @@
-import { ActionIcon, Box, Tooltip } from "@mantine/core";
+import { ActionIcon, Avatar, Box, Group, Tooltip } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useEffect, useState } from "react";
 import { useListInstrumentMetricsApiV1InstrumentsMetricsGet } from "../../api/instruments/instruments";
 import { InstrumentMetricsScheme } from "../../models";
 import { asRuNumber, withCurrency } from "../../utils/strings";
 
 const columns = [
   {
-    accessorFn: (row: InstrumentMetricsScheme) => row.instrument.name,
+    accessorFn: (row: InstrumentMetricsScheme) => (
+      <Group spacing="xs">
+        <Avatar src={row.instrument.image_link} radius="xl" size={24} />
+        {row.instrument.name}
+      </Group>
+    ),
     header: "Инструмент",
     id: "instr",
   },
@@ -60,42 +59,8 @@ const columns = [
 ] as MRT_ColumnDef[];
 
 const VolatilityTable: React.FC = () => {
-  const [params, setParams] = useState({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "vv", desc: true },
-  ]);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 15,
-  });
-
-  useEffect(
-    () =>
-      setParams(
-        Object.assign(
-          {},
-          {
-            page: pagination.pageIndex,
-            page_size: pagination.pageSize,
-          },
-          sorting.length > 0 && {
-            order_by: (sorting[0].desc ? "-" : "") + sorting[0].id,
-          },
-          globalFilter && { search: globalFilter },
-          columnFilters &&
-            columnFilters.reduce(
-              (res, item) => ({ ...res, [item.id]: item.value }),
-              {}
-            )
-        )
-      ),
-    [pagination, columnFilters, globalFilter, sorting]
-  );
-
   const { refetch, data, isLoading, isError, isFetching } =
-    useListInstrumentMetricsApiV1InstrumentsMetricsGet(params);
+    useListInstrumentMetricsApiV1InstrumentsMetricsGet();
 
   return (
     <MantineReactTable
@@ -103,27 +68,16 @@ const VolatilityTable: React.FC = () => {
       data={data?.items ?? []}
       state={{
         isLoading,
-        columnFilters,
-        globalFilter,
-        sorting,
-        pagination,
         showAlertBanner: isError,
         showProgressBars: isFetching,
       }}
       initialState={{
         density: "xs",
+        pagination: { pageIndex: 0, pageSize: 15 },
+        sorting: [{ id: "vv", desc: true }],
       }}
-      manualFiltering
-      manualSorting
-      manualPagination
-      onColumnFiltersChange={setColumnFilters}
-      onGlobalFilterChange={setGlobalFilter}
-      onPaginationChange={setPagination}
-      onSortingChange={setSorting}
       mantineTableProps={{ striped: true }}
       mantineTableHeadCellProps={{ sx: { padding: 0 } }}
-      pageCount={data?.count ? Math.ceil(data.count / pagination.pageSize) : 1}
-      rowCount={data?.count ?? 0}
       renderTopToolbarCustomActions={() => {
         return (
           <Box sx={{ display: "flex", gap: "8px" }}>

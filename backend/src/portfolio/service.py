@@ -10,6 +10,20 @@ from src.account.models import Subaccount
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
 
 
+async def get_latest_portfolio_cost(
+    session: AsyncSession, *, subaccount: Subaccount, currency: str = "rub"
+) -> Decimal | None:
+    cost = await session.scalars(
+        select(PortfolioCost.value)
+        .join(Portfolio)
+        .filter(
+            Portfolio.subaccount_id == subaccount.id, PortfolioCost.currency == currency
+        )
+        .order_by(Portfolio.date_added.desc())
+    )
+    return cost.first()
+
+
 async def get_latest_portfolio(
     session: AsyncSession, *, subaccount: Subaccount
 ) -> Portfolio | None:
@@ -60,9 +74,8 @@ async def get_portfolio_cost(
 async def get_portfolio_cost_stat(
     session: AsyncSession, *, subaccount: Subaccount
 ) -> dict:
-    last_portfolio = await get_latest_portfolio(session, subaccount=subaccount)
+    last_cost = await get_latest_portfolio_cost(session, subaccount=subaccount)
     cost = await get_portfolio_cost(session, subaccount=subaccount, range="today")
-    if last_portfolio is None or len(cost) == 0:
+    if last_cost is None:
         return {"cost": 0, "daily_gain": 0}
-    current_cost = last_portfolio.cost[0].value
-    return {"cost": current_cost, "daily_gain": current_cost / cost[0][0]}
+    return {"cost": last_cost, "daily_gain": last_cost / cost[0][0]}

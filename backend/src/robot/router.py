@@ -2,9 +2,9 @@ import asyncio
 from collections import Counter
 from datetime import datetime
 from statistics import mean
-from typing import Annotated, List
+from typing import Annotated, Any, List
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.robot.service as robot_service
@@ -89,6 +89,26 @@ async def get_active_workers_count(workers: List[Worker] = Depends(get_user_work
 @router.get("/workers/{worker_id}", response_model=WorkerScheme)
 async def read_worker(worker: Worker = Depends(get_user_worker_by_id)):
     return worker
+
+
+@router.delete("/workers/{worker_id}", response_model=WorkerScheme)
+async def delete_worker(
+    worker: Worker = Depends(get_user_worker_by_id),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return await robot_service.delete_worker(session, worker=worker)
+
+
+@router.put("/workers/{worker_id}/settings", response_model=WorkerScheme)
+async def update_worker_settings(
+    config: Any = Body(...),
+    worker: Worker = Depends(get_user_worker_by_id),
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(get_current_user),
+):
+    return await robot_service.update_worker_config(
+        session, user=user, worker=worker, config=config
+    )
 
 
 @router.get("/workers/{worker_id}/status", response_model=str)

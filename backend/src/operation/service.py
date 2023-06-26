@@ -97,7 +97,7 @@ async def get_portfolio_revenue(
         )
     )
 
-    portfolio = await portfolio_service.get_latest_portfolio(
+    last_cost = await portfolio_service.get_latest_portfolio_cost(
         session, subaccount=subaccount
     )
 
@@ -111,8 +111,8 @@ async def get_portfolio_revenue(
     revenue = revenue or 0
     daily_volume = daily_volume or 0
 
-    if portfolio is not None:
-        revenue += portfolio.cost[0].value
+    if last_cost is not None:
+        revenue += last_cost
 
     return {"daily_volume": daily_volume, "profit": revenue}
 

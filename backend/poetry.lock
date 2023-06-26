@@ -687,6 +687,21 @@ doc = ["mdx-include (>=1.4.1,<2.0.0)", "mkdocs (>=1.1.2,<2.0.0)", "mkdocs-markdo
 test = ["anyio[trio] (>=3.2.1,<4.0.0)", "black (==23.1.0)", "coverage[toml] (>=6.5.0,<8.0)", "databases[sqlite] (>=0.3.2,<0.7.0)", "email-validator (>=1.1.1,<2.0.0)", "flask (>=1.1.2,<3.0.0)", "httpx (>=0.23.0,<0.24.0)", "isort (>=5.0.6,<6.0.0)", "mypy (==0.982)", "orjson (>=3.2.1,<4.0.0)", "passlib[bcrypt] (>=1.7.2,<2.0.0)", "peewee (>=3.13.3,<4.0.0)", "pytest (>=7.1.3,<8.0.0)", "python-jose[cryptography] (>=3.3.0,<4.0.0)", "python-multipart (>=0.0.5,<0.0.7)", "pyyaml (>=5.3.1,<7.0.0)", "ruff (==0.0.138)", "sqlalchemy (>=1.3.18,<1.4.43)", "types-orjson (==3.6.2)", "types-ujson (==5.7.0.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0,<6.0.0)"]
 
 [[package]]
+name = "fastapi-cprofile"
+version = "0.0.2"
+description = "A FastAPI Middleware with cProfile to stats your service performance."
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fastapi_cprofile-0.0.2-py3-none-any.whl", hash = "sha256:dc2709c54a9503915d7f1fa9a81c38c9405762440421a22d131d78c3461cdb08"},
+    {file = "fastapi_cprofile-0.0.2.tar.gz", hash = "sha256:af929b6c48add45b36c68a22efc1b699f86317e7d3d52623d52589228a764d5e"},
+]
+
+[package.dependencies]
+fastapi = "*"
+
+[[package]]
 name = "fastapi-filter"
 version = "0.6.0"
 description = "FastAPI filter"
@@ -750,6 +765,18 @@ files = [
 [package.dependencies]
 fastapi-users = ">=10.0.0"
 sqlalchemy = {version = ">=2.0.0,<2.1.0", extras = ["asyncio"]}
+
+[[package]]
+name = "gprof2dot"
+version = "2022.7.29"
+description = "Generate a dot graph from the output of several profilers."
+category = "dev"
+optional = false
+python-versions = ">=2.7"
+files = [
+    {file = "gprof2dot-2022.7.29-py2.py3-none-any.whl", hash = "sha256:f165b3851d3c52ee4915eb1bd6cca571e5759823c2cd0f71a79bda93c2dc85d6"},
+    {file = "gprof2dot-2022.7.29.tar.gz", hash = "sha256:45b4d298bd36608fccf9511c3fd88a773f7a1abc04d6cd39445b11ba43133ec5"},
+]
 
 [[package]]
 name = "greenlet"
@@ -1824,4 +1851,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "40261a29f1af08329b46b271a7028ec226c6166e50fbeaa5c61940150863a8c7"
+content-hash = "e6cfc2e955616279873338cd9aacb7352a015aa3f333e13d109709627d64bbf8"

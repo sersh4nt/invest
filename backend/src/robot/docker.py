@@ -18,6 +18,19 @@ def get_container_by_name(container: str) -> Container | None:
         return None
 
 
+def remove_container(container: str | Container, force: bool = False) -> bool:
+    if isinstance(container, str):
+        container = get_container_by_name(container)
+    if container is None:
+        return True
+    try:
+        container.remove(force=force)
+        return True
+    except docker.errors.APIError as e:
+        print(e)
+        return False
+
+
 def create_container(image: str, name: str, env: dict, *args, **kwargs) -> Container:
     return client.containers.create(
         image, name=name, environment=env, detach=True, *args, **kwargs

@@ -29,16 +29,16 @@ services:
   redis:
     image: redis:7-alpine
 
-  celery-worker:
-    build: .
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - backtest-results:/src/backtest-results
-    env_file:
-      - .env
-    command: celery -A src.worker worker -l info -E -B
-    depends_on:
-      - redis
+  # celery-worker:
+  #   build: .
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - backtest-results:/src/backtest-results
+  #   env_file:
+  #     - .env
+  #   command: celery -A src.worker worker -l info -E -B
+  #   depends_on:
+  #     - redis
 
 volumes:
   # db-data:

@@ -5,7 +5,6 @@ import WorkerLogs from "./WorkerLogs";
 
 const WorkerDetailed: React.FC = () => {
   const matches = useMediaQuery("(min-width: 65em)");
-  console.log(matches);
 
   return (
     <Flex direction={matches ? "row" : "column"} gap="md" h="100%">
