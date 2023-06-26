@@ -1,6 +1,7 @@
 from celery import Celery, chain, group
 from celery.schedules import crontab
 from sqlalchemy import select
+from tinkoff.invest import AioRequestError, Client, InstrumentStatus
 
 from src.account.models import Subaccount
 from src.backtest.flows import BackTestStrategyFlow
@@ -12,6 +13,7 @@ from src.instrument.flows import (
     UpdateCurrenciesFlow,
     UpdateETFSFlow,
     UpdateFuturesFlow,
+    UpdateInstrumentMetrics,
     UpdateOptionsFlow,
     UpdateSharesFlow,
 )
@@ -24,7 +26,8 @@ celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender: Celery, **kwargs):
     sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
-    sender.add_periodic_task(crontab("*"), store_operations.s())
+    sender.add_periodic_task(crontab(), store_operations.s())
+    sender.add_periodic_task(crontab("0", "12"), update_instruments_metrics.s())
 
 
 @celery.task
@@ -112,3 +115,41 @@ def update_shares(*args, **kwargs):
 def backtest_strategy(data: dict, user_id: str, strategy_name: str, *args, **kwargs):
     flow = BackTestStrategyFlow(data, user_id, strategy_name)
     flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_instrument_metrics(figi: str, *args, **kwargs):
+    flow = UpdateInstrumentMetrics(figi, *args, **kwargs)
+    flow.run(*args, **kwargs)
+
+
+@celery.task
+def update_instruments_metrics(*args, **kwargs):
+    options = [
+        ("grpc.max_send_message_length", 512 * 1024 * 1024),
+        ("grpc.max_receive_message_length", 512 * 1024 * 1024),
+    ]
+
+    with Client(settings.TINKOFF_TOKEN, options=options) as client:
+        try:
+            instruments = client.instruments.shares(
+                instrument_status=InstrumentStatus.INSTRUMENT_STATUS_ALL
+            )
+        except AioRequestError as e:
+            print(e)
+            instruments = []
+
+    instruments = [
+        i
+        for i in getattr(instruments, "instruments", [])
+        if i.api_trade_available_flag
+        and i.buy_available_flag
+        and i.sell_available_flag
+        and i.currency == "rub"
+    ]
+
+    for i, instrument in enumerate(instruments):
+        # applying for 3 jobs per minute to fit rmp eliminations
+        update_instrument_metrics.apply_async(
+            args=[instrument.figi], countdown=(i // 3) * 60
+        )

@@ -16,7 +16,9 @@ import type {
 import type {
   PageInstrumentScheme,
   HTTPValidationError,
-  ListInstrumentsApiV1InstrumentsGetParams
+  ListInstrumentsApiV1InstrumentsGetParams,
+  PageInstrumentMetricsScheme,
+  ListInstrumentMetricsApiV1InstrumentsMetricsGetParams
 } from '../../models'
 import { customInstance } from '.././axios'
 import type { ErrorType } from '.././axios'
@@ -69,6 +71,47 @@ export const useListInstrumentsApiV1InstrumentsGet = <TData = Awaited<ReturnType
   const queryFn: QueryFunction<Awaited<ReturnType<typeof listInstrumentsApiV1InstrumentsGet>>> = ({ signal }) => listInstrumentsApiV1InstrumentsGet(params, requestOptions, signal);
 
   const query = useQuery<Awaited<ReturnType<typeof listInstrumentsApiV1InstrumentsGet>>, TError, TData>(queryKey, queryFn, queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary List Instrument Metrics
+ */
+export const listInstrumentMetricsApiV1InstrumentsMetricsGet = (
+    params?: ListInstrumentMetricsApiV1InstrumentsMetricsGetParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<PageInstrumentMetricsScheme>(
+      {url: `/api/v1/instruments/metrics`, method: 'get',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getListInstrumentMetricsApiV1InstrumentsMetricsGetQueryKey = (params?: ListInstrumentMetricsApiV1InstrumentsMetricsGetParams,) => [`/api/v1/instruments/metrics`, ...(params ? [params]: [])];
+
+    
+export type ListInstrumentMetricsApiV1InstrumentsMetricsGetQueryResult = NonNullable<Awaited<ReturnType<typeof listInstrumentMetricsApiV1InstrumentsMetricsGet>>>
+export type ListInstrumentMetricsApiV1InstrumentsMetricsGetQueryError = ErrorType<HTTPValidationError>
+
+export const useListInstrumentMetricsApiV1InstrumentsMetricsGet = <TData = Awaited<ReturnType<typeof listInstrumentMetricsApiV1InstrumentsMetricsGet>>, TError = ErrorType<HTTPValidationError>>(
+ params?: ListInstrumentMetricsApiV1InstrumentsMetricsGetParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listInstrumentMetricsApiV1InstrumentsMetricsGet>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListInstrumentMetricsApiV1InstrumentsMetricsGetQueryKey(params);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listInstrumentMetricsApiV1InstrumentsMetricsGet>>> = ({ signal }) => listInstrumentMetricsApiV1InstrumentsMetricsGet(params, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof listInstrumentMetricsApiV1InstrumentsMetricsGet>>, TError, TData>(queryKey, queryFn, queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   query.queryKey = queryKey;
 

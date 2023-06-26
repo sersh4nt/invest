@@ -113,3 +113,5 @@ class StoreSubaccountOperationsFlow:
                 prev_cursor = response.next_cursor
                 if not response.has_next:
                     break
+
+        session.close()

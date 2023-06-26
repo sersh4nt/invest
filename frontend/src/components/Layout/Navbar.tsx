@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { mainRoutes } from "../../data/routes";
 import useAuth from "../../hooks/useAuth";
+import { useQueryClient } from "react-query";
 
 interface NavbarProps {
   opened: boolean;
@@ -86,6 +87,7 @@ const useStyles = createStyles((theme) => ({
 const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { logout } = useAuth();
 
@@ -115,7 +117,10 @@ const Navbar: React.FC<NavbarProps> = ({ opened, setOpened }) => {
     </a>
   ));
 
-  const handleLogout = () => logout();
+  const handleLogout = () => {
+    logout();
+    queryClient.invalidateQueries();
+  };
 
   return (
     <MantiveNavbar

@@ -2,16 +2,19 @@ import json
 import uuid
 from copy import deepcopy
 from datetime import datetime
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
-import src.account.service as account_service
-import src.robot.docker as docker_service
 from dateutil import parser
 from docker.errors import APIError, ImageNotFound
+from docker.models.containers import Container
 from fastapi.concurrency import run_in_threadpool
 from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
+import src.account.service as account_service
+import src.robot.docker as docker_service
+from src.account.models import Subaccount
 from src.backtest.models import BacktestResult
 from src.common.pagination import PaginationOpts
 from src.common.utils import paginate_stmt
@@ -80,34 +83,36 @@ async def list_workers(
     return results.all(), count
 
 
-async def create_worker(
-    session: AsyncSession, *, data: WorkerCreate, user: User
-) -> Tuple[Worker, str]:
-    subaccount = await account_service.get_subaccount_by_id(
-        session, subaccount_id=data.subaccount_id
-    )
-    if subaccount is None:
-        raise SubaccountNotFoundError()
-
-    robot = await get_robot_by_id(session, robot_id=data.robot_id)
-    if robot is None:
-        raise RobotNotFoundError()
-
-    instruments_cfg = []
-    for cfg in data.config:
-        local_config = deepcopy(cfg)
-        figi = local_config.pop("figi", None)
+def create_worker_env(configs: list[Any], strategy_name: str) -> list[Any]:
+    result = []
+    for config in configs:
+        current = deepcopy(config)
+        figi = current.pop("figi", None)
         if figi is None:
             continue
-        instruments_cfg.append(
-            {"figi": figi, "strategy": {"name": robot.name, "parameters": local_config}}
+        result.append(
+            {"figi": figi, "strategy": {"name": strategy_name, "parameters": current}}
         )
+    return result
 
-    env = {
-        "INSTRUMENTS": json.dumps(instruments_cfg),
-        "ACCOUNT_ID": subaccount.broker_id,
-        "TOKEN": subaccount.account.token,
+
+def create_container_env(
+    broker_id: str, token: str, configs: list[Any], strategy_name: str
+) -> dict:
+    return {
+        "INSTRUMENTS": json.dumps(create_worker_env(configs, strategy_name)),
+        "ACCOUNT_ID": broker_id,
+        "TOKEN": token,
     }
+
+
+async def create_worker_from_robot(
+    user: User, robot: Robot, subaccount: Subaccount, config: Any
+) -> tuple[str, Container]:
+    "returns status and container name"
+    env = create_container_env(
+        subaccount.broker_id, subaccount.account.token, config, robot.name
+    )
     image = robot.image
     name = f"user_{str(user.id)}_worker_{str(uuid.uuid4())}"
 
@@ -125,6 +130,26 @@ async def create_worker(
         print("Got error during creating container")
         print(e)
 
+    return status, container
+
+
+async def create_worker(
+    session: AsyncSession, *, data: WorkerCreate, user: User
+) -> Tuple[Worker, str]:
+    subaccount = await account_service.get_subaccount_by_id(
+        session, subaccount_id=data.subaccount_id
+    )
+    if subaccount is None:
+        raise SubaccountNotFoundError()
+
+    robot = await get_robot_by_id(session, robot_id=data.robot_id)
+    if robot is None:
+        raise RobotNotFoundError()
+
+    status, container = await create_worker_from_robot(
+        user, robot, subaccount, data.config
+    )
+
     if data.is_enabled:
         try:
             status = await run_in_threadpool(docker_service.start_container, container)
@@ -137,7 +162,7 @@ async def create_worker(
         subaccount=subaccount,
         config=data.config,
         is_enabled=data.is_enabled,
-        container_name=name,
+        container_name=container.name,
     )
     session.add(worker)
     await session.commit()
@@ -179,3 +204,39 @@ async def restart_worker(worker: Worker):
         docker_service.restart_worker, worker.container_name
     )
     return status
+
+
+async def delete_worker(session: AsyncSession, *, worker: Worker):
+    await run_in_threadpool(docker_service.remove_container, worker.container_name)
+    await session.delete(worker)
+    await session.commit()
+    return worker
+
+
+async def update_worker_config(
+    session: AsyncSession, *, user: User, worker: Worker, config: Any
+):
+    subaccount = await account_service.get_subaccount_by_id(
+        session, subaccount_id=worker.subaccount_id
+    )
+    if subaccount is None:
+        raise SubaccountNotFoundError()
+
+    robot = await get_robot_by_id(session, robot_id=worker.robot_id)
+    if robot is None:
+        raise RobotNotFoundError()
+
+    status = await run_in_threadpool(docker_service.get_status, worker.container_name)
+
+    await run_in_threadpool(docker_service.remove_container, worker.container_name)
+
+    _, container = await create_worker_from_robot(user, robot, subaccount, config)
+    worker.container_name = container.name
+    worker.config = config
+    session.add(worker)
+    await session.commit()
+    await session.refresh(worker)
+
+    if status == "RUNNING":
+        await run_in_threadpool(docker_service.start_container, container.name)
+    return worker

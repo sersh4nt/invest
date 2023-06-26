@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AsyncClient, OrderState, AioRequestError
+from tinkoff.invest import AioRequestError, AsyncClient, OrderState
 
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
@@ -97,7 +97,7 @@ async def get_portfolio_revenue(
         )
     )
 
-    portfolio = await portfolio_service.get_latest_portfolio(
+    last_cost = await portfolio_service.get_latest_portfolio_cost(
         session, subaccount=subaccount
     )
 
@@ -111,8 +111,8 @@ async def get_portfolio_revenue(
     revenue = revenue or 0
     daily_volume = daily_volume or 0
 
-    if portfolio is not None:
-        revenue += portfolio.cost[0].value
+    if last_cost is not None:
+        revenue += last_cost
 
     return {"daily_volume": daily_volume, "profit": revenue}
 

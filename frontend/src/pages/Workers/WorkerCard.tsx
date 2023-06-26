@@ -1,6 +1,11 @@
 import { ActionIcon, Badge, Card, Group, Text, Tooltip } from "@mantine/core";
-import { IconCircleArrowUpRight } from "@tabler/icons-react";
+import { IconCircleArrowUpRight, IconTrash } from "@tabler/icons-react";
+import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
+import {
+  useDeleteWorkerApiV1WorkersWorkerIdDelete,
+  getListWorkersApiV1WorkersGetQueryKey,
+} from "../../api/robots/robots";
 import { WorkerScheme } from "../../models";
 
 interface WorkerCardProps {
@@ -9,15 +14,27 @@ interface WorkerCardProps {
 
 const WorkerCard: React.FC<WorkerCardProps> = ({ worker }) => {
   const naviagate = useNavigate();
+  const { mutateAsync, isLoading } =
+    useDeleteWorkerApiV1WorkersWorkerIdDelete();
+  const queryClient = useQueryClient();
 
   const handleNavigate = () => naviagate(`/workers/${worker.id}`);
+
+  const handleDelete = async () => {
+    try {
+      await mutateAsync({ workerId: worker.id });
+      queryClient.invalidateQueries(getListWorkersApiV1WorkersGetQueryKey());
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Card padding="md" withBorder>
       <Card.Section withBorder p="md">
         <Group position="apart">
           <Text>Робот №{worker.id}</Text>
-          <Group>
+          <Group spacing="xs">
             {worker.status && (
               <Badge
                 variant="outline"
@@ -35,6 +52,15 @@ const WorkerCard: React.FC<WorkerCardProps> = ({ worker }) => {
             <Tooltip label="Посмотреть детали" withArrow>
               <ActionIcon onClick={handleNavigate}>
                 <IconCircleArrowUpRight />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Удалить робота" withArrow>
+              <ActionIcon
+                onClick={handleDelete}
+                color="red"
+                loading={isLoading}
+              >
+                <IconTrash />
               </ActionIcon>
             </Tooltip>
           </Group>

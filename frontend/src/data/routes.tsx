@@ -1,10 +1,11 @@
 import {
   IconBriefcase,
   IconColumns,
+  IconHistory,
   IconRobot,
   IconSettings2,
+  IconTable,
   IconUserCircle,
-  IconHistory,
 } from "@tabler/icons-react";
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
@@ -23,6 +24,7 @@ const Robots = lazy(() => import("../pages/Robots"));
 const WorkerDetailed = lazy(() => import("../pages/WorkerDetailed"));
 const Backtest = lazy(() => import("../pages/Backtest"));
 const RobotBacktest = lazy(() => import("../pages/Backtest/RobotBacktest"));
+const Metrics = lazy(() => import("../pages/Metrcis"));
 
 export const mainRoutes = [
   {
@@ -66,6 +68,12 @@ export const mainRoutes = [
         element: <RobotBacktest />,
       },
     ],
+  },
+  {
+    path: "/metrics",
+    label: "Метрики инструментов",
+    icon: IconTable,
+    element: <Metrics />,
   },
 ];
 

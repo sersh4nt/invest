@@ -1,18 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - db-data:/var/lib/postgresql/data/pgdata
-    env_file:
-      - ./backend/.env
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -24,7 +12,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: bash -c ./cmd/start.sh
     depends_on:
-      - db
       - redis
     env_file:
       - ./backend/.env
@@ -42,7 +29,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - backtest-results:/src/backtest-results
     depends_on:
-      - db
       - redis
     restart: unless-stopped
 
@@ -58,8 +44,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  db-data:
-    driver: local
-
   backtest-results:
     external: true

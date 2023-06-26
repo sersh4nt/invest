@@ -1,8 +1,9 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 import docker
 import docker.errors
 from docker.models.containers import Container
+
 from src.config import settings
 
 client = docker.DockerClient(settings.DOCKER_URI)
@@ -15,6 +16,19 @@ def get_container_by_name(container: str) -> Container | None:
         return None
     except docker.errors.APIError:
         return None
+
+
+def remove_container(container: str | Container, force: bool = False) -> bool:
+    if isinstance(container, str):
+        container = get_container_by_name(container)
+    if container is None:
+        return True
+    try:
+        container.remove(force=force)
+        return True
+    except docker.errors.APIError as e:
+        print(e)
+        return False
 
 
 def create_container(image: str, name: str, env: dict, *args, **kwargs) -> Container:

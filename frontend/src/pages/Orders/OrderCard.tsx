@@ -64,8 +64,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
           style={{ flex: "1 0 0", width: "calc(100% - 46px)" }}
         >
           <Flex justify="space-between" direction="row-reverse" w="100%">
-            <Text color={data.price > 0 ? "teal" : "inherit"}>
-              {withCurrency(data.price, data.instrument.currency)}
+            <Text color={data.direction == "SELL" ? "teal" : "inherit"}>
+              {withCurrency(data.direction == "SELL" ? data.price : -data.price, data.instrument.currency)}
             </Text>
             <Text truncate fw={500}>
               {data.instrument.ticker}

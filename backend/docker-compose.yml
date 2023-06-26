@@ -1,16 +1,16 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - db-data:/var/lib/postgresql/data/pgdata
-    env_file:
-      - .env
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
+  # db:
+  #   image: postgres:15-alpine
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data/pgdata
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - PGDATA=/var/lib/postgresql/data/pgdata
+  #   ports:
+  #     - "5432:5432"
 
   app:
     container_name: invest-api
@@ -19,7 +19,6 @@ services:
       - backtest-results:/src/backtest-results
       - ./:/src
     depends_on:
-      - db
       - redis
     env_file:
       - .env
@@ -30,21 +29,20 @@ services:
   redis:
     image: redis:7-alpine
 
-  celery-worker:
-    build: .
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - backtest-results:/src/backtest-results
-    env_file:
-      - .env
-    command: celery -A src.worker worker -l info -E -B
-    depends_on:
-      - db
-      - redis
+  # celery-worker:
+  #   build: .
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - backtest-results:/src/backtest-results
+  #   env_file:
+  #     - .env
+  #   command: celery -A src.worker worker -l info -E -B
+  #   depends_on:
+  #     - redis
 
 volumes:
-  db-data:
-    driver: "local"
+  # db-data:
+  #   driver: "local"
 
   backtest-results:
     driver: "local"

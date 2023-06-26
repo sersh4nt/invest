@@ -285,6 +285,79 @@ export const useReadWorkerApiV1WorkersWorkerIdGet = <TData = Awaited<ReturnType<
 }
 
 /**
+ * @summary Delete Worker
+ */
+export const deleteWorkerApiV1WorkersWorkerIdDelete = (
+    workerId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<WorkerScheme>(
+      {url: `/api/v1/workers/${workerId}`, method: 'delete'
+    },
+      options);
+    }
+  
+
+
+    export type DeleteWorkerApiV1WorkersWorkerIdDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWorkerApiV1WorkersWorkerIdDelete>>>
+    
+    export type DeleteWorkerApiV1WorkersWorkerIdDeleteMutationError = ErrorType<HTTPValidationError>
+
+    export const useDeleteWorkerApiV1WorkersWorkerIdDelete = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorkerApiV1WorkersWorkerIdDelete>>, TError,{workerId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteWorkerApiV1WorkersWorkerIdDelete>>, {workerId: number}> = (props) => {
+          const {workerId} = props ?? {};
+
+          return  deleteWorkerApiV1WorkersWorkerIdDelete(workerId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof deleteWorkerApiV1WorkersWorkerIdDelete>>, TError, {workerId: number}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
+ * @summary Update Worker Settings
+ */
+export const updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut = (
+    workerId: number,
+    updateWorkerSettingsApiV1WorkersWorkerIdSettingsPutBody: unknown,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<WorkerScheme>(
+      {url: `/api/v1/workers/${workerId}/settings`, method: 'put',
+      headers: {'Content-Type': 'application/json', },
+      data: updateWorkerSettingsApiV1WorkersWorkerIdSettingsPutBody
+    },
+      options);
+    }
+  
+
+
+    export type UpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPutMutationResult = NonNullable<Awaited<ReturnType<typeof updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut>>>
+    export type UpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPutMutationBody = unknown
+    export type UpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPutMutationError = ErrorType<HTTPValidationError>
+
+    export const useUpdateWorkerSettingsApiV1WorkersWorkerIdSettingsPut = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut>>, TError,{workerId: number;data: unknown}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut>>, {workerId: number;data: unknown}> = (props) => {
+          const {workerId,data} = props ?? {};
+
+          return  updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut(workerId,data,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof updateWorkerSettingsApiV1WorkersWorkerIdSettingsPut>>, TError, {workerId: number;data: unknown}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
  * @summary Get Worker Status
  */
 export const getWorkerStatusApiV1WorkersWorkerIdStatusGet = (
