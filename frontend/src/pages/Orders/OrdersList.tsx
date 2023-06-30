@@ -1,35 +1,23 @@
-import {
-  Text,
-  Group,
-  Stack,
-  ActionIcon,
-  Divider,
-  Center,
-  Skeleton,
-} from "@mantine/core";
+import { ActionIcon, Center, Divider, Group, Stack, Text } from "@mantine/core";
 import { IconRefresh, IconTrash } from "@tabler/icons-react";
+import { useQueryClient } from "react-query";
+import { useCancelAllOrdersApiV1SubaccountsSubaccountIdPost } from "../../api/accounts/accounts";
 import {
-  useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet,
   getListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGetQueryKey,
+  useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet,
 } from "../../api/operations/operations";
 import useSubaccount from "../../hooks/useSubaccount";
 import OrderCard from "./OrderCard";
-import { useCancelAllOrdersApiV1SubaccountsSubaccountIdPost } from "../../api/accounts/accounts";
-import { useQueryClient } from "react-query";
 
 const OrdersList: React.FC = () => {
   const client = useQueryClient();
   const { subaccount } = useSubaccount();
 
-  const {
-    data,
-    isFetching,
-    refetch,
-    isLoading: ordersLoading,
-  } = useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet(
-    Number(subaccount),
-    { query: { refetchInterval: 10000 } }
-  );
+  const { data, isFetching, refetch } =
+    useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet(
+      Number(subaccount),
+      { query: { refetchInterval: 10000 } }
+    );
 
   const { mutateAsync, isLoading } =
     useCancelAllOrdersApiV1SubaccountsSubaccountIdPost();
@@ -63,17 +51,15 @@ const OrdersList: React.FC = () => {
         </Group>
       </Group>
       <Divider m={0} mb="xs" />
-      <Skeleton visible={ordersLoading}>
-        <Stack spacing="xs" style={{ flex: "1 1 0", overflowY: "auto" }}>
-          {data && data?.length > 0 ? (
-            data.map((item, key) => <OrderCard data={item} key={key} />)
-          ) : (
-            <Center my="auto">
-              <Text>Нет ни одной активной заявки</Text>
-            </Center>
-          )}
-        </Stack>
-      </Skeleton>
+      <Stack spacing="xs" style={{ flex: "1 1 0", overflowY: "auto" }}>
+        {data && data?.length > 0 ? (
+          data.map((item, key) => <OrderCard data={item} key={key} />)
+        ) : (
+          <Center my="auto">
+            <Text>Нет ни одной активной заявки</Text>
+          </Center>
+        )}
+      </Stack>
     </Stack>
   );
 };

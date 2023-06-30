@@ -23,6 +23,9 @@ def remove_container(container: str | Container, force: bool = False) -> bool:
         container = get_container_by_name(container)
     if container is None:
         return True
+    status = get_status(container)
+    if status.capitalize() == "RUNNING":
+        stop_worker(container)
     try:
         container.remove(force=force)
         return True

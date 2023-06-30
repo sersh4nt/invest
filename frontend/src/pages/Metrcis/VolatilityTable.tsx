@@ -21,12 +21,14 @@ const columns = [
       asRuNumber(row.volatility / 1000),
     header: "Волатильность",
     id: "volatility",
+    maxSize: 50,
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) =>
       asRuNumber(row.buy_volume + row.sell_volume),
     header: "Объем",
     id: "volume",
+    maxSize: 50,
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) =>
@@ -38,23 +40,27 @@ const columns = [
     accessorFn: (row: InstrumentMetricsScheme) => asRuNumber(row.spread),
     id: "spread",
     header: "Спред",
+    maxSize: 50,
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) =>
       withCurrency(row.last_price * (row.instrument?.lot ?? 1), "rub"),
     id: "last_price",
     header: "Цена",
+    maxSize: 50,
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) =>
       asRuNumber(row.relative_price),
     id: "relative_price",
     header: "Относительная цена",
+
   },
   {
     accessorFn: (row: InstrumentMetricsScheme) => asRuNumber(row.gain),
     id: "gain",
     header: "Прирост, %",
+    maxSize: 50,
   },
 ] as MRT_ColumnDef[];
 

@@ -22,12 +22,13 @@ class StoreSubaccountOperationsFlow:
         self.subaccount_id = subaccount_id
 
     def _get_last_operation_date(self, session: Session) -> datetime | None:
-        stmt = (
-            select(Operation.date)
-            .filter(Operation.subaccount_id == self.subaccount_id)
-            .order_by(Operation.date.desc())
-        )
-        return session.scalars(stmt).first()
+        # stmt = (
+        #     select(Operation.date)
+        #     .filter(Operation.subaccount_id == self.subaccount_id)
+        #     .order_by(Operation.date.desc())
+        # )
+        # return session.scalars(stmt).first()
+        return datetime.today()
 
     def _insert_operations_by_batch(
         self, *, session: Session, operations: List[OperationItem]
