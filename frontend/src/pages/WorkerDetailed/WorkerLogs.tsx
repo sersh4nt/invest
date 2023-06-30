@@ -137,7 +137,7 @@ const WorkerLogs: React.FC = () => {
             )}
           </div> */}
           <AutoSizer>
-            {({ width, height }) => (
+            {({ width, height }: { width: number; height: number }) => (
               <List
                 ref={listRef}
                 width={width}
