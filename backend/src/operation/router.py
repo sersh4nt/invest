@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.account.service as account_service
@@ -10,6 +10,7 @@ from src.account.dependencies import get_user_subaccount
 from src.account.models import Subaccount
 from src.common.exceptions import BadRequest
 from src.common.pagination import Page, PaginationOpts
+from src.common.schemas import DefaultResponse
 from src.common.utils import quotation_to_decimal
 from src.db.session import get_async_session
 from src.operation.schemas import (
@@ -17,6 +18,7 @@ from src.operation.schemas import (
     CancelOrderScheme,
     OperationScheme,
     OperationStats,
+    OrderCreate,
     RevenueStats,
 )
 
@@ -68,6 +70,21 @@ async def list_active_orders(
         }
         for order in orders
     ]
+
+
+@router.post(
+    "/subaccounts/{subaccount_id}/active-orders", response_model=DefaultResponse
+)
+async def create_order(
+    data: OrderCreate,
+    subaccount: Subaccount = Depends(get_user_subaccount),
+):
+    status, msg = await operations_service.create_order(
+        subaccount=subaccount, data=data
+    )
+    if not status:
+        raise HTTPException(status_code=400, detail=msg)
+    return {"status": status, "msg": msg}
 
 
 @router.get(

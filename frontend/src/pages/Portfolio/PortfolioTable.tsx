@@ -1,4 +1,13 @@
-import { Avatar, Group, Paper, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Avatar,
+  Box,
+  Group,
+  Paper,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { IconRefresh } from "@tabler/icons-react";
 import { MRT_ColumnDef, MRT_Row, MantineReactTable } from "mantine-react-table";
 import { useEffect, useState } from "react";
 import { useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet } from "../../api/portfolio/portfolio";
@@ -86,7 +95,7 @@ const PortfolioTable: React.FC = () => {
 
   const [rows, setRows] = useState<PortfolioPositionScheme[]>([]);
 
-  const { data, isLoading } =
+  const { data, isFetching, refetch } =
     useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet(
       Number(subaccount)
     );
@@ -104,8 +113,17 @@ const PortfolioTable: React.FC = () => {
       <MantineReactTable
         columns={columns}
         data={rows}
-        state={{ isLoading }}
+        state={{ isLoading: isFetching }}
         initialState={{ density: "xs", sorting: [{ id: "yield", desc: true }] }}
+        renderTopToolbarCustomActions={() => (
+          <Box sx={{ display: "flex", gap: "8px" }}>
+            <Tooltip withArrow position="right" label="Обновить данные">
+              <ActionIcon onClick={() => refetch()}>
+                <IconRefresh />
+              </ActionIcon>
+            </Tooltip>
+          </Box>
+        )}
       />
     </Paper>
   );

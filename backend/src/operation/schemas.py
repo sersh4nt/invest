@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel
 
@@ -56,3 +56,11 @@ class RevenueStats(BaseModel):
 class CancelOrderScheme(BaseModel):
     subaccount_id: int
     order_id: str
+
+
+class OrderCreate(BaseModel):
+    figi: str
+    quantity: int
+    price: str | None
+    is_limit: bool
+    type: Literal["buy", "sell"]
