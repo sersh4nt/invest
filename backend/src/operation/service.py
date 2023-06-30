@@ -1,17 +1,25 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import List, Tuple
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AioRequestError, AsyncClient, OrderState
+from tinkoff.invest import (
+    AioRequestError,
+    AsyncClient,
+    OrderDirection,
+    OrderState,
+    OrderType,
+)
 
 import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
 from src.common.pagination import PaginationOpts
-from src.common.utils import paginate_stmt
+from src.common.utils import decimal_to_quotation, paginate_stmt
 from src.instrument.models import Instrument
 from src.operation.models import Operation
+from src.operation.schemas import OrderCreate
 
 
 async def get_operations(
@@ -126,3 +134,32 @@ async def cancel_order(subaccount: Subaccount, order_id: str) -> True:
             return True
         except AioRequestError:
             return False
+
+
+async def create_order(
+    *, subaccount: Subaccount, data: OrderCreate
+) -> tuple[bool, str]:
+    """
+    returns order_id if created sucessfully
+    else returns details string
+    """
+    direction = (
+        OrderDirection.ORDER_DIRECTION_BUY
+        if data.type == "buy"
+        else OrderDirection.ORDER_DIRECTION_SELL
+    )
+    order_type = (
+        OrderType.ORDER_TYPE_LIMIT if data.is_limit else OrderType.ORDER_TYPE_MARKET
+    )
+    async with AsyncClient(subaccount.account.token) as client:
+        try:
+            response = await client.orders.post_order(
+                figi=data.figi,
+                quantity=data.quantity,
+                price=decimal_to_quotation(Decimal(data.price)),
+                direction=direction,
+                order_type=order_type,
+            )
+            return True, response.order_id
+        except AioRequestError as e:
+            return False, e.details

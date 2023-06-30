@@ -21,6 +21,8 @@ import type {
   HTTPValidationError,
   ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams,
   ActiveOrderScheme,
+  DefaultResponse,
+  OrderCreate,
   OperationStats,
   RevenueStats,
   CancelOrderScheme
@@ -126,6 +128,44 @@ export const useListActiveOrdersApiV1SubaccountsSubaccountIdActiveOrdersGet = <T
 }
 
 /**
+ * @summary Create Order
+ */
+export const createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost = (
+    subaccountId: number,
+    orderCreate: OrderCreate,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<DefaultResponse>(
+      {url: `/api/v1/subaccounts/${subaccountId}/active-orders`, method: 'post',
+      headers: {'Content-Type': 'application/json', },
+      data: orderCreate
+    },
+      options);
+    }
+  
+
+
+    export type CreateOrderApiV1SubaccountsSubaccountIdActiveOrdersPostMutationResult = NonNullable<Awaited<ReturnType<typeof createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost>>>
+    export type CreateOrderApiV1SubaccountsSubaccountIdActiveOrdersPostMutationBody = OrderCreate
+    export type CreateOrderApiV1SubaccountsSubaccountIdActiveOrdersPostMutationError = ErrorType<HTTPValidationError>
+
+    export const useCreateOrderApiV1SubaccountsSubaccountIdActiveOrdersPost = <TError = ErrorType<HTTPValidationError>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost>>, TError,{subaccountId: number;data: OrderCreate}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost>>, {subaccountId: number;data: OrderCreate}> = (props) => {
+          const {subaccountId,data} = props ?? {};
+
+          return  createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost(subaccountId,data,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof createOrderApiV1SubaccountsSubaccountIdActiveOrdersPost>>, TError, {subaccountId: number;data: OrderCreate}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
  * @summary Get Daily Operations Stats
  */
 export const getDailyOperationsStatsApiV1SubaccountsSubaccountIdStatsOperationsGet = (

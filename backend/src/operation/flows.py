@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 from tinkoff.invest import (
     Client,

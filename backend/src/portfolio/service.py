@@ -5,11 +5,12 @@ from typing import List, Literal, Tuple
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from tinkoff.invest import AioRequestError, AsyncClient
+
 from src.account.models import Subaccount
 from src.common.utils import quotation_to_decimal
 from src.instrument.models import Instrument
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
-from tinkoff.invest import AioRequestError, AsyncClient
 
 
 async def get_latest_portfolio_cost(
