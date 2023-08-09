@@ -50,9 +50,8 @@ async def list_operations(
     )
     existing = {op.broker_id for op in operations}
     live_orders = [op for op in live_orders if op.broker_id not in existing]
-    operations = sorted(
-        list(operations).extend(live_orders), key=lambda x: x.date, reverse=True
-    )
+    operations.extend(live_orders)
+    operations = sorted(operations, key=lambda x: x.date, reverse=True)
     return {"count": count, "page": pagination.page or 0, "items": operations}
 
 

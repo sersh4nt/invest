@@ -195,6 +195,7 @@ async def get_operations_live(subaccount: Subaccount) -> list[Operation]:
             ],
         )
         for op in ops.operations
+        if op.id == ''
     }
 
     for op in ops.operations:
