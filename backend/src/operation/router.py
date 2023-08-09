@@ -35,13 +35,23 @@ async def list_operations(
     session: AsyncSession = Depends(get_async_session),
     pagination: PaginationOpts = Depends(),
 ):
-    print(pagination.page, pagination.page_size)
+    page = pagination.page or 0
+    live_orders = []
+    if page == 0:
+        live_orders = await operations_service.get_operations_live(
+            subaccount=subaccount
+        )
     operations, count = await operations_service.get_operations(
         session,
         subaccount=subaccount,
         dt_from=dt_from,
         dt_to=dt_to,
         pagination=pagination,
+    )
+    existing = {op.broker_id for op in operations}
+    live_orders = [op for op in live_orders if op.broker_id not in existing]
+    operations = sorted(
+        list(operations).extend(live_orders), key=lambda x: x.date, reverse=True
     )
     return {"count": count, "page": pagination.page or 0, "items": operations}
 

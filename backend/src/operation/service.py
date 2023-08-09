@@ -1,25 +1,20 @@
-from datetime import datetime
+from datetime import date, datetime, time
 from decimal import Decimal
 from typing import List, Tuple
 
+import src.portfolio.service as portfolio_service
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import (
-    AioRequestError,
-    AsyncClient,
-    OrderDirection,
-    OrderState,
-    OrderType,
-)
-
-import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
 from src.common.pagination import PaginationOpts
-from src.common.utils import decimal_to_quotation, paginate_stmt
+from src.common.utils import (decimal_to_quotation, paginate_stmt,
+                              quotation_to_decimal)
 from src.instrument.models import Instrument
-from src.operation.models import Operation
+from src.operation.models import Operation, OperationTrade
 from src.operation.schemas import OrderCreate
+from tinkoff.invest import (AioRequestError, AsyncClient, OperationState,
+                            OrderDirection, OrderState, OrderType)
 
 
 async def get_operations(
@@ -163,3 +158,53 @@ async def create_order(
             return True, response.order_id
         except AioRequestError as e:
             return False, e.details
+
+
+async def get_operations_live(subaccount: Subaccount) -> list[Operation]:
+    dt_from = datetime.combine(date.today(), time.min)
+    async with AsyncClient(subaccount.account.token) as client:
+        try:
+            ops = await client.operations.get_operations(
+                account_id=subaccount.broker_id,
+                from_=dt_from,
+                state=OperationState.OPERATION_STATE_EXECUTED,
+            )
+        except AioRequestError as e:
+            print(e)
+            return []
+
+    operations = {
+        op.id: Operation(
+            subaccount_id=subaccount.id,
+            broker_id=op.id,
+            currency=op.payment.currency,
+            payment=quotation_to_decimal(op.payment),
+            price=quotation_to_decimal(op.price),
+            type=op.type,
+            state=op.state.name[16:],
+            quantity=op.quantity,
+            instrument_figi=op.figi or None,
+            date=op.date,
+            trades=[
+                OperationTrade(
+                    date=trade.date_time,
+                    quantity=trade.quantity,
+                    price=quotation_to_decimal(trade.price),
+                )
+                for trade in op.trades
+            ],
+        )
+        for op in ops.operations
+    }
+
+    for op in ops.operations:
+        if op.parent_operation_id == "":
+            continue
+
+        parent = operations.get(op.parent_operation_id, None)
+        if parent is None:
+            continue
+
+        parent.commission = quotation_to_decimal(op.payment)
+
+    return list(operations.values())
