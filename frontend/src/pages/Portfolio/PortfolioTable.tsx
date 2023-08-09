@@ -18,12 +18,13 @@ import { withCurrency } from "../../utils/strings";
 const columns = [
   {
     header: "Название",
-    accessorFn: (row: PortfolioPositionScheme) => (
-      <Group spacing="sm">
-        <Avatar radius="xl" size="sm" src={row.instrument.image_link} />
-        <Text>{row.instrument.name}</Text>
-      </Group>
-    ),
+    accessorFn: (row: PortfolioPositionScheme) =>
+      row.instrument && (
+        <Group spacing="sm">
+          <Avatar radius="xl" size="sm" src={row.instrument.image_link} />
+          <Text>{row.instrument.name}</Text>
+        </Group>
+      ),
   },
   {
     header: "Количество",
@@ -34,6 +35,7 @@ const columns = [
     header: "Цена",
     id: "current_price",
     accessorFn: (row: PortfolioPositionScheme) =>
+      row.instrument &&
       withCurrency(row.current_price, row.instrument.currency),
     maxSize: 50,
   },
@@ -41,12 +43,14 @@ const columns = [
     header: "Средняя",
     id: "average_price",
     accessorFn: (row: PortfolioPositionScheme) =>
+      row.instrument &&
       withCurrency(row.average_price, row.instrument.currency),
     maxSize: 50,
   },
   {
     header: "Стоимость",
     accessorFn: (row: PortfolioPositionScheme) =>
+      row.instrument &&
       withCurrency(
         Math.round(
           row.current_price *
@@ -64,9 +68,11 @@ const columns = [
     accessorFn: (row: PortfolioPositionScheme) => {
       const value = row.expected_yield + row.current_nkd + row.var_margin;
       return (
-        <Text color={value > 0 ? "teal" : value < 0 ? "red" : "default"}>
-          {withCurrency(value, row.instrument.currency)}
-        </Text>
+        row.instrument && (
+          <Text color={value > 0 ? "teal" : value < 0 ? "red" : "default"}>
+            {withCurrency(value, row.instrument.currency)}
+          </Text>
+        )
       );
     },
     sortingFn: (
@@ -95,13 +101,13 @@ const PortfolioTable: React.FC = () => {
 
   const [rows, setRows] = useState<PortfolioPositionScheme[]>([]);
 
-  const { data, isFetching, refetch } =
+  const { data, isFetching, isLoading, refetch } =
     useGetLatestPortfolioApiV1SubaccountsSubaccountIdPortfolioGet(
       Number(subaccount)
     );
 
   useEffect(() => {
-    if (!data?.positions) {
+    if (!data?.positions || isLoading) {
       setRows([]);
       return;
     }
