@@ -1,4 +1,4 @@
-import { Badge, Card, Group, Skeleton, Text } from "@mantine/core";
+import { Badge, Card, Group, Text } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -54,14 +54,13 @@ const WorkerLogs: React.FC = () => {
     scrollToBottom();
   }, [logs]);
 
-  const { isLoading } = useGetWorkerLogsApiV1WorkersWorkerIdLogsGet(
+  useGetWorkerLogsApiV1WorkersWorkerIdLogsGet(
     Number(workerId),
     { logsSince },
     {
       query: {
         refetchInterval: 500,
         onSuccess: (data) => {
-          const l1 = logs.length;
           setLogs((p) => [
             ...p,
             ...data
@@ -72,8 +71,12 @@ const WorkerLogs: React.FC = () => {
               )
               .map((item) => item.message),
           ]);
-          setLogsSince(data.at(-1)?.date);
-          if (logs.length != l1) setHasMoreLogs(true);
+          setLogsSince(p => {
+            if (data.at(-1)?.date != p) {
+              setHasMoreLogs(true);
+            }
+            return data.at(-1)?.date
+          });
         },
       },
     }
@@ -82,80 +85,78 @@ const WorkerLogs: React.FC = () => {
   const handleScroll = () => hasMoreLogs && setHasMoreLogs(false);
 
   return (
-    <Skeleton visible={isLoading} h="100%">
-      <Card
-        withBorder
-        padding="md"
-        sx={{ maxHeight: "calc(100vh - 54px - 2.1rem)", height: "100%" }}
-      >
-        <Card.Section withBorder p="sm">
-          <Group position="apart">
-            <Group>
-              <Text>Worker logs</Text>
-              {hasMoreLogs && (
-                <Badge
-                  variant="outline"
-                  color="yellow"
-                  onClick={scrollToBottom}
-                >
-                  Есть новые логи
-                </Badge>
-              )}
-            </Group>
-            <Badge
-              size="lg"
-              variant="outline"
-              color={
-                status == "running"
-                  ? "teal"
-                  : status == "created"
+    <Card
+      withBorder
+      padding="md"
+      sx={{ maxHeight: "calc(100vh - 54px - 2.1rem)", height: "100%" }}
+    >
+      <Card.Section withBorder p="sm">
+        <Group position="apart">
+          <Group>
+            <Text>Worker logs</Text>
+            {hasMoreLogs && (
+              <Badge
+                variant="outline"
+                color="yellow"
+                onClick={scrollToBottom}
+              >
+                Есть новые логи
+              </Badge>
+            )}
+          </Group>
+          <Badge
+            size="lg"
+            variant="outline"
+            color={
+              status == "running"
+                ? "teal"
+                : status == "created"
                   ? "yellow"
                   : "red"
-              }
-            >
-              {status}
-            </Badge>
-          </Group>
-        </Card.Section>
-        <Card.Section pl="sm" h="calc(100% - 1.5rem)">
-          {/* <div
-            style={{
-              height: "100%",
-              overflow: "auto",
-            }}
+            }
           >
-            {logs.length > 0 ? (
-              logs.map((item, key) => (
-                <Text key={key} sx={{ flexShrink: 0 }}>
-                  {item}
-                </Text>
-              ))
-            ) : (
-              <Center h="100%">
-                <Text>No logs found</Text>
-              </Center>
-            )}
-          </div> */}
-          <AutoSizer>
-            {({ width, height }: { width: number; height: number }) => (
-              <List
-                ref={listRef}
-                width={width}
-                height={height}
-                itemCount={logs.length}
-                itemSize={24}
-                style={{ scrollBehavior: "smooth" }}
-                onScroll={handleScroll}
-              >
-                {({ index, style }) => (
-                  <LogMessage text={logs[index]} style={style} />
-                )}
-              </List>
-            )}
-          </AutoSizer>
-        </Card.Section>
-      </Card>
-    </Skeleton>
+            {status}
+          </Badge>
+        </Group>
+      </Card.Section>
+      <Card.Section pl="sm" h="calc(100% - 1.5rem)">
+        {/* <div
+          style={{
+            height: "100%",
+            overflow: "auto",
+          }}
+        >
+          {logs.length > 0 ? (
+            logs.map((item, key) => (
+              <Text key={key} sx={{ flexShrink: 0 }}>
+                {item}
+              </Text>
+            ))
+          ) : (
+            <Center h="100%">
+              <Text>No logs found</Text>
+            </Center>
+          )}
+        </div> */}
+        <AutoSizer>
+          {({ width, height }: { width: number; height: number }) => (
+            <List
+              ref={listRef}
+              width={width}
+              height={height}
+              itemCount={logs.length}
+              itemSize={24}
+              style={{ scrollBehavior: "smooth" }}
+              onScroll={handleScroll}
+            >
+              {({ index, style }) => (
+                <LogMessage text={logs[index]} style={style} />
+              )}
+            </List>
+          )}
+        </AutoSizer>
+      </Card.Section>
+    </Card>
   );
 };
 export default WorkerLogs;

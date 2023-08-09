@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from tinkoff.invest import (
     Client,
@@ -21,13 +22,15 @@ class StoreSubaccountOperationsFlow:
         self.subaccount_id = subaccount_id
 
     def _get_last_operation_date(self, session: Session) -> datetime | None:
-        # stmt = (
-        #     select(Operation.date)
-        #     .filter(Operation.subaccount_id == self.subaccount_id)
-        #     .order_by(Operation.date.desc())
-        # )
-        # return session.scalars(stmt).first()
-        return datetime.today()
+        stmt = (
+            select(Operation.date)
+            .filter(Operation.subaccount_id == self.subaccount_id)
+            .order_by(Operation.date.desc())
+        )
+        result = session.scalars(stmt).first()
+        if result is None:
+            return None
+        return min(result, datetime.today().replace(tzinfo=timezone.utc))
 
     def _insert_operations_by_batch(
         self, *, session: Session, operations: List[OperationItem]
