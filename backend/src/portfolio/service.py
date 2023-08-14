@@ -103,6 +103,8 @@ async def get_portfolio_cost(
 ) -> List[Tuple[Decimal, datetime]]:
     def _get_date_grouper_from_params(range: str) -> tuple[datetime, int]:
         now = datetime.combine(date.today(), time.min, timezone.utc)
+        if range == 'today':
+            return now, 1
         if range == "week":
             return now - timedelta(days=now.weekday()), 300
         if range == "month":
