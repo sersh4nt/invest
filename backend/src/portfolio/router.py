@@ -42,7 +42,7 @@ async def list_portfolio_cost(
         range=range,
     )
     return {
-        "values": [{"value": v[0], "ts": v[1]} for v in values],
+        "values": [{"value": round(v[0], 2), "ts": v[1]} for v in values],
         "currency": currency,
     }
 

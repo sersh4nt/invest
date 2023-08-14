@@ -1,16 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from typing import List, Literal, Tuple
 
-from sqlalchemy import select
+from sqlalchemy import extract, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from tinkoff.invest import AioRequestError, AsyncClient
-
 from src.account.models import Subaccount
 from src.common.utils import quotation_to_decimal
 from src.instrument.models import Instrument
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
+from tinkoff.invest import AioRequestError, AsyncClient
 
 
 async def get_latest_portfolio_cost(
@@ -102,24 +101,35 @@ async def get_portfolio_cost(
     currency: str = "rub",
     range: Literal["today", "week", "month", "year", "all"] = "all"
 ) -> List[Tuple[Decimal, datetime]]:
+    def _get_date_grouper_from_params(range: str) -> tuple[datetime, int]:
+        now = datetime.combine(date.today(), time.min, timezone.utc)
+        if range == "week":
+            return now - timedelta(days=now.weekday()), 300
+        if range == "month":
+            return now.replace(day=1), 3600
+        if range == "year":
+            return now.replace(month=1, day=1), 24 * 3600
+        return subaccount.opened_date, 24 * 3600 * 30
+
+    dt_from, grouper = _get_date_grouper_from_params(range)
+
     stmt = (
-        select(PortfolioCost.value, Portfolio.date_added)
+        select(
+            func.avg(PortfolioCost.value),
+            func.to_timestamp(
+                func.round(extract("epoch", Portfolio.date_added) / grouper) * grouper
+            ).label("ts"),
+        )
         .join(Portfolio)
         .join(Subaccount)
-        .filter(PortfolioCost.currency == currency, Subaccount.id == subaccount.id)
-        .order_by(Portfolio.date_added)
+        .filter(
+            Portfolio.subaccount_id == subaccount.id,
+            PortfolioCost.currency == currency,
+            Portfolio.date_added >= dt_from,
+        )
+        .group_by("ts")
+        .order_by("ts")
     )
-
-    now = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    if range == "week":
-        now = now - timedelta(days=now.weekday())
-    elif range == "month":
-        now = now.replace(day=1)
-    elif range == "year":
-        now = now.replace(month=1)
-
-    if range != "all":
-        stmt = stmt.filter(Portfolio.date_added >= now)
 
     values = await session.execute(stmt)
     return values.all()
