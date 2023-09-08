@@ -119,7 +119,7 @@ async def create_worker_from_robot(
     status = "created"
     try:
         container = await run_in_threadpool(
-            docker_service.create_container, image, name, env
+            docker_service.create_container, image, name, env, auto_restart=True
         )
     except ImageNotFound as e:
         print(e)

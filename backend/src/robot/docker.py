@@ -27,6 +27,7 @@ def remove_container(container: str | Container, force: bool = False) -> bool:
     if status.capitalize() == "RUNNING":
         stop_worker(container)
     try:
+        container.stop()
         container.remove(force=force)
         return True
     except docker.errors.APIError as e:
@@ -34,7 +35,11 @@ def remove_container(container: str | Container, force: bool = False) -> bool:
         return False
 
 
-def create_container(image: str, name: str, env: dict, *args, **kwargs) -> Container:
+def create_container(
+    image: str, name: str, env: dict, auto_restart: bool = False, *args, **kwargs
+) -> Container:
+    if auto_restart:
+        kwargs = {**kwargs, "restart_policy": {"Name": "always"}}
     return client.containers.create(
         image, name=name, environment=env, detach=True, *args, **kwargs
     )
