@@ -28,6 +28,7 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
     sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
     sender.add_periodic_task(crontab(), store_operations.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments_metrics.s())
+    sender.add_periodic_task(crontab("0", "12"), update_instruments.s())
 
 
 @celery.task
@@ -64,7 +65,7 @@ def store_portfolio(*args, **kwargs):
 
 @celery.task
 def update_instruments(*args, **kwargs):
-    flow = chain(
+    flow = group(
         update_currencies.s(*args, **kwargs),
         update_bonds.s(*args, **kwargs),
         update_etfs.s(*args, **kwargs),

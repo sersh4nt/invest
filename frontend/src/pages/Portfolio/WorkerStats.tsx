@@ -16,7 +16,7 @@ const WorkerStats: React.FC = () => {
             <IconSettings2 size="1.8rem" stroke={1.5} />
           </ThemeIcon>
         }
-        value={(data?.active ?? 0).toString()}
+        value={(data?.running ?? 0).toString()}
         addContent={
           <Text>
             {Object.entries(data ?? {}).reduce(
