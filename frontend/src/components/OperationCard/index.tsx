@@ -17,7 +17,7 @@ interface OperationCardProps {
   currency: string;
   date: Date | string;
   affix?: JSX.Element;
-  avatarSrc?: string;
+  avatarSrc?: string | JSX.Element;
 }
 
 const OperationCard: React.FC<OperationCardProps> = ({
@@ -45,7 +45,13 @@ const OperationCard: React.FC<OperationCardProps> = ({
       onClick={affix && handleExpand}
     >
       <Flex fz="sm" wrap="nowrap" gap={6}>
-        <Avatar radius="xl" size={40} src={avatarSrc} />
+        {avatarSrc && typeof avatarSrc === "string" ? (
+          <Avatar radius="xl" size={40} src={avatarSrc} />
+        ) : (
+          <Avatar radius="xl" size={40}>
+            {avatarSrc}
+          </Avatar>
+        )}
         <Stack
           spacing={0}
           style={{ flex: "1 0 0", width: "calc(100% - 46px)" }}

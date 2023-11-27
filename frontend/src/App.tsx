@@ -9,7 +9,7 @@ const client = new QueryClient();
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={client}>
-      <MantineProvider>
+      <MantineProvider withGlobalStyles withNormalizeCSS>
         <RouterProvider router={router} />
       </MantineProvider>
     </QueryClientProvider>
