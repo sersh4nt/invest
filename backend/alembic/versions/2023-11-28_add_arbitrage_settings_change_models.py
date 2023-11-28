@@ -27,7 +27,7 @@ def upgrade() -> None:
         sa.Column("d_return_calculated", sa.Float(), nullable=True),
         sa.Column("d_take", sa.Float(), nullable=True),
         sa.Column("d_return", sa.Float(), nullable=True),
-        sa.Column("volume", sa.Integer(), nullable=False),
+        sa.Column("volume", sa.Integer(), nullable=True),
         sa.Column("spread_required", sa.Float(), nullable=False),
         sa.Column("id", sa.BigInteger(), nullable=False),
         sa.Column(
