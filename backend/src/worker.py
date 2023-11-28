@@ -6,6 +6,8 @@ from sqlalchemy import select
 from tinkoff.invest import AioRequestError, Client, InstrumentStatus
 
 from src.account.models import Subaccount
+from src.arbitrage.flows import UpdateArbitrageDeltaFlow
+from src.arbitrage.models import ArbitrageDeltas
 from src.backtest.flows import BackTestStrategyFlow
 from src.config import settings
 from src.db import base  # noqa: F401
@@ -31,6 +33,7 @@ def setup_periodic_tasks(sender: Celery, **kwargs: dict[str, Any]) -> None:
     sender.add_periodic_task(crontab(), store_operations.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments_metrics.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments.s())
+    sender.add_periodic_task(crontab("0", "0"), update_arbitrage_deltas.s())
 
 
 @celery.task
@@ -167,3 +170,19 @@ def update_instruments_metrics(*args: tuple, **kwargs: dict[str, Any]) -> None:
         update_instrument_metrics.apply_async(
             args=[instrument.figi], countdown=(i // 3) * 60
         )
+
+
+@celery.task
+def update_arbitrage_delta(
+    record_id: int, *args: tuple, **kwargs: dict[str, Any]
+) -> None:
+    flow = UpdateArbitrageDeltaFlow()
+    flow.run(record_id, *args, **kwargs)
+
+
+@celery.task
+def update_arbitrage_deltas(*args: tuple, **kwargs: dict[str, Any]) -> None:
+    db = next(get_sync_session())
+    ids = db.scalars(select(ArbitrageDeltas.id))
+    db.close()
+    return group([update_arbitrage_delta.s(id, *args, **kwargs) for id in ids])()
