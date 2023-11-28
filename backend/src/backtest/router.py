@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,11 +19,11 @@ async def init_backtest_task(
     data: BacktestCreate,
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     response = await backtest_service.create_result(session, data=data, user=user)
     return response
 
 
 @router.get("/{backtest_id}", response_model=BacktestRead)
-async def read_backtest(backtest: BacktestResult = Depends(backtest_by_id)):
+async def read_backtest(backtest: BacktestResult = Depends(backtest_by_id)) -> Any:
     return backtest

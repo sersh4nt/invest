@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Literal, Optional
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +18,7 @@ router = APIRouter(tags=["portfolio"])
 async def get_latest_portfolio(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     portfolio = await portfolio_service.get_latest_portfolio(
         session, subaccount=subaccount
     )
@@ -33,8 +33,8 @@ async def list_portfolio_cost(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
     currency: str = "rub",
-    range: str = "all",
-):
+    range: Literal["today", "week", "month", "year", "all"] = "all",
+) -> Any:
     values = await portfolio_service.get_portfolio_cost(
         session,
         subaccount=subaccount,
@@ -55,7 +55,7 @@ async def list_portfolio_cost(
 async def get_portfolio_cost_stat(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     result = await portfolio_service.get_portfolio_cost_stat(
         session, subaccount=subaccount
     )

@@ -1,4 +1,6 @@
-from celery import Celery, chain, group
+from typing import Any
+
+from celery import Celery, group
 from celery.schedules import crontab
 from sqlalchemy import select
 from tinkoff.invest import AioRequestError, Client, InstrumentStatus
@@ -24,7 +26,7 @@ celery = Celery("worker", broker=settings.REDIS_URI, backend=settings.REDIS_URI)
 
 
 @celery.on_after_configure.connect
-def setup_periodic_tasks(sender: Celery, **kwargs):
+def setup_periodic_tasks(sender: Celery, **kwargs: dict[str, Any]) -> None:
     sender.add_periodic_task(crontab("*/5"), store_portfolio.s())
     sender.add_periodic_task(crontab(), store_operations.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments_metrics.s())
@@ -32,19 +34,23 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
 
 
 @celery.task
-def store_operations_by_subaccount_id(subaccount_id: int, *args, **kwargs):
+def store_operations_by_subaccount_id(
+    subaccount_id: int, *args: tuple, **kwargs: dict[str, Any]
+) -> None:
     flow = StoreSubaccountOperationsFlow(subaccount_id)
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def store_portfolio_by_subaccount_id(subaccount_id: int, *args, **kwargs):
+def store_portfolio_by_subaccount_id(
+    subaccount_id: int, *args: tuple, **kwargs: dict[str, Any]
+) -> None:
     flow = StorePortfolioFlow()
     flow.run(subaccount_id, *args, **kwargs)
 
 
 @celery.task
-def store_operations(*args, **kwargs):
+def store_operations(*args: tuple, **kwargs: dict[str, Any]) -> None:
     db = next(get_sync_session())
     ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
     db.close()
@@ -54,7 +60,7 @@ def store_operations(*args, **kwargs):
 
 
 @celery.task
-def store_portfolio(*args, **kwargs):
+def store_portfolio(*args: tuple, **kwargs: dict[str, Any]) -> None:
     db = next(get_sync_session())
     ids = db.scalars(select(Subaccount.id).filter(Subaccount.is_enabled))
     db.close()
@@ -64,7 +70,7 @@ def store_portfolio(*args, **kwargs):
 
 
 @celery.task
-def update_instruments(*args, **kwargs):
+def update_instruments(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = group(
         update_currencies.s(*args, **kwargs),
         update_bonds.s(*args, **kwargs),
@@ -77,55 +83,59 @@ def update_instruments(*args, **kwargs):
 
 
 @celery.task
-def update_currencies(*args, **kwargs):
+def update_currencies(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateCurrenciesFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_bonds(*args, **kwargs):
+def update_bonds(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateBondsFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_etfs(*args, **kwargs):
+def update_etfs(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateETFSFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_futures(*args, **kwargs):
+def update_futures(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateFuturesFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_options(*args, **kwargs):
+def update_options(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateOptionsFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_shares(*args, **kwargs):
+def update_shares(*args: tuple, **kwargs: dict[str, Any]) -> None:
     flow = UpdateSharesFlow()
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def backtest_strategy(data: dict, user_id: str, strategy_name: str, *args, **kwargs):
+def backtest_strategy(
+    data: dict, user_id: str, strategy_name: str, *args: tuple, **kwargs: dict[str, Any]
+) -> None:
     flow = BackTestStrategyFlow(data, user_id, strategy_name)
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_instrument_metrics(figi: str, *args, **kwargs):
+def update_instrument_metrics(
+    figi: str, *args: tuple, **kwargs: dict[str, Any]
+) -> None:
     flow = UpdateInstrumentMetrics(figi, *args, **kwargs)
     flow.run(*args, **kwargs)
 
 
 @celery.task
-def update_instruments_metrics(*args, **kwargs):
+def update_instruments_metrics(*args: tuple, **kwargs: dict[str, Any]) -> None:
     options = [
         ("grpc.max_send_message_length", 512 * 1024 * 1024),
         ("grpc.max_receive_message_length", 512 * 1024 * 1024),
@@ -138,18 +148,21 @@ def update_instruments_metrics(*args, **kwargs):
             )
         except AioRequestError as e:
             print(e)
-            instruments = []
+            instruments = None
 
-    instruments = [
+    if instruments is None:
+        raise RuntimeError("unable to fetch shares")
+
+    instruments_list = [
         i
-        for i in getattr(instruments, "instruments", [])
+        for i in instruments.instruments
         if i.api_trade_available_flag
         and i.buy_available_flag
         and i.sell_available_flag
         and i.currency == "rub"
     ]
 
-    for i, instrument in enumerate(instruments):
+    for i, instrument in enumerate(instruments_list):
         # applying for 3 jobs per minute to fit rmp eliminations
         update_instrument_metrics.apply_async(
             args=[instrument.figi], countdown=(i // 3) * 60

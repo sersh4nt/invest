@@ -1,4 +1,4 @@
-"""Traverse currency to inherit instrument class
+"""Traverse currency to inherit instrument class.
 
 Revision ID: 4bc018fd4ed8
 Revises: e21db593fdad
@@ -6,6 +6,7 @@ Create Date: 2023-05-02 07:07:02.172555
 
 """
 import sqlalchemy as sa
+
 from alembic import op
 
 # revision identifiers, used by Alembic.

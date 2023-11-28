@@ -1,3 +1,5 @@
+# type: ignore
+
 from datetime import datetime, timedelta, timezone
 from math import log
 from statistics import mean
@@ -6,13 +8,18 @@ from typing import Any, Callable, Literal
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
-from tinkoff.invest import AioRequestError
+from tinkoff.invest import (
+    AioRequestError,
+    CandleInterval,
+    Client,
+    GetOrderBookResponse,
+    HistoricCandle,
+    InstrumentStatus,
+)
 from tinkoff.invest import Bond as TBond
-from tinkoff.invest import CandleInterval, Client
 from tinkoff.invest import Currency as TCurrency
-from tinkoff.invest import Etf as TETF
+from tinkoff.invest import Etf as TETF  # noqa: N814
 from tinkoff.invest import Future as TFuture
-from tinkoff.invest import GetOrderBookResponse, HistoricCandle, InstrumentStatus
 from tinkoff.invest import Option as TOption
 from tinkoff.invest import Share as TShare
 
@@ -95,7 +102,7 @@ class BaseUpdateInstrumentFlow:
 
     def _insert_by_batch(
         self,
-        Class: Any,
+        Class: Any,  # noqa: N803
         values: list[dict[str, Any]],
         update_fields: list = None,
         batch_size: int = 1000,
@@ -120,7 +127,7 @@ class BaseUpdateInstrumentFlow:
         base_values = [self._get_instrument_fields(i) for i in instruments]
         self._insert_by_batch(Instrument, base_values, list(self._base_fields.keys()))
 
-        Class = self._get_orm_class()
+        Class = self._get_orm_class()  # noqa
         values = [self._get_additional_fields(i) for i in instruments]
         self._insert_by_batch(Class, values, list(self._additional_fields.keys()))
 
@@ -235,7 +242,7 @@ class UpdateInstrumentMetrics:
             result.append(price)
 
         for candle in candles:
-            o, h, l, c = (
+            o, h, l, c = (  # noqa: E741
                 quotation_to_float(candle.open),
                 quotation_to_float(candle.high),
                 quotation_to_float(candle.low),

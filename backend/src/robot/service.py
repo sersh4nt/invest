@@ -2,13 +2,13 @@ import json
 import uuid
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, List, Tuple
+from typing import Any, Sequence
 
 from dateutil import parser
 from docker.errors import APIError, ImageNotFound
 from docker.models.containers import Container
 from fastapi.concurrency import run_in_threadpool
-from sqlalchemy import distinct, func, select
+from sqlalchemy import Row, distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -41,8 +41,8 @@ async def get_robot_by_id(session: AsyncSession, *, robot_id: int) -> Robot | No
 
 
 async def list_robots(
-    session: AsyncSession, *, pagination: PaginationOpts = None
-) -> Tuple[Tuple[List[Robot], int, float], int]:
+    session: AsyncSession, *, pagination: PaginationOpts | None = None
+) -> tuple[Sequence[Row[tuple[Robot, int, Any]]], int]:
     stmt = (
         select(
             Robot,
@@ -64,12 +64,12 @@ async def list_robots(
     stmt = paginate_stmt(stmt, pagination)
     results = await session.execute(stmt)
     count = await session.scalar(select(func.count(Robot.id)))
-    return results.all(), count
+    return results.all(), count or 0
 
 
 async def list_workers(
-    session: AsyncSession, *, pagination: PaginationOpts = None, user: User
-) -> Tuple[List[Worker], int]:
+    session: AsyncSession, *, pagination: PaginationOpts | None = None, user: User
+) -> tuple[Sequence[Worker], int]:
     stmt = (
         select(Worker)
         .filter(Worker.user_id == user.id)
@@ -80,7 +80,7 @@ async def list_workers(
     count = await session.scalar(
         select(func.count(Worker.id)).filter(Worker.user_id == user.id)
     )
-    return results.all(), count
+    return results.all(), count or 0
 
 
 def create_worker_env(configs: list[Any], strategy_name: str) -> list[Any]:
@@ -109,7 +109,7 @@ def create_container_env(
 async def create_worker_from_robot(
     user: User, robot: Robot, subaccount: Subaccount, config: Any
 ) -> tuple[str, Container]:
-    "returns status and container name"
+    """Returns status and container name."""
     env = create_container_env(
         subaccount.broker_id, subaccount.account.token, config, robot.name
     )
@@ -124,7 +124,7 @@ async def create_worker_from_robot(
     except ImageNotFound as e:
         print(e)
         status = "error"
-        raise RobotNotFoundError()
+        raise RobotNotFoundError() from e
     except APIError as e:
         status = "error"
         print("Got error during creating container")
@@ -135,7 +135,7 @@ async def create_worker_from_robot(
 
 async def create_worker(
     session: AsyncSession, *, data: WorkerCreate, user: User
-) -> Tuple[Worker, str]:
+) -> tuple[Worker, str]:
     subaccount = await account_service.get_subaccount_by_id(
         session, subaccount_id=data.subaccount_id
     )
@@ -177,11 +177,11 @@ async def get_worker_status(worker: Worker) -> str:
 
 async def get_worker_logs(
     worker: Worker, logs_since: datetime | None = None
-) -> List[ContainerMessage]:
+) -> list[ContainerMessage]:
     logs = await run_in_threadpool(
         docker_service.get_logs, worker.container_name, logs_since
     )
-    lines: List[ContainerMessage] = []
+    lines: list[ContainerMessage] = []
     if logs:
         for line in logs.decode().strip().split("\n"):
             date, message = line.split(" ", 1)
@@ -189,24 +189,24 @@ async def get_worker_logs(
     return lines
 
 
-async def start_worker(worker: Worker):
+async def start_worker(worker: Worker) -> str:
     status = await run_in_threadpool(docker_service.start_worker, worker.container_name)
     return status
 
 
-async def stop_worker(worker: Worker):
+async def stop_worker(worker: Worker) -> str:
     status = await run_in_threadpool(docker_service.stop_worker, worker.container_name)
     return status
 
 
-async def restart_worker(worker: Worker):
+async def restart_worker(worker: Worker) -> str:
     status = await run_in_threadpool(
         docker_service.restart_worker, worker.container_name
     )
     return status
 
 
-async def delete_worker(session: AsyncSession, *, worker: Worker):
+async def delete_worker(session: AsyncSession, *, worker: Worker) -> Worker:
     await run_in_threadpool(docker_service.remove_container, worker.container_name)
     await session.delete(worker)
     await session.commit()
@@ -215,7 +215,7 @@ async def delete_worker(session: AsyncSession, *, worker: Worker):
 
 async def update_worker_config(
     session: AsyncSession, *, user: User, worker: Worker, config: Any
-):
+) -> Worker:
     subaccount = await account_service.get_subaccount_by_id(
         session, subaccount_id=worker.subaccount_id
     )

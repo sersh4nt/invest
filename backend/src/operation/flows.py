@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import Any, List
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -34,7 +34,7 @@ class StoreSubaccountOperationsFlow:
 
     def _insert_operations_by_batch(
         self, *, session: Session, operations: List[OperationItem]
-    ):
+    ) -> None:
         items = {
             op.id: Operation(
                 subaccount_id=self.subaccount_id,
@@ -73,7 +73,7 @@ class StoreSubaccountOperationsFlow:
         session.add_all(items.values())
         session.commit()
 
-    def run(self, *args, **kwargs):
+    def run(self, *args: tuple, **kwargs: dict[str, Any]) -> None:
         session = next(get_sync_session())
         subaccount = session.get(Subaccount, self.subaccount_id)
 
@@ -99,7 +99,7 @@ class StoreSubaccountOperationsFlow:
                 )
 
                 if prev_cursor is not None:
-                    setattr(request, "cursor", prev_cursor)
+                    request.cursor = prev_cursor
 
                 try:
                     response = client.operations.get_operations_by_cursor(request)

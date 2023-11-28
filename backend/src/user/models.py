@@ -11,5 +11,5 @@ class User(SQLAlchemyBaseUserTableUUID, Base, AuditMixin):
     accounts = relationship("Account", back_populates="user", lazy="selectin")
     workers = relationship("Worker", back_populates="user")
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa: D105
         return self.email

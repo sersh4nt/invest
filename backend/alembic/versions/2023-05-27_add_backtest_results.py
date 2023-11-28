@@ -1,13 +1,14 @@
-"""Add backtest results
+"""Add backtest results.
 
 Revision ID: 589dafc056a9
 Revises: a34c7666e786
 Create Date: 2023-05-27 09:11:11.169907
 
 """
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "589dafc056a9"

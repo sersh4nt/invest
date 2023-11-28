@@ -1,4 +1,4 @@
-from typing import List
+from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +8,6 @@ from tinkoff.invest import AccessLevel, AsyncClient
 
 from src.account.models import Account, Subaccount
 from src.account.schemas import AccountCreate, AccountUpdate, SubaccountUpdate
-from src.account.tinkoff import get_account_subaccounts
 from src.common.exceptions import ObjectAlreadyExists
 from src.user.models import User
 
@@ -35,7 +34,7 @@ async def get_subaccount_by_id(
     return subaccount.first()
 
 
-async def list_user_accounts(session: AsyncSession, *, user: User) -> List[Account]:
+async def list_user_accounts(session: AsyncSession, *, user: User) -> Sequence[Account]:
     accounts = await session.scalars(
         select(Account)
         .filter(Account.user_id == user.id)
@@ -49,20 +48,20 @@ async def create_account(
     session: AsyncSession, *, data: AccountCreate, user: User
 ) -> Account:
     async with AsyncClient(data.token) as client:
-        subaccounts = await get_account_subaccounts(client)
+        response = await client.users.get_accounts()
 
     subaccounts = [
         s
-        for s in subaccounts
+        for s in response.accounts
         if s.access_level == AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS
     ]
 
-    obj = await session.scalars(
+    scalars = await session.scalars(
         select(Account)
         .filter(Account.user_id == user.id, Account.token == data.token)
         .options(selectinload(Account.subaccounts))
     )
-    obj = obj.first()
+    obj = scalars.first()
 
     if obj is None:
         obj = Account(
@@ -123,6 +122,6 @@ async def update_subaccount(
     return subaccount
 
 
-async def cancel_all_orders(subaccount: Subaccount):
+async def cancel_all_orders(subaccount: Subaccount) -> None:
     async with AsyncClient(subaccount.account.token) as client:
         await client.cancel_all_orders(account_id=subaccount.broker_id)

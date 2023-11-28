@@ -1,12 +1,11 @@
-from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class SubaccountBase(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
+    name: str | None = None
+    description: str | None = None
     is_enabled: bool = False
 
 
@@ -24,8 +23,9 @@ class SubaccountScheme(SubaccountBase):
 
 
 class AccountBase(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    name: str | None = None
+    description: str | None = None
+    is_sandbox: bool = False
 
 
 class AccountCreate(AccountBase):
@@ -39,7 +39,7 @@ class AccountUpdate(AccountBase):
 class AccountScheme(AccountBase):
     id: int
     user_id: UUID
-    subaccounts: List[SubaccountScheme]
+    subaccounts: list[SubaccountScheme]
 
     class Config:
         orm_mode = True

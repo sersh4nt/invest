@@ -1,20 +1,26 @@
 from datetime import date, datetime, time
 from decimal import Decimal
-from typing import List, Tuple
+from typing import Sequence
 
-import src.portfolio.service as portfolio_service
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from tinkoff.invest import (
+    AioRequestError,
+    AsyncClient,
+    OperationState,
+    OrderDirection,
+    OrderState,
+    OrderType,
+)
+
+import src.portfolio.service as portfolio_service
 from src.account.models import Account, Subaccount
 from src.common.pagination import PaginationOpts
-from src.common.utils import (decimal_to_quotation, paginate_stmt,
-                              quotation_to_decimal)
+from src.common.utils import decimal_to_quotation, paginate_stmt, quotation_to_decimal
 from src.instrument.models import Instrument
 from src.operation.models import Operation, OperationTrade
 from src.operation.schemas import OrderCreate
-from tinkoff.invest import (AioRequestError, AsyncClient, OperationState,
-                            OrderDirection, OrderState, OrderType)
 
 
 async def get_operations(
@@ -23,8 +29,8 @@ async def get_operations(
     subaccount: Subaccount,
     dt_from: datetime | None = None,
     dt_to: datetime | None = None,
-    pagination: PaginationOpts = None
-) -> Tuple[List[Operation], int]:
+    pagination: PaginationOpts | None = None
+) -> tuple[Sequence[Operation], int]:
     stmt = (
         select(Operation)
         .filter(Operation.subaccount_id == subaccount.id)
@@ -50,17 +56,20 @@ async def get_operations(
     result = await session.scalars(stmt)
     count = await session.scalar(cnt_stmt)
 
-    return result.all(), count
+    return result.all(), count or 0
 
 
 async def get_active_orders(
     session: AsyncSession, *, subaccount: Subaccount
-) -> Tuple[List[OrderState], List[Instrument]]:
+) -> tuple[Sequence[OrderState], Sequence[Instrument]]:
     token = (
         await session.scalars(
             select(Account.token).filter(Account.id == subaccount.account_id)
         )
     ).first()
+
+    if token is None:
+        raise RuntimeError("unable to fetch token")
 
     async with AsyncClient(token) as client:
         orders = await client.orders.get_orders(account_id=subaccount.broker_id)
@@ -120,7 +129,7 @@ async def get_portfolio_revenue(
     return {"daily_volume": daily_volume, "profit": revenue}
 
 
-async def cancel_order(subaccount: Subaccount, order_id: str) -> True:
+async def cancel_order(subaccount: Subaccount, order_id: str) -> bool:
     async with AsyncClient(subaccount.account.token) as client:
         try:
             await client.orders.cancel_order(
@@ -135,8 +144,9 @@ async def create_order(
     *, subaccount: Subaccount, data: OrderCreate
 ) -> tuple[bool, str]:
     """
-    returns order_id if created sucessfully
-    else returns details string
+    returns order_id if created sucessfully.
+
+    else returns details string.
     """
     direction = (
         OrderDirection.ORDER_DIRECTION_BUY
@@ -151,7 +161,9 @@ async def create_order(
             response = await client.orders.post_order(
                 figi=data.figi,
                 quantity=data.quantity,
-                price=decimal_to_quotation(Decimal(data.price)),
+                price=None
+                if data.price is None
+                else decimal_to_quotation(Decimal(data.price)),
                 direction=direction,
                 order_type=order_type,
             )
@@ -195,7 +207,7 @@ async def get_operations_live(subaccount: Subaccount) -> list[Operation]:
             ],
         )
         for op in ops.operations
-        if op.id == ''
+        if op.id == ""
     }
 
     for op in ops.operations:

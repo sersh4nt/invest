@@ -8,7 +8,7 @@ from src.user.dependencies import UserManager
 from src.user.models import User
 
 
-async def main():
+async def main() -> None:
     async with async_session() as session:
         user_db = SQLAlchemyUserDatabase(session, User)
         manager = UserManager(user_db)

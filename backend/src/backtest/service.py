@@ -24,7 +24,7 @@ async def get_result_by_id(session: AsyncSession, *, id: UUID) -> BacktestResult
 
 async def create_result(
     session: AsyncSession, *, data: BacktestCreate, user: User
-) -> BacktestResult:
+) -> dict:
     if len(user.accounts) == 0:
         raise BadRequest()
 

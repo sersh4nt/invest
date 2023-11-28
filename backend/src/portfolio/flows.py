@@ -1,3 +1,5 @@
+from typing import Any
+
 from tinkoff.invest import Client
 from tinkoff.invest.exceptions import RequestError
 
@@ -8,9 +10,14 @@ from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
 
 
 class StorePortfolioFlow:
-    def run(self, subaccount_id: int, *args, **kwargs):
+    def run(
+        self, subaccount_id: int, *args: tuple, **kwargs: dict[str, Any]
+    ) -> int | None:
         session = next(get_sync_session())
         subaccount = session.get(Subaccount, subaccount_id)
+
+        if subaccount is None:
+            raise RuntimeError("subaccount not found!")
 
         with Client(subaccount.account.token) as client:
             try:
@@ -18,8 +25,8 @@ class StorePortfolioFlow:
                     account_id=subaccount.broker_id
                 )
             except RequestError:
-                print(f"Got exception getting portfolio, exit...")
-                return
+                print("Got exception getting portfolio, exit...")
+                return None
 
         positions = [
             PortfolioPosition(
