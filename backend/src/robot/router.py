@@ -34,7 +34,7 @@ router = APIRouter(tags=["robots"], dependencies=[Depends(get_current_user)])
 async def list_robots(
     session: AsyncSession = Depends(get_async_session),
     pagination: PaginationOpts = Depends(),
-):
+) -> Any:
     robots, count = await robot_service.list_robots(session, pagination=pagination)
     items = []
     for robot, cnt, avg_yield in robots:
@@ -45,7 +45,7 @@ async def list_robots(
 
 
 @router.get("/robots/{robot_id}/backtests", response_model=RobotBacktestScheme)
-async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)):
+async def list_robot_backtests(robot: Robot = Depends(get_robot_by_id)) -> Any:
     backtests = robot.backtests
     vals = [b.relative_yield for b in backtests if b.relative_yield is not None]
     avg_yield = mean(vals) if len(vals) > 1 else 0
@@ -57,7 +57,7 @@ async def list_workers(
     session: AsyncSession = Depends(get_async_session),
     pagination: PaginationOpts = Depends(),
     user: User = Depends(get_current_user),
-):
+) -> Any:
     workers, count = await robot_service.list_workers(
         session, pagination=pagination, user=user
     )
@@ -73,21 +73,23 @@ async def create_worker(
     data: WorkerCreate,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(get_current_user),
-):
+) -> Any:
     worker, status = await robot_service.create_worker(session, data=data, user=user)
     worker.status = status
     return worker
 
 
 @router.get("/workers/stats/active", tags=["stats"], response_model=WorkersStats)
-async def get_active_workers_count(workers: List[Worker] = Depends(get_user_workers)):
+async def get_active_workers_count(
+    workers: List[Worker] = Depends(get_user_workers),
+) -> Any:
     tasks = [robot_service.get_worker_status(worker) for worker in workers]
     results = await asyncio.gather(*tasks)
     return Counter(results)
 
 
 @router.get("/workers/{worker_id}", response_model=WorkerScheme)
-async def read_worker(worker: Worker = Depends(get_user_worker_by_id)):
+async def read_worker(worker: Worker = Depends(get_user_worker_by_id)) -> Any:
     return worker
 
 
@@ -95,7 +97,7 @@ async def read_worker(worker: Worker = Depends(get_user_worker_by_id)):
 async def delete_worker(
     worker: Worker = Depends(get_user_worker_by_id),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     return await robot_service.delete_worker(session, worker=worker)
 
 
@@ -105,14 +107,14 @@ async def update_worker_settings(
     worker: Worker = Depends(get_user_worker_by_id),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(get_current_user),
-):
+) -> Any:
     return await robot_service.update_worker_config(
         session, user=user, worker=worker, config=config
     )
 
 
 @router.get("/workers/{worker_id}/status", response_model=str)
-async def get_worker_status(worker: Worker = Depends(get_user_worker_by_id)):
+async def get_worker_status(worker: Worker = Depends(get_user_worker_by_id)) -> Any:
     return await robot_service.get_worker_status(worker)
 
 
@@ -120,26 +122,26 @@ async def get_worker_status(worker: Worker = Depends(get_user_worker_by_id)):
 async def get_worker_logs(
     worker: Worker = Depends(get_user_worker_by_id),
     logs_since: Annotated[datetime | None, Query(alias="logsSince")] = None,
-):
+) -> Any:
     return await robot_service.get_worker_logs(worker, logs_since)
 
 
 @router.post("/workers/{worker_id}/start", response_model=str)
 async def start_worker(
     worker: Worker = Depends(get_user_worker_by_id),
-):
+) -> Any:
     return await robot_service.start_worker(worker)
 
 
 @router.post("/workers/{worker_id}/stop", response_model=str)
 async def stop_worker(
     worker: Worker = Depends(get_user_worker_by_id),
-):
+) -> Any:
     return await robot_service.stop_worker(worker)
 
 
 @router.post("/workers/{worker_id}/restart", response_model=str)
 async def restart_worker(
     worker: Worker = Depends(get_user_worker_by_id),
-):
+) -> Any:
     return await robot_service.restart_worker(worker)

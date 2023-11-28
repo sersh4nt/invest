@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import docker
 import docker.errors
@@ -36,16 +37,21 @@ def remove_container(container: str | Container, force: bool = False) -> bool:
 
 
 def create_container(
-    image: str, name: str, env: dict, auto_restart: bool = False, *args, **kwargs
+    image: str,
+    name: str,
+    env: dict,
+    auto_restart: bool = False,
+    *args: tuple,
+    **kwargs: dict[str, Any]
 ) -> Container:
     if auto_restart:
         kwargs = {**kwargs, "restart_policy": {"Name": "always"}}
     return client.containers.create(
-        image, name=name, environment=env, detach=True, *args, **kwargs
+        image, *args, name=name, environment=env, detach=True, **kwargs
     )
 
 
-def start_container(container: str | Container):
+def start_container(container: str | Container) -> str:
     if isinstance(container, str):
         container = get_container_by_name(container)
     if container is None:
@@ -67,7 +73,7 @@ def get_logs(container: str | Container, logs_since: datetime | None = None) -> 
         container = get_container_by_name(container)
     if container is None:
         return b""
-    logs_kwargs = {"timestamps": True}
+    logs_kwargs: dict[str, Any] = {"timestamps": True}
     if logs_since is not None:
         if logs_since.tzinfo is not None:
             logs_since = logs_since.replace(tzinfo=None)

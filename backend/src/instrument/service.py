@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from fastapi_filter.contrib.sqlalchemy import Filter
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,9 +15,9 @@ async def list_instruments(
     *,
     filter: Filter | None = None,
     pagination: PaginationOpts | None = None
-) -> tuple[list[Instrument], int]:
+) -> tuple[Sequence[Instrument], int]:
     stmt = select(Instrument).filter(
-        Instrument.figi != None, Instrument.is_tradable == True
+        Instrument.figi is not None, Instrument.is_tradable is True
     )
     if filter is not None:
         stmt = filter.filter(stmt)
@@ -24,7 +26,7 @@ async def list_instruments(
     count = await session.scalar(select(func.count()).select_from(stmt.subquery()))
     stmt = paginate_stmt(stmt, pagination)
     result = await session.scalars(stmt)
-    return result.all(), count
+    return result.all(), count or 0
 
 
 async def list_instrument_metrics(
@@ -32,7 +34,7 @@ async def list_instrument_metrics(
     *,
     filter: Filter | None = None,
     pagination: PaginationOpts | None = None
-) -> tuple[list[InstrumentMetrics], int]:
+) -> tuple[Sequence[InstrumentMetrics], int]:
     stmt = select(
         InstrumentMetrics,
         (InstrumentMetrics.buy_volume + InstrumentMetrics.sell_volume).label("volume"),
@@ -48,4 +50,4 @@ async def list_instrument_metrics(
     count = await session.scalar(select(func.count()).select_from(stmt.subquery()))
     stmt = paginate_stmt(stmt, pagination)
     result = await session.scalars(stmt)
-    return result.all(), count
+    return result.all(), count or 0

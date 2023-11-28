@@ -1,21 +1,12 @@
+import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
-from uuid import UUID
+from typing import Optional
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Integer,
-    Numeric,
-    String,
-    Text,
-)
-from sqlalchemy.dialects import postgresql
+from sqlalchemy import ColumnElement, DateTime, ForeignKey, Numeric, String, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.base_class import Base
 from src.db.mixins import AuditMixin, IntegerIDPKMixin
@@ -24,17 +15,17 @@ from src.db.mixins import AuditMixin, IntegerIDPKMixin
 class Instrument(Base):
     __tablename__ = "instruments"
 
-    uid: UUID = Column(postgresql.UUID, primary_key=True, index=True)
-    type: str = Column(String, nullable=False)
-    figi: str = Column(String(length=12))
-    ticker: str = Column(String)
-    lot: int = Column(Integer)
-    currency: str = Column(String(length=3), default="rub")
-    name: str = Column(Text)
-    min_price_increment: Decimal = Column(Numeric(28, 9))
-    image_link: str = Column(String)
-    position_uid: UUID = Column(postgresql.UUID, index=True)
-    is_tradable: bool = Column(Boolean)
+    uid: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, index=True)
+    type: Mapped[str] = mapped_column(String, nullable=False)
+    figi: Mapped[str] = mapped_column(String(length=12))
+    ticker: Mapped[Optional[str]]
+    lot: Mapped[Optional[int]]
+    currency: Mapped[str] = mapped_column(String(length=3), default="rub")
+    name: Mapped[Optional[str]] = mapped_column(Text)
+    min_price_increment: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
+    image_link: Mapped[Optional[str]]
+    position_uid: Mapped[Optional[uuid.UUID]] = mapped_column(UUID, index=True)
+    is_tradable: Mapped[Optional[bool]]
 
     __mapper_args__ = {
         "polymorphic_identity": "instrument",
@@ -45,8 +36,10 @@ class Instrument(Base):
 class Currency(Instrument):
     __tablename__ = "currencies"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
-    iso: str = Column(String(length=3))
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
+    iso: Mapped[str] = mapped_column(String(length=3))
 
     __mapper_args__ = {"polymorphic_identity": "currency"}
 
@@ -54,7 +47,9 @@ class Currency(Instrument):
 class Share(Instrument):
     __tablename__ = "shares"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
 
     __mapper_args__ = {"polymorphic_identity": "share"}
 
@@ -62,8 +57,10 @@ class Share(Instrument):
 class ETF(Instrument):
     __tablename__ = "etfs"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
-    fixed_commission: Decimal = Column(Numeric(28, 9))
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
+    fixed_commission: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
 
     __mapper_args__ = {"polymorphic_identity": "etf"}
 
@@ -71,12 +68,14 @@ class ETF(Instrument):
 class Bond(Instrument):
     __tablename__ = "bonds"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
-    coupon_quantity_per_year: int = Column(Integer)
-    maturity_date: datetime = Column(DateTime(timezone=True))
-    nominal: Decimal = Column(Numeric(28, 9))
-    initial_nominal: Decimal = Column(Numeric(28, 9))
-    issue_size: Decimal = Column(Numeric(28, 9))
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
+    coupon_quantity_per_year: Mapped[Optional[int]]
+    maturity_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    nominal: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
+    initial_nominal: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
+    issue_size: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
 
     __mapper_args__ = {"polymorphic_identity": "bond"}
 
@@ -84,14 +83,16 @@ class Bond(Instrument):
 class Future(Instrument):
     __tablename__ = "futures"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
-    futures_type: str = Column(String)
-    asset_type: str = Column(String)
-    basic_asset: UUID = Column(postgresql.UUID)
-    basic_asset_size: Decimal = Column(Numeric(28, 9))
-    expiration_date: datetime = Column(DateTime(timezone=True))
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
+    futures_type: Mapped[Optional[str]]
+    asset_type: Mapped[Optional[str]]
+    basic_asset: Mapped[Optional[uuid.UUID]] = mapped_column(UUID)
+    basic_asset_size: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
+    expiration_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
 
-    def is_expired(self):
+    def is_expired(self) -> bool:
         now = datetime.utcnow().replace(tzinfo=timezone.utc)
         return self.expiration_date >= now
 
@@ -101,16 +102,18 @@ class Future(Instrument):
 class Option(Instrument):
     __tablename__ = "options"
 
-    uid: UUID = Column(postgresql.UUID, ForeignKey("instruments.uid"), primary_key=True)
-    direction: str = Column(String)
-    payment_type: str = Column(String)
-    style: str = Column(String)
-    settlement_style: str = Column(String)
-    settlement_currency: str = Column(String(length=3))
-    asset_type: str = Column(String)
-    basic_asset: UUID = Column(postgresql.UUID)
-    basic_asset_size: Decimal = Column(Numeric(28, 9))
-    strike_price: Decimal = Column(Numeric(28, 9))
+    uid: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("instruments.uid"), primary_key=True
+    )
+    direction: Mapped[Optional[str]]
+    payment_type: Mapped[Optional[str]]
+    style: Mapped[Optional[str]]
+    settlement_style: Mapped[Optional[str]]
+    settlement_currency: Mapped[Optional[str]] = mapped_column(String(length=3))
+    asset_type: Mapped[Optional[str]]
+    basic_asset: Mapped[Optional[uuid.UUID]] = mapped_column(UUID)
+    basic_asset_size: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
+    strike_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(28, 9))
 
     __mapper_args__ = {"polymorphic_identity": "option"}
 
@@ -118,34 +121,36 @@ class Option(Instrument):
 class InstrumentMetrics(Base, IntegerIDPKMixin, AuditMixin):
     __tablename__ = "instrument_metrics"
 
-    figi: str = Column(String)
-    volatility: float = Column(Float)
-    buy_volume: float = Column(Float)
-    sell_volume: float = Column(Float)
-    spread: float = Column(Float)
-    last_price: float = Column(Float)
-    relative_price: float = Column(Float)
-    gain: float = Column(Float)
+    figi: Mapped[str] = mapped_column(String(length=12))
+    volatility: Mapped[Optional[float]]
+    buy_volume: Mapped[Optional[float]]
+    sell_volume: Mapped[Optional[float]]
+    spread: Mapped[Optional[float]]
+    last_price: Mapped[Optional[float]]
+    relative_price: Mapped[Optional[float]]
+    gain: Mapped[Optional[float]]
 
     @hybrid_property
     def volume(self) -> float:
-        return self.buy_volume + self.sell_volume
+        return (self.buy_volume or 0) + (self.sell_volume or 0)
 
     @volume.inplace.expression
     @classmethod
-    def _volume_expression(cls):
+    def _volume_expression(cls) -> ColumnElement[float | None]:
         return cls.buy_volume + cls.sell_volume
 
     @hybrid_property
     def vv(self) -> float:
-        return self.volatility * (self.buy_volume + self.sell_volume)
+        return (self.volatility or 0) * (
+            (self.buy_volume or 0) + (self.sell_volume or 0)
+        )
 
     @vv.inplace.expression
     @classmethod
-    def _vv_expression(cls):
+    def _vv_expression(cls) -> ColumnElement[float | None]:
         return cls.volatility * (cls.buy_volume + cls.sell_volume)
 
-    instrument = relationship(
+    instrument: Mapped["Instrument"] = relationship(
         "Instrument",
         primaryjoin="Instrument.figi==InstrumentMetrics.figi",
         foreign_keys=[figi],

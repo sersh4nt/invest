@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +22,7 @@ async def list_instruments(
     filter: InstrumentFilter = FilterDepends(InstrumentFilter),
     pagination: PaginationOpts = Depends(),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     items, count = await instrument_service.list_instruments(
         session, filter=filter, pagination=pagination
     )
@@ -32,7 +34,7 @@ async def list_instrument_metrics(
     filter: InstrumentMetricsFilter = FilterDepends(InstrumentMetricsFilter),
     pagination: PaginationOpts = Depends(),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     items, count = await instrument_service.list_instrument_metrics(
         session, filter=filter, pagination=pagination
     )

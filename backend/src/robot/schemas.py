@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Type
 
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, validator
 
 from src.backtest.schemas import BacktestRead
 
@@ -24,11 +24,11 @@ class RobotScheme(RobotBase):
     avg_yield: float | None = None
 
     @validator("creator", pre=True)
-    def set_creator(cls, v):
+    def set_creator(cls: Type["RobotScheme"], v: Any) -> str:  # noqa: N805
         try:
             return str(v)
         except Exception as e:
-            raise ValidationError() from e
+            raise ValueError("unable to parse string") from e
 
     class Config:
         orm_mode = True

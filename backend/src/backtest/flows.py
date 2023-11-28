@@ -2,6 +2,7 @@ import json
 import random
 import time
 import uuid
+from typing import Any
 
 import docker
 import docker.errors
@@ -22,6 +23,7 @@ from src.robot.models import Robot
 client = docker.DockerClient(settings.DOCKER_URI)
 
 
+# type: ignore
 class BackTestStrategyFlow:
     def __init__(self, data: dict, user_id: str, strategy_name: str) -> None:
         self.data = parse_obj_as(BacktestCreate, data)
@@ -29,14 +31,16 @@ class BackTestStrategyFlow:
         self.strategy_name = strategy_name
         self.uid = self.data.id or str(uuid.uuid4())
 
-    def _get_token(self, session: Session):
+    def _get_token(self, session: Session) -> str:
         tokens = session.scalars(
             select(Account.token).filter(Account.user_id == self.user_id)
         ).all()
         return random.choice([*tokens, settings.TINKOFF_TOKEN])
 
-    def _get_image(self, session: Session):
+    def _get_image(self, session: Session) -> str:
         robot = session.get(Robot, self.data.robot_id)
+        if robot is None:
+            raise RuntimeError("unable to get robot")
         return robot.image
 
     def _prepare_infrastructure(self) -> tuple[Volume, Volume, Network]:
@@ -112,11 +116,13 @@ class BackTestStrategyFlow:
         print(f"Time elapsed: {time_elapsed:.2f} seconds, cleaning up...")
         return time_elapsed
 
-    def _clean_up(self):
+    def _clean_up(self) -> None:
         self.broker_container.stop()
         self.network.remove()
 
-    def _save_results(self, session: Session, time_elapsed: float | None = None):
+    def _save_results(
+        self, session: Session, time_elapsed: float | None = None
+    ) -> None:
         print("Done! Saving results...")
         obj = session.get(BacktestResult, self.uid)
         if obj is None:
@@ -127,13 +133,13 @@ class BackTestStrategyFlow:
             results: dict = json.load(f)
 
         obj.results = results
-        obj.absolute_yield = float(results.get("absolute_yield"))
-        obj.relative_yield = float(results.get("portfolio", {}).get("yield"))
+        obj.absolute_yield = float(results.get("absolute_yield", 0))
+        obj.relative_yield = float(results.get("portfolio", {}).get("yield", 0))
         obj.time_elapsed = time_elapsed
         session.add(obj)
         session.commit()
 
-    def run(self, *args, **kwargs):
+    def run(self, *args: tuple, **kwargs: dict[str, Any]) -> None:
         session = next(get_sync_session())
 
         obj = session.get(BacktestResult, self.uid)

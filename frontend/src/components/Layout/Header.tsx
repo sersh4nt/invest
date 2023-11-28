@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import AccountSelector from "./AccountSelector";
 import logo from "../../assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   opened: boolean;
@@ -19,6 +20,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ opened, setOpened }) => {
   const theme = useMantineTheme();
+  const navigate = useNavigate();
 
   return (
     <MantineHeader height={56} p="md">
@@ -35,13 +37,18 @@ const Header: React.FC<HeaderProps> = ({ opened, setOpened }) => {
         <Grid align="center" justify="space-between" w="100%">
           <Grid.Col span="auto">
             <Group align="end">
-              <Image src={logo} width={90} fit="contain" />
+              <Image
+                src={logo}
+                width={90}
+                fit="contain"
+                onClick={() => navigate("/")}
+                sx={{ cursor: "pointer" }}
+              />
               <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                 <Text c="dimmed" fz="xs">
                   {" "}
                   by{" "}
                   <Anchor
-                    span
                     c="blue"
                     inherit
                     href="https://t.me/sersh4nt"

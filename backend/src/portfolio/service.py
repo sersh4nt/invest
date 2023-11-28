@@ -1,15 +1,16 @@
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
-from typing import List, Literal, Tuple
+from typing import Literal, Sequence, Tuple
 
-from sqlalchemy import extract, func, select
+from sqlalchemy import Row, extract, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from tinkoff.invest import AioRequestError, AsyncClient
+
 from src.account.models import Subaccount
 from src.common.utils import quotation_to_decimal
 from src.instrument.models import Instrument
 from src.portfolio.models import Portfolio, PortfolioCost, PortfolioPosition
-from tinkoff.invest import AioRequestError, AsyncClient
 
 
 async def get_latest_portfolio_cost(
@@ -38,7 +39,7 @@ async def get_latest_portfolio(
             response = None
 
     if response is None:
-        portfolio = await session.scalars(
+        scalars = await session.scalars(
             select(Portfolio)
             .options(
                 selectinload(Portfolio.positions).selectinload(
@@ -50,14 +51,14 @@ async def get_latest_portfolio(
             .order_by(Portfolio.date_added.desc())
             .limit(1)
         )
-        return portfolio.first()
+        return scalars.first()
 
     instruments = await session.scalars(
         select(Instrument).filter(
             Instrument.uid.in_([p.instrument_uid for p in response.positions])
         )
     )
-    instruments = {str(i.uid): i for i in instruments.all()}
+    instruments_dict: dict[str, Instrument] = {str(i.uid): i for i in instruments.all()}
 
     portfolio = Portfolio(
         subaccount=subaccount,
@@ -79,7 +80,7 @@ async def get_latest_portfolio(
         positions=[
             PortfolioPosition(
                 instrument_uid=p.instrument_uid,
-                instrument=instruments[p.instrument_uid],
+                instrument=instruments_dict[p.instrument_uid],
                 quantity=quotation_to_decimal(p.quantity_lots),
                 blocked=quotation_to_decimal(p.blocked_lots),
                 average_price=quotation_to_decimal(p.average_position_price),
@@ -100,10 +101,10 @@ async def get_portfolio_cost(
     subaccount: Subaccount,
     currency: str = "rub",
     range: Literal["today", "week", "month", "year", "all"] = "all"
-) -> List[Tuple[Decimal, datetime]]:
+) -> Sequence[Row[Tuple[Decimal, datetime]]]:
     def _get_date_grouper_from_params(range: str) -> tuple[datetime, int]:
         now = datetime.combine(date.today(), time.min, timezone.utc)
-        if range == 'today':
+        if range == "today":
             return now, 1
         if range == "week":
             return now - timedelta(days=now.weekday()), 300

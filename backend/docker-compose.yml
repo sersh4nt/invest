@@ -1,14 +1,30 @@
 version: '3'
 
 services:
+  db:
+    ports:
+      - 5432:5432
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 3s
+      timeout: 5s
+      retries: 100
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   app:
     container_name: invest-api
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - backtest-results:/src/backtest-results
       - ./:/src
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     env_file:
       - .env
     build: .
@@ -17,6 +33,11 @@ services:
 
   redis:
     image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 3s
+      timeout: 5s
+      retries: 100
 
   # celery-worker:
   #   build: .
@@ -33,3 +54,4 @@ volumes:
   backtest-results:
     driver: "local"
     name: backtest-results
+  pgdata:

@@ -1,11 +1,12 @@
-"""Create models
+"""Create models.
 
 Revision ID: e21db593fdad
-Revises: 
+Revises:
 Create Date: 2023-04-27 08:28:24.368870
 
 """
 import sqlalchemy as sa
+
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -110,25 +111,6 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("uid", name=op.f("bonds_pkey")),
     )
-    op.create_table(
-        "candles",
-        sa.Column("instrument_uid", sa.UUID(), nullable=True),
-        sa.Column("high", sa.Numeric(precision=18, scale=9), nullable=True),
-        sa.Column("low", sa.Numeric(precision=18, scale=9), nullable=True),
-        sa.Column("open", sa.Numeric(precision=18, scale=9), nullable=True),
-        sa.Column("close", sa.Numeric(precision=18, scale=9), nullable=True),
-        sa.Column("volume", sa.Integer(), nullable=True),
-        sa.Column("date", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("resolution", sa.String(), nullable=True),
-        sa.Column("id", sa.BigInteger(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["instrument_uid"],
-            ["instruments.uid"],
-            name=op.f("candles_instrument_uid_fkey"),
-        ),
-        sa.PrimaryKeyConstraint("id", name=op.f("candles_pkey")),
-    )
-    op.create_index(op.f("candles_id_idx"), "candles", ["id"], unique=False)
     op.create_table(
         "etfs",
         sa.Column("uid", sa.UUID(), nullable=False),
@@ -278,8 +260,6 @@ def downgrade() -> None:
     op.drop_table("options")
     op.drop_table("futures")
     op.drop_table("etfs")
-    op.drop_index(op.f("candles_id_idx"), table_name="candles")
-    op.drop_table("candles")
     op.drop_table("bonds")
     op.drop_index(op.f("instruments_uid_idx"), table_name="instruments")
     op.drop_index(op.f("instruments_position_uid_idx"), table_name="instruments")

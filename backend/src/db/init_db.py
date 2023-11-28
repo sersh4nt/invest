@@ -19,5 +19,4 @@ async def init_db(manager: BaseUserManager) -> None:
     except UserAlreadyExists:
         user = await manager.get_by_email(data.email)
         user = await manager.update(UserUpdate(**data.dict()), user)
-    finally:
-        return user
+    return user

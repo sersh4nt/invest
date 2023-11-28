@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, List
+from typing import Annotated, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,7 +34,7 @@ async def list_operations(
     dt_to: Annotated[datetime | None, Query(alias="to")] = None,
     session: AsyncSession = Depends(get_async_session),
     pagination: PaginationOpts = Depends(),
-):
+) -> Any:
     page = pagination.page or 0
     live_orders = []
     if page == 0:
@@ -50,6 +50,7 @@ async def list_operations(
     )
     existing = {op.broker_id for op in operations}
     live_orders = [op for op in live_orders if op.broker_id not in existing]
+    operations = list(operations)
     operations.extend(live_orders)
     operations = sorted(operations, key=lambda x: x.date, reverse=True)
     return {"count": count, "page": pagination.page or 0, "items": operations}
@@ -61,17 +62,17 @@ async def list_operations(
 async def list_active_orders(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     orders, instruments = await operations_service.get_active_orders(
         session, subaccount=subaccount
     )
-    instruments = {i.figi: i for i in instruments}
+    instruments_dict = {i.figi: i for i in instruments}
     return [
         {
             "broker_id": order.order_id,
             "lots_requested": order.lots_requested,
             "lots_executed": order.lots_executed,
-            "instrument": instruments[order.figi],
+            "instrument": instruments_dict[order.figi],
             "direction": order.direction.name[16:],
             "price": quotation_to_decimal(order.initial_order_price),
             "type": order.order_type.name[11:],
@@ -87,7 +88,7 @@ async def list_active_orders(
 async def create_order(
     data: OrderCreate,
     subaccount: Subaccount = Depends(get_user_subaccount),
-):
+) -> Any:
     status, msg = await operations_service.create_order(
         subaccount=subaccount, data=data
     )
@@ -104,7 +105,7 @@ async def create_order(
 async def get_daily_operations_stats(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     response = await operations_service.get_operations_stats(
         session, subaccount=subaccount
     )
@@ -119,7 +120,7 @@ async def get_daily_operations_stats(
 async def get_portfolio_revenue(
     subaccount: Subaccount = Depends(get_user_subaccount),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     result = await operations_service.get_portfolio_revenue(
         session, subaccount=subaccount
     )
@@ -130,7 +131,7 @@ async def get_portfolio_revenue(
 async def cancel_order(
     data: CancelOrderScheme,
     session: AsyncSession = Depends(get_async_session),
-):
+) -> Any:
     subaccount = await account_service.get_subaccount_by_id(
         session, subaccount_id=data.subaccount_id
     )
