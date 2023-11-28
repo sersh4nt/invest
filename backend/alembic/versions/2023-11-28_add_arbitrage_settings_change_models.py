@@ -47,7 +47,7 @@ def upgrade() -> None:
     op.create_index(
         op.f("arbitrage_deltas_id_idx"), "arbitrage_deltas", ["id"], unique=False
     )
-    op.add_column("accounts", sa.Column("is_sandbox", sa.Boolean(), nullable=False))
+    op.add_column("accounts", sa.Column("is_sandbox", sa.Boolean(), nullable=True))
     op.alter_column(
         "backtest_results",
         "robot_config",
@@ -65,9 +65,6 @@ def upgrade() -> None:
     )
     op.alter_column(
         "instrument_metrics", "figi", existing_type=sa.VARCHAR(), nullable=False
-    )
-    op.alter_column(
-        "instruments", "figi", existing_type=sa.VARCHAR(length=12), nullable=False
     )
     op.alter_column(
         "instruments", "currency", existing_type=sa.VARCHAR(length=3), nullable=False

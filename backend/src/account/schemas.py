@@ -25,7 +25,7 @@ class SubaccountScheme(SubaccountBase):
 class AccountBase(BaseModel):
     name: str | None = None
     description: str | None = None
-    is_sandbox: bool = False
+    is_sandbox: bool | None = None
 
 
 class AccountCreate(AccountBase):

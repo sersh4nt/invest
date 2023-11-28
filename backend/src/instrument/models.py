@@ -17,7 +17,7 @@ class Instrument(Base):
 
     uid: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, index=True)
     type: Mapped[str] = mapped_column(String, nullable=False)
-    figi: Mapped[str] = mapped_column(String(length=12))
+    figi: Mapped[Optional[str]] = mapped_column(String(length=12))
     ticker: Mapped[Optional[str]]
     lot: Mapped[Optional[int]]
     currency: Mapped[str] = mapped_column(String(length=3), default="rub")

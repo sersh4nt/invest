@@ -19,7 +19,7 @@ class Account(Base, IntegerIDPKMixin):
     token: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     name: Mapped[Optional[str]]
     description: Mapped[Optional[str]] = mapped_column(Text)
-    is_sandbox: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_sandbox: Mapped[Optional[bool]] = mapped_column(Boolean, default=False)
 
     user = relationship("User", back_populates="accounts")
     subaccounts: Mapped[list["Subaccount"]] = relationship(
