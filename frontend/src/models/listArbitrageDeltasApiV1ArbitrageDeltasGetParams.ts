@@ -5,9 +5,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams = {
-from?: string;
-to?: string;
+export type ListArbitrageDeltasApiV1ArbitrageDeltasGetParams = {
+order_by?: string;
 page?: number;
 page_size?: number;
 };

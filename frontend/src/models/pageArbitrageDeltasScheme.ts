@@ -4,10 +4,10 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { RobotScheme } from './robotScheme';
+import type { ArbitrageDeltasScheme } from './arbitrageDeltasScheme';
 
-export interface PageRobotScheme {
+export interface PageArbitrageDeltasScheme {
   count: number;
-  items: RobotScheme[];
+  items: ArbitrageDeltasScheme[];
   page: number;
 }

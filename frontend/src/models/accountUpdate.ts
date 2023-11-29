@@ -5,7 +5,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface PortfolioCostTimestampted {
-  ts: string;
-  value: number;
+export interface AccountUpdate {
+  description?: string;
+  is_sandbox?: boolean;
+  name?: string;
+  token: string;
 }
