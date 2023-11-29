@@ -1,5 +1,6 @@
 from typing import Any
 
+from datetime import datetime, timezone, timedelta
 from celery import Celery, group
 from celery.schedules import crontab
 from sqlalchemy import select
@@ -182,7 +183,10 @@ def update_arbitrage_delta(
 
 @celery.task
 def update_arbitrage_deltas(*args: tuple, **kwargs: dict[str, Any]) -> None:
+    now = datetime.now(timezone.utc) - timedelta(days=1)
     db = next(get_sync_session())
-    ids = db.scalars(select(ArbitrageDeltas.id))
+    ids = db.scalars(
+        select(ArbitrageDeltas.id).filter(ArbitrageDeltas.updated_at <= now)
+    )
     db.close()
     return group([update_arbitrage_delta.s(id, *args, **kwargs) for id in ids])()

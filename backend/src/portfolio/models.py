@@ -17,9 +17,7 @@ class Portfolio(Base, IntegerIDPKMixin):
     subaccount_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("subaccounts.id", ondelete="CASCADE")
     )
-    date_added: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), default=datetime.utcnow()
-    )
+    date_added: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     subaccount = relationship("Subaccount", back_populates="portfolio")
     cost = relationship("PortfolioCost", back_populates="portfolio")

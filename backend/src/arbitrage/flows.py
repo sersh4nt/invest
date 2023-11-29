@@ -15,7 +15,7 @@ from src.db.session import get_sync_session
 
 class UpdateArbitrageDeltaFlow:
     CBR_URL = "https://www.cbr.ru/hd_base/KeyRate/"
-    cbr_rate: Decimal | None
+    cbr_rate: Decimal | None = None
 
     def _get_cbr_rate(self) -> Decimal:
         if self.cbr_rate is not None:
@@ -90,9 +90,7 @@ class UpdateArbitrageDeltaFlow:
             ).candles
 
         mn, mx, volume = self._get_min_max_deltas(
-            share_candles,
-            future_candles,
-            delta.future.basic_asset_size // delta.share.lot,
+            share_candles, future_candles, delta.future.basic_asset_size
         )
 
         now = datetime.now(timezone.utc)
@@ -102,12 +100,13 @@ class UpdateArbitrageDeltaFlow:
         cbr_rate = self._get_cbr_rate()
 
         delta.volume = volume
-
         delta.d_take_calculated = (
-            expiration * (cbr_rate / 365 + Decimal("0.01")) + delta.spread_required / 2
+            expiration * (cbr_rate / 365 + Decimal("0.01"))
+            + Decimal(delta.spread_required) / 2
         )
         delta.d_return_calculated = (
-            expiration * (cbr_rate / 365 - Decimal("0.01")) - delta.spread_required / 2
+            expiration * (cbr_rate / 365 - Decimal("0.01"))
+            - Decimal(delta.spread_required) / 2
         )
 
         if volume > 0:

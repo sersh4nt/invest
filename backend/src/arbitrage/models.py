@@ -27,7 +27,7 @@ class ArbitrageDeltas(Base, IntegerIDPKMixin, AuditMixin):
     )
     future = relationship(
         "Future",
-        primaryjoin="Future.figi == foreign(ArbitrageDeltas.share_figi)",
+        primaryjoin="Future.figi == foreign(ArbitrageDeltas.future_figi)",
         foreign_keys=[future_figi],
         lazy="selectin",
     )
