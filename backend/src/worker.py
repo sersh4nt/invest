@@ -34,7 +34,7 @@ def setup_periodic_tasks(sender: Celery, **kwargs: dict[str, Any]) -> None:
     sender.add_periodic_task(crontab(), store_operations.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments_metrics.s())
     sender.add_periodic_task(crontab("0", "12"), update_instruments.s())
-    sender.add_periodic_task(crontab("0", "0"), update_arbitrage_deltas.s())
+    sender.add_periodic_task(crontab("0"), update_arbitrage_deltas.s())
 
 
 @celery.task
