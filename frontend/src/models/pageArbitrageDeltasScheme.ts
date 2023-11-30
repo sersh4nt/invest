@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { ArbitrageDeltasScheme } from './arbitrageDeltasScheme';
+import type { ArbitrageDeltasScheme } from "./arbitrageDeltasScheme";
 
 export interface PageArbitrageDeltasScheme {
   count: number;

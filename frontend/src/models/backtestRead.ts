@@ -4,10 +4,10 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { InstrumentScheme } from './instrumentScheme';
-import type { BacktestReadIntervalRaw } from './backtestReadIntervalRaw';
-import type { BacktestReadResults } from './backtestReadResults';
-import type { BacktestReadRobotConfig } from './backtestReadRobotConfig';
+import type { InstrumentScheme } from "./instrumentScheme";
+import type { BacktestReadIntervalRaw } from "./backtestReadIntervalRaw";
+import type { BacktestReadResults } from "./backtestReadResults";
+import type { BacktestReadRobotConfig } from "./backtestReadRobotConfig";
 
 export interface BacktestRead {
   absolute_yield?: number;

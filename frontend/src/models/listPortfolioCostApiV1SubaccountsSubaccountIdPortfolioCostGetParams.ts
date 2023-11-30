@@ -4,9 +4,10 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange } from './listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange';
+import type { ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange } from "./listPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange";
 
-export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams = {
-currency?: string;
-range?: ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange;
-};
+export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetParams =
+  {
+    currency?: string;
+    range?: ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange;
+  };

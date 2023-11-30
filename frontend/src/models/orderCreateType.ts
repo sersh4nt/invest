@@ -5,11 +5,11 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type OrderCreateType = typeof OrderCreateType[keyof typeof OrderCreateType];
-
+export type OrderCreateType =
+  (typeof OrderCreateType)[keyof typeof OrderCreateType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OrderCreateType = {
-  buy: 'buy',
-  sell: 'sell',
+  buy: "buy",
+  sell: "sell",
 } as const;

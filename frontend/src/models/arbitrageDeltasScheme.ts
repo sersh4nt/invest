@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { InstrumentScheme } from './instrumentScheme';
+import type { InstrumentScheme } from "./instrumentScheme";
 
 export interface ArbitrageDeltasScheme {
   d_return?: number;
@@ -13,6 +13,8 @@ export interface ArbitrageDeltasScheme {
   d_take_calculated?: number;
   future?: InstrumentScheme;
   future_figi: string;
+  is_active?: boolean;
+  multiplier?: number;
   share?: InstrumentScheme;
   share_figi: string;
   spread_required: number;

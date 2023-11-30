@@ -5,14 +5,15 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange = typeof ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange[keyof typeof ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange];
-
+export type ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange =
+  (typeof ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange)[keyof typeof ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange = {
-  today: 'today',
-  week: 'week',
-  month: 'month',
-  year: 'year',
-  all: 'all',
-} as const;
+export const ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange =
+  {
+    today: "today",
+    week: "week",
+    month: "month",
+    year: "year",
+    all: "all",
+  } as const;

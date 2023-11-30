@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { PortfolioCostTimestampted } from './portfolioCostTimestampted';
+import type { PortfolioCostTimestampted } from "./portfolioCostTimestampted";
 
 export interface PortfolioCostList {
   currency: string;

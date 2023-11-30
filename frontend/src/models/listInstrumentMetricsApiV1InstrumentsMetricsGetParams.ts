@@ -6,11 +6,11 @@
  */
 
 export type ListInstrumentMetricsApiV1InstrumentsMetricsGetParams = {
-order_by?: string;
-instrument__type?: string;
-instrument__q?: string;
-instrument__order_by?: string;
-instrument__ticker?: string;
-page?: number;
-page_size?: number;
+  order_by?: string;
+  instrument__type?: string;
+  instrument__q?: string;
+  instrument__order_by?: string;
+  instrument__ticker?: string;
+  page?: number;
+  page_size?: number;
 };

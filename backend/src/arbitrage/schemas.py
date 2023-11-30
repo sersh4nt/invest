@@ -13,6 +13,8 @@ class ArbitrageDeltasBase(BaseModel):
     d_return: float | None
     volume: int | None
     spread_required: float
+    is_active: bool | None
+    multiplier: int | None
 
 
 class ArbitrageDeltasScheme(ArbitrageDeltasBase):
@@ -25,6 +27,7 @@ class ArbitrageDeltasScheme(ArbitrageDeltasBase):
 
 class ArbitrageDeltasFilter(Filter):
     order_by: list[str] | None
+    is_active: bool | None
 
     class Constants(Filter.Constants):
         model = ArbitrageDeltas

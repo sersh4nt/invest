@@ -4,8 +4,8 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { PortfolioCostScheme } from './portfolioCostScheme';
-import type { PortfolioPositionScheme } from './portfolioPositionScheme';
+import type { PortfolioCostScheme } from "./portfolioCostScheme";
+import type { PortfolioPositionScheme } from "./portfolioPositionScheme";
 
 export interface PortfolioScheme {
   cost?: PortfolioCostScheme[];

@@ -6,8 +6,8 @@
  */
 
 export type ListOperationsApiV1SubaccountsSubaccountIdOperationsGetParams = {
-from?: string;
-to?: string;
-page?: number;
-page_size?: number;
+  from?: string;
+  to?: string;
+  page?: number;
+  page_size?: number;
 };

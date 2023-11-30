@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { InstrumentScheme } from './instrumentScheme';
+import type { InstrumentScheme } from "./instrumentScheme";
 
 export interface ActiveOrderScheme {
   broker_id: string;

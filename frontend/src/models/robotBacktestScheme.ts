@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { BacktestRead } from './backtestRead';
+import type { BacktestRead } from "./backtestRead";
 
 export interface RobotBacktestScheme {
   avg_yield?: number;

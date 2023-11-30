@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { RobotScheme } from './robotScheme';
+import type { RobotScheme } from "./robotScheme";
 
 export interface PageRobotScheme {
   count: number;

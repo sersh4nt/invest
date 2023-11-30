@@ -6,7 +6,8 @@
  */
 
 export type ListArbitrageDeltasApiV1ArbitrageDeltasGetParams = {
-order_by?: string;
-page?: number;
-page_size?: number;
+  order_by?: string;
+  is_active?: boolean;
+  page?: number;
+  page_size?: number;
 };

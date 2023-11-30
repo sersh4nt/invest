@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { OrderCreateType } from './orderCreateType';
+import type { OrderCreateType } from "./orderCreateType";
 
 export interface OrderCreate {
   figi: string;

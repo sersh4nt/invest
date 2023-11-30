@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { SubaccountScheme } from './subaccountScheme';
+import type { SubaccountScheme } from "./subaccountScheme";
 
 export interface AccountScheme {
   description?: string;

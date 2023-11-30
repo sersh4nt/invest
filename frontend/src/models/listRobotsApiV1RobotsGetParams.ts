@@ -6,6 +6,6 @@
  */
 
 export type ListRobotsApiV1RobotsGetParams = {
-page?: number;
-page_size?: number;
+  page?: number;
+  page_size?: number;
 };

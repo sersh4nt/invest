@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Box, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Avatar, Box, Group, Tooltip, Text } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { ArbitrageDeltasScheme } from "../../models";
@@ -53,6 +53,24 @@ const columns = [
         : "-",
     header: "Дельта выхода рассчитанная",
     id: "d_return_calculated",
+    maxSize: 50,
+  },
+  {
+    accessorFn: (row: ArbitrageDeltasScheme) =>
+      row.multiplier != undefined ? asRuNumber(row.multiplier) : "-",
+    header: "Мультипликатор",
+    id: "multiplier",
+    maxSize: 50,
+  },
+  {
+    accessorFn: (row: ArbitrageDeltasScheme) =>
+      row.is_active ? (
+        <Text color="teal">Активна</Text>
+      ) : (
+        <Text color="red">Неактивна</Text>
+      ),
+    header: "Активность",
+    id: "active",
     maxSize: 50,
   },
 ] as MRT_ColumnDef[];

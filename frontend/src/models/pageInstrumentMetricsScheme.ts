@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { InstrumentMetricsScheme } from './instrumentMetricsScheme';
+import type { InstrumentMetricsScheme } from "./instrumentMetricsScheme";
 
 export interface PageInstrumentMetricsScheme {
   count: number;

@@ -6,10 +6,10 @@
  */
 
 export type ListInstrumentsApiV1InstrumentsGetParams = {
-type?: string;
-q?: string;
-order_by?: string;
-ticker?: string;
-page?: number;
-page_size?: number;
+  type?: string;
+  q?: string;
+  order_by?: string;
+  ticker?: string;
+  page?: number;
+  page_size?: number;
 };

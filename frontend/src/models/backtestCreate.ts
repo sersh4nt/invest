@@ -4,8 +4,8 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { BacktestCreateIntervalRaw } from './backtestCreateIntervalRaw';
-import type { BacktestCreateRobotConfig } from './backtestCreateRobotConfig';
+import type { BacktestCreateIntervalRaw } from "./backtestCreateIntervalRaw";
+import type { BacktestCreateRobotConfig } from "./backtestCreateRobotConfig";
 
 export interface BacktestCreate {
   broker_fee?: number;

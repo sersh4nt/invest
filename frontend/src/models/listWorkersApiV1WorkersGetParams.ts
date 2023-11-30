@@ -6,6 +6,6 @@
  */
 
 export type ListWorkersApiV1WorkersGetParams = {
-page?: number;
-page_size?: number;
+  page?: number;
+  page_size?: number;
 };

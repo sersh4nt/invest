@@ -5,14 +5,14 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type BacktestCreateIntervalRaw = typeof BacktestCreateIntervalRaw[keyof typeof BacktestCreateIntervalRaw];
-
+export type BacktestCreateIntervalRaw =
+  (typeof BacktestCreateIntervalRaw)[keyof typeof BacktestCreateIntervalRaw];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BacktestCreateIntervalRaw = {
-  '1min': '1min',
-  '5min': '5min',
-  '15min': '15min',
-  hour: 'hour',
-  day: 'day',
+  "1min": "1min",
+  "5min": "5min",
+  "15min": "15min",
+  hour: "hour",
+  day: "day",
 } as const;

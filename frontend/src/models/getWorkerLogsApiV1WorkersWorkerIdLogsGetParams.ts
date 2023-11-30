@@ -6,5 +6,5 @@
  */
 
 export type GetWorkerLogsApiV1WorkersWorkerIdLogsGetParams = {
-logsSince?: string;
+  logsSince?: string;
 };
