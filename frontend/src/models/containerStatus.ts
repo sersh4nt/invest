@@ -4,7 +4,7 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { ContainerMessage } from './containerMessage';
+import type { ContainerMessage } from "./containerMessage";
 
 export interface ContainerStatus {
   status: string;

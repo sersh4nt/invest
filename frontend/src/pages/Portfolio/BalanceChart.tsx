@@ -24,6 +24,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet } from "../../api/portfolio/portfolio";
 import useSubaccount from "../../hooks/useSubaccount";
+import { ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange } from "../../models";
 
 ChartJS.register(
   Tooltip,
@@ -70,7 +71,10 @@ const BalanceChart: React.FC = () => {
   const { data, isLoading } =
     useListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGet(
       Number(subaccount),
-      { range }
+      {
+        range:
+          range as ListPortfolioCostApiV1SubaccountsSubaccountIdPortfolioCostGetRange,
+      }
     );
 
   const handleReset = () => {

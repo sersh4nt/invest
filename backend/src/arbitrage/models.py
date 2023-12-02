@@ -18,6 +18,8 @@ class ArbitrageDeltas(Base, IntegerIDPKMixin, AuditMixin):
     d_return: Mapped[Optional[float]]
     volume: Mapped[Optional[int]] = mapped_column(Integer, default=0)
     spread_required: Mapped[float] = mapped_column(Float, default=2.0)
+    is_active: Mapped[Optional[bool]]
+    multiplier: Mapped[Optional[int]]
 
     share = relationship(
         "Share",

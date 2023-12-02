@@ -4,10 +4,10 @@
  * Invest API
  * OpenAPI spec version: 0.1.0
  */
-import type { WorkerScheme } from "./workerScheme";
+import type { ArbitrageDeltasScheme } from "./arbitrageDeltasScheme";
 
-export interface PageWorkerScheme {
+export interface PageArbitrageDeltasScheme {
   count: number;
-  items: WorkerScheme[];
+  items: ArbitrageDeltasScheme[];
   page: number;
 }

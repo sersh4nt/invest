@@ -5,4 +5,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type GetArbitrageDealsApiV1ArbitrageRateGetParams = { symbols: string[]; deals: number; initialAmount: number; paymentMethods: string[]; buyTaker?: boolean };
+export type GetArbitrageDealsApiV1ArbitrageRateGetParams = {
+  symbols: string[];
+  deals: number;
+  initialAmount: number;
+  paymentMethods: string[];
+  buyTaker?: boolean;
+};

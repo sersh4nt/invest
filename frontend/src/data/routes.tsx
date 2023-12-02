@@ -17,7 +17,6 @@ import Register from "../pages/Register";
 
 const Accounts = lazy(() => import("../pages/Accounts"));
 const Portfolio = lazy(() => import("../pages/Portfolio"));
-const Arbitrage = lazy(() => import("../pages/Arbitrage"));
 const Orders = lazy(() => import("../pages/Orders"));
 const Workers = lazy(() => import("../pages/Workers"));
 const Robots = lazy(() => import("../pages/Robots"));
@@ -88,11 +87,6 @@ export const routes: RouteObject[] = [
           {
             path: "/workers/:workerId",
             element: <WorkerDetailed />,
-          },
-
-          {
-            path: "/arbitrage",
-            element: <Arbitrage />,
           },
           ...mainRoutes.map((item) => ({
             path: item.path,

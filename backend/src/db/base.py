@@ -17,5 +17,6 @@ from src.portfolio.models import (  # noqa: F401
 )
 from src.robot.models import Robot, Worker  # noqa: F401
 from src.user.models import User  # noqa: F401
+from src.arbitrage.models import ArbitrageDeltas # noqa: f401
 
 from .base_class import Base  # noqa: F401
